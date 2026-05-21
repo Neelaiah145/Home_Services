@@ -3,8 +3,8 @@
 {% block content %}
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
+<link rel="stylesheet" href="{% static 'assets/css/dashboards_style/customer.css' %}">
+<!-- <style>
 :root {
     --cp-bg: #f4f7fb;
     --cp-card: #ffffff;
@@ -268,13 +268,22 @@ body {
 @media(max-width:768px){
     .cp-main-table { min-width: 1000px; }
 }
-</style>
+</style> -->
 
 <div class="cp-portal-page">
 
-    <div class="cp-page-header">
-        <h6 class="cp-page-title">My Complaints</h6>
-        <div class="cp-page-sub">View and manage support requests for your booked services</div>
+
+
+    <div>
+
+        <h2 class="dashboard-heading">
+                My Complaints
+        </h2>
+
+        <p class="dashboard-subheading">
+            View and manage support requests for your booked services
+        </p>
+
     </div>
 
     <div class="cp-table-card">

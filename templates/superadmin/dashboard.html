@@ -295,18 +295,29 @@ body{
 <div class="dashboard-wrapper">
 
     <!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
 
-    <div class="dashboard-header">
+    <div>
 
-        <div class="dashboard-title">
+        <h2 class="dashboard-heading">
             Superadmin Dashboard
-        </div>
+        </h2>
 
-        <div class="dashboard-subtitle">
+        <p class="dashboard-subheading">
             Monitor all users, vendors, bookings and analytics reports
-        </div>
+        </p>
 
     </div>
+
+    <a
+        href="{% url 'export_dashboard_excel' %}"
+        class="btn btn-primary dashboard-download-btn">
+
+        ⬇ Download Excel
+
+    </a>
+
+</div>
 
     <!-- CARDS -->
 

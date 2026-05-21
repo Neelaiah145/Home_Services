@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.conf import settings
 from core.models import Category, CategoryService
 import uuid
+from datetime import datetime
 from datetime import date
 
 from django.utils import timezone
@@ -60,6 +61,9 @@ class User(AbstractUser):
         blank=True,
         related_name="created_users"
     )
+
+    user_created_at = models.DateTimeField(auto_now_add=True)
+    user_updated_at = models.DateTimeField(auto_now=True)
     state = models.CharField(
         max_length=100,
         blank=True,
@@ -103,8 +107,7 @@ class User(AbstractUser):
     ("good", "Good"),
     ("average", "Average"),
     ("bad", "Bad"),
-    ("normal", "Normal"),
-)
+    ("normal", "Normal"),)
 
     behaviour = models.CharField(max_length=20,choices=BEHAVIOUR,default="normal")
 
@@ -205,8 +208,8 @@ class Booking(models.Model):
     renewal_count = models.IntegerField(
         default=0
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-
+    booking_created_at = models.DateTimeField(auto_now_add=True)
+    booking_updated_at = models.DateTimeField(auto_now=True)
     def __str__(self):
         return f"{self.order_id} - {self.service.s_title}"
     # show the booking services in days wise if the multiple services booking
@@ -220,21 +223,34 @@ class Booking(models.Model):
             ).days + 1
 
         return 0
-    # notify the services ending beofre 3 days
+
+
+  
+    # SHOW RENEW NOTIFICATION BEFORE 10 DAYS
     @property
     def show_renew_button(self):
 
         if self.end_date:
 
+            end_date = self.end_date
+
+            # HANDLE DATETIME FIELD
+            if isinstance(end_date, datetime):
+
+                end_date = end_date.date()
+
+            today = datetime.today().date()
+
             remaining_days = (
-                self.end_date - date.today()
+                end_date - today
             ).days
 
-            return remaining_days <= 3
+            print("Remaining Days :", remaining_days)
+
+            return 0 <= remaining_days <= 10
 
         return False
     
-
 # booking history(track the order)
 class BookingHistory(models.Model):
 
@@ -306,7 +322,8 @@ class Payment(models.Model):
     due_date = models.DateField(blank=True,null=True)
     reminder_sent = models.BooleanField(default=False)
     payment_method = models.CharField(max_length=20,choices=PAYMENT_METHOD,default='Cash')
-    created_at = models.DateTimeField(auto_now_add=True)
+    payment_created_at = models.DateTimeField(auto_now_add=True)
+    payment_updated_at = models.DateTimeField(auto_now=True)
 
     @property
     def due_amount(self):
@@ -343,7 +360,8 @@ class VendorProfile(models.Model):
     is_verified = models.BooleanField(default=False)
     rating = models.FloatField(default=0)
     total_jobs = models.IntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+    profile_created_at = models.DateTimeField(auto_now_add=True)
+    profile_updated_at = models.DateTimeField(auto_now=True)
     pan_number = models.CharField(max_length=30,null=True,blank=True)
     pan_card = models.FileField(upload_to="vendor/pan/",null=True,blank=True)
     license_number = models.CharField(max_length=50,null=True,blank=True)
@@ -450,3 +468,38 @@ class Notification(models.Model):
     class Meta:
 
         ordering = ['-id']
+        
+        
+        
+        
+
+
+
+# terms and conditions
+
+class TermsAcceptance(models.Model):
+
+    customer = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="terms_acceptances"
+    )
+
+    booking = models.ForeignKey(
+        "Booking",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
+    )
+
+    signature = models.ImageField(
+        upload_to="signatures/"
+    )
+
+    accepted = models.BooleanField(default=False)
+
+    accepted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+
+        return self.customer.email

@@ -4,7 +4,8 @@
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
+<link rel="stylesheet" href="{% static 'assets/css/dashboards_style/customer.css' %}">
+<!-- <style>
     :root {
         --bg: #f4f7fb;
         --card: #ffffff;
@@ -251,17 +252,23 @@
         .toolbar { flex-direction: column; }
         table { min-width: 1100px; }
     }
-</style>
+</style> -->
 
 <div class="page-container">
 
     <!-- HEADER -->
-    <div class="page-header">
-        <h6 class="fw-semibold mb-0">Track Orders</h6>
-        <div class="page-subtitle">
-            Track customer bookings and service progress in real-time
-        </div>
+    <div>
+
+        <h2 class="dashboard-heading">
+            Track Orders 
+        </h2>
+
+        <p class="dashboard-subheading">
+      Track customer bookings and service progress in real-time
+        </p>
+
     </div>
+
 
     <!-- TABLE CARD -->
     <div class="table-card">
@@ -300,7 +307,7 @@
                         <th>Service</th>
                         <th>Vendor</th>
                         <th>Current Status</th>
-                        <th>Updated Date</th>
+                      
                         <th>Timeline</th>
                     </tr>
                 </thead>
@@ -329,9 +336,7 @@
                                 {{ booking.get_status_display }}
                             </span>
                         </td>
-                        <td>
-                            <div class="small-text">{{ booking.updated_at|date:"d M Y" }}</div>
-                        </td>
+
                         <td>
                             <a href="{% url 'customer_tracking_detail' booking.id %}" class="timeline-btn">
                                 View Timeline

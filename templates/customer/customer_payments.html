@@ -3,8 +3,8 @@
 {% block content %}
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-<style>
+<link rel="stylesheet" href="{% static 'assets/css/dashboards_style/customer.css' %}">
+<!-- <style>
 
 :root{
     --bg:#f4f7fb;
@@ -454,23 +454,25 @@ tbody tr:hover{
 
 }
 
-</style>
+</style> -->
 
 <div class="orders-page">
 
     <!-- HEADER -->
 
-    <div class="page-header">
+    <div>
 
-        <h6 class="fw-semibold mb-0">
-            Payment History
-        </h6>
+        <h2 class="dashboard-heading">
+             Payment History
+        </h2>
 
-        <div class="page-subtitle">
-            View all your payment transactions and payment details
-        </div>
+        <p class="dashboard-subheading">
+          View all your payment transactions and payment details
+        </p>
 
     </div>
+
+
 
     <!-- DUE DATE NOTIFICATIONS -->
 

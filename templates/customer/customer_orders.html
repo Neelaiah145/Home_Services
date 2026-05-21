@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-
+<link rel="stylesheet" href="{% static 'assets/css/dashboards_style/customer.css' %}">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
+<!-- <style>
 
 :root{
     --bg:#f4f7fb;
@@ -508,23 +508,20 @@ tbody tr:hover{
 
 }
 
-</style>
+</style> -->
 
 <div class="orders-page">
 
-    <div class="page-header">
 
-        <div>
+    <div>
 
-            <h6 class="fw-semibold mb-0">
-                My Bookings
-            </h6>
+        <h2 class="dashboard-heading">
+           My Bookings
+        </h2>
 
-            <div class="page-sub">
-                View all your booked services and booking details
-            </div>
-
-        </div>
+        <p class="dashboard-subheading">
+               View all your booked services and booking details
+        </p>
 
     </div>
 
@@ -925,7 +922,7 @@ window.onload = function(){
 
         const bookingId = alert.dataset.id;
 
-        // SUCCESS CLOSED
+        // HIDE ONLY CLOSED SUCCESS ALERT
 
         if(
             localStorage.getItem(
@@ -937,25 +934,10 @@ window.onload = function(){
 
         }
 
-        // SUCCESS SHOWING
-
-        else{
-
-            const warningBox = document.getElementById(
-                "renew-warning-" + bookingId
-            );
-
-            if(warningBox){
-
-                warningBox.style.display = "none";
-
-            }
-
-        }
-
     });
 
 }
+
 
 // CLOSE SUCCESS ALERT
 
@@ -975,24 +957,10 @@ function closeRenewMessage(id){
 
             successBox.style.display = "none";
 
-            // SAVE CLOSED STATUS
-
             localStorage.setItem(
                 "renew_closed_" + id,
                 "true"
             );
-
-            // SHOW WARNING AGAIN
-
-            const warningBox = document.getElementById(
-                "renew-warning-" + id
-            );
-
-            if(warningBox){
-
-                warningBox.style.display = "flex";
-
-            }
 
         },250);
 

@@ -4832,7 +4832,7 @@ body{
 }
 
 .card-title{
-    font-size:17px;
+    font-size:17px !important;
     font-weight:700;
     color:#111827;
     margin:0;
@@ -5222,3 +5222,57 @@ body{
     }
 
 }
+
+
+
+
+/* page heading code style  */
+/* TOP HEADER */
+
+.dashboard-container{
+    padding: 1.2rem;
+}
+
+.dashboard-topbar{
+    margin-bottom: 1.2rem;
+}
+
+.dashboard-heading{
+    margin: 0;
+    font-size: 24px !important;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1.2;
+}
+
+.dashboard-subheading{
+    margin-top: .35rem;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #6b7280;
+   
+}
+
+/* REMOVE EXTRA SPACE */
+
+.dashboard-cards{
+    margin-top: 0;
+}
+/* html code  */
+/* <!-- Header --> */
+
+/* <div class="dashboard-topbar">
+
+    <div>
+
+        <h2 class="dashboard-heading">
+            Vendor Dashboard
+        </h2>
+
+        <p class="dashboard-subheading">
+            Manage leads, customers and service activities.
+        </p>
+
+    </div>
+
+</div> */

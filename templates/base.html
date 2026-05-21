@@ -6,7 +6,10 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<link rel="apple-touch-icon" sizes="480x480" href="{% static 'assets/images/logo/top_serdixitha_logo.png' %}">
+
   <title>SriDixitha Dashboard </title>
 
 
@@ -88,6 +91,8 @@
 
         {% if user.is_authenticated %}
 
+
+
         <!-- ================= SUPERADMIN ================= -->
         {% if user.role == "superadmin" %}
 
@@ -120,21 +125,21 @@
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'superadmin_orders' %}active{% endif %}">
           <a href="{% url 'superadmin_orders' %}">
-            <iconify-icon icon="mdi:cart-outline" class="menu-icon"></iconify-icon>
+            <iconify-icon icon="mdi:view-list-outline" class="menu-icon"></iconify-icon>
             <span>All Leads</span>
           </a>
         </li>
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'admin_renewal_dashboard' %}active{% endif %}">
           <a href="{% url 'admin_renewal_dashboard' %}">
-            <iconify-icon icon="mdi:cart-outline"  class="menu-icon"></iconify-icon>
+            <iconify-icon icon="mdi:autorenew"  class="menu-icon"></iconify-icon>
             <span> Renewal Leads</span>
           </a>
         </li>
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'superadmin_payments' %}active{% endif %}">
           <a href="{% url 'superadmin_payments' %}">
-            <iconify-icon icon="mdi:credit-card-outline" class="menu-icon"></iconify-icon>
+            <iconify-icon icon="mdi:cash-multiple" class="menu-icon"></iconify-icon>
             <span>Payments</span>
           </a>
         </li>
@@ -142,8 +147,16 @@
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'complaint_list' %}active{% endif %}">
           <a href="{% url 'complaint_list' %}">
-            <iconify-icon icon="mdi:note-text-outline" class="menu-icon"></iconify-icon>
+            <iconify-icon icon="mdi:comment-text-outline" class="menu-icon"></iconify-icon>
             <span>Customer Remarks</span>
+          </a>
+        </li>
+
+
+        <li class="sidebar__item {% if request.resolver_match.url_name == 'terms_list' %}active{% endif %}">
+          <a href="{% url 'terms_list' %}">
+            <iconify-icon icon="mdi:clipboard-check-outline" class="menu-icon"></iconify-icon>
+            <span>T&C Approvals</span>
           </a>
         </li>
 
@@ -220,6 +233,8 @@
 
 
         <!-- ================= ADMIN ================= -->
+
+
         {% elif user.role == "admin" %}
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
@@ -438,6 +453,18 @@
 
         </li>
 
+        <li class="sidebar__item {% if request.resolver_match.url_name == 'vendor_help' %}active{% endif %}">
+
+          <a href="{% url 'vendor_help' %}">
+
+            <iconify-icon icon="mdi:briefcase-outline"  class="menu-icon"></iconify-icon>
+
+            <span>Help/FAQ</span>
+
+          </a>
+
+        </li>
+
 
 
 
@@ -520,6 +547,23 @@
           </a>
         </li>
 
+        
+<li class="sidebar__item {% if request.resolver_match.url_name == 'customer_terms' %}active{% endif %}">
+
+    <a href="{% url 'customer_terms' %}">
+
+        <iconify-icon
+            icon="solar:chat-line-outline"
+            class="menu-icon">
+        </iconify-icon>
+
+        <span>
+            Terms & Conditions
+        </span>
+
+    </a>
+
+</li>
 
 
 

@@ -9,8 +9,12 @@ from datetime import datetime
 from django.core.paginator import Paginator
 import re
 from django.http import JsonResponse
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
+from accounts.utils import paginate_queryset
 # Create your views here.
 
+from accounts.views import mainly_allowed_roles
 
 class CategoryServicesAPIView(View):
     def get(self, request, category_id):
@@ -18,6 +22,8 @@ class CategoryServicesAPIView(View):
             category_id=category_id
         ).order_by('s_title').values('id', 's_title')
         return JsonResponse({'services': list(services)})
+
+
 
 
 class IndexView(View):
@@ -49,8 +55,7 @@ class IndexView(View):
             cat_services = CategoryService.objects.filter(
                 category_id=category_id
             ).order_by('s_title')
-
-        return render(request, 'index.html', {
+        context={
             'selected_category': selected_category,
             'footer': footer,
             'news': news,
@@ -60,7 +65,10 @@ class IndexView(View):
             'jobs': jobs,
             'feedbacks': feedbacks,
             'cat_services': cat_services,
-        })
+        }
+        return render(request, 'index.html',context )
+
+
 
 
 class ServicesListView(View):
@@ -82,38 +90,54 @@ class ServicesListView(View):
         paginator = Paginator(category_services, 3)
         page_number = request.GET.get('page')
         category_servicess = paginator.get_page(page_number)
-
-        return render(request, 'serviceslist.html', {
+        context={
             'selected_category': selected_category,
             'category_servicess': category_servicess,
             'category_services': CategoryService.objects.filter(category=selected_category),
             'footer': footer,
             'news': news,
-        })
+        }
+        return render(request, 'serviceslist.html',context)
+        
+        
 
 class Joblisting(View):
     def get(self,request):
         jobs = Job.objects.all().order_by('title')
         footer = Footer.objects.first()
         news = News.objects.all().order_by('id')
-        return render(request, 'joblisting.html', {'footer':footer,'news':news,'jobs':jobs})
-    
+        context={'footer':footer,
+                 'news':news,
+                 'jobs':jobs
+                 }
+        return render(request, 'joblisting.html',context)
+ 
+ 
+ 
+  
 class CategoryListing(View):
     def get(self,request):
         categories = Category.objects.all().order_by('title')
         footer = Footer.objects.first()
         news = News.objects.all().order_by('id')
-        return render(request, 'category_listing.html', {'footer':footer,'news':news,'categories':categories})
+        context={'footer':footer,
+                 'news':news,
+                 'categories':categories
+                 }
+        return render(request, 'category_listing.html',context )
+
+
+
 
 class ContactForm(View):
-
     def get(self, request):
         footer = Footer.objects.first()
         news = News.objects.all().order_by('id')
-        return render(request, 'contact.html', {
+        context={
             'footer': footer,
             'news': news
-        })
+        }
+        return render(request, 'contact.html',context )
 
     def post(self, request):
         name = request.POST.get('name', '').strip()
@@ -145,14 +169,14 @@ class ContactForm(View):
 
         footer = Footer.objects.first()
         news = News.objects.all().order_by('id')
-
-        if errors:
-            return render(request, 'contact.html', {
+        context={
                 'errors': errors,
                 'old': request.POST,
                 'footer': footer,
                 'news': news
-            })
+            }
+        if errors:
+            return render(request, 'contact.html',context )
 
         Contact.objects.create(
             name=name,
@@ -168,16 +192,19 @@ class ContactForm(View):
         return redirect('contact')
 
 
-class ContactListView(View):
+
+@method_decorator(never_cache, name='dispatch')
+class ContactListView(LoginRequiredMixin,View):
     def get(self, request):
-        contacts = Contact.objects.all().order_by('-created_at')
+        contacts = Contact.objects.all().order_by('-contact_created_at')
 
         return render(request, 'pages/contact/list.html', {
             'contacts': contacts
         })
 
 
-class ContactUpdateView(View):
+@method_decorator(never_cache, name='dispatch')
+class ContactUpdateView(LoginRequiredMixin,View):
     def get(self, request, pk):
         contact = get_object_or_404(Contact, pk=pk)
         return render(request, 'pages/contact/update.html', {
@@ -200,15 +227,17 @@ class ContactUpdateView(View):
         return redirect('list.contact')
 
 
-class DeleteContact(View):
+
+@method_decorator(never_cache, name='dispatch')
+class DeleteContact(LoginRequiredMixin,View):
     def get(self, request, pk):
         conatct = get_object_or_404(Contact, pk=pk)
         conatct.delete()
         messages.success(request, "Contact  deleted")
         return redirect('list.contact')
 
-
-class FeedbackForm(View):
+@method_decorator(never_cache, name='dispatch')
+class FeedbackForm(LoginRequiredMixin,View):
 
     def get(self, request):
         footer = Footer.objects.first()
@@ -266,15 +295,18 @@ class FeedbackForm(View):
         return redirect('feedbackform')
 
 
-class ListFeedback(View):
+
+@method_decorator(never_cache, name='dispatch')
+class ListFeedback(LoginRequiredMixin,View):
     def get(self, request):
-        feedbacks = ServiceFeedback.objects.all().order_by('-created_at')
+        feedbacks = ServiceFeedback.objects.all().order_by('-feedback_created_at')
         return render(request, 'pages/feedback/list.html', {
             'feedbacks': feedbacks
         })
 
 
-class DeleteFeedback(View):
+@method_decorator(never_cache, name='dispatch')
+class DeleteFeedback(LoginRequiredMixin,View):
     def get(self, request, id):
         feebback = get_object_or_404(ServiceFeedback, id=id)
         feebback.delete()
@@ -282,14 +314,14 @@ class DeleteFeedback(View):
         return redirect('list.feedback')
 
 
-from accounts.utils import paginate_queryset
 
 
-class NewsListView(View):
+@method_decorator(never_cache, name='dispatch')
+class NewsListView(LoginRequiredMixin,View):
 
     def get(self, request):
 
-        news = News.objects.all().order_by('-created_at')
+        news = News.objects.all().order_by('-news_created_at')
 
         # PAGINATION
         page_obj = paginate_queryset(request, news, 10)
@@ -301,8 +333,8 @@ class NewsListView(View):
             }
         )
 
-
-class CreateNews(View):
+@method_decorator(never_cache, name='dispatch')
+class CreateNews(LoginRequiredMixin,View):
     def get(self, request):
         return render(request, 'pages/news/create_news.html')
 
@@ -316,9 +348,11 @@ class CreateNews(View):
         news.save()
         messages.success(request,"News created successfully")
         return redirect('news.list')
+    
+    
 
-
-class UpdateNews(View):
+@method_decorator(never_cache, name='dispatch')
+class UpdateNews(LoginRequiredMixin,View):
 
     def get(self, request, pk):
         news = get_object_or_404(News, pk=pk)
@@ -335,7 +369,9 @@ class UpdateNews(View):
         return redirect('news.list')
 
 
-class DeleteNews(View):
+
+@method_decorator(never_cache, name='dispatch')
+class DeleteNews(LoginRequiredMixin,View):
     def get(self, request, pk):
         news = get_object_or_404(News, pk=pk)
         news.delete()
@@ -344,9 +380,8 @@ class DeleteNews(View):
 
 
 
-
-class ListBanner(View):
-
+@method_decorator(never_cache, name='dispatch')
+class ListBanner(LoginRequiredMixin,View):
     def get(self, request):
         banner = HeroBanner.objects.all().order_by("-id")
         page_obj = paginate_queryset(request, banner, 10)
@@ -358,7 +393,8 @@ class ListBanner(View):
         )
 
 
-class CreateBanner(View):
+@method_decorator(never_cache, name='dispatch')
+class CreateBanner(LoginRequiredMixin,View):
     def get(self, request):
         return render(request, 'pages/hero_section/create_banner.html')
 
@@ -377,7 +413,8 @@ class CreateBanner(View):
         return redirect("list.banner")
 
 
-class UpdateBanner(View):
+@method_decorator(never_cache, name='dispatch')
+class UpdateBanner(LoginRequiredMixin,View):
 
     def get(self, request, pk):
         banner = get_object_or_404(HeroBanner, pk=pk)
@@ -399,7 +436,8 @@ class UpdateBanner(View):
         return redirect('list.banner')
 
 
-class DeleteBanner(View):
+@method_decorator(never_cache, name='dispatch')
+class DeleteBanner(LoginRequiredMixin,View):
     def get(self, request, pk):
         banner = get_object_or_404(HeroBanner, pk=pk)
         banner.delete()
@@ -407,9 +445,10 @@ class DeleteBanner(View):
         return redirect('list.banner')
 
 
+
 class ListCategory(View):
     def get(self, request):
-        categories = Category.objects.all().order_by('-created_at')
+        categories = Category.objects.all().order_by('-category_created_at')
 
         paginator = Paginator(categories, 5)
         page_number = request.GET.get('page')
@@ -421,7 +460,8 @@ class ListCategory(View):
         })
 
 
-class CreateCategory(View):
+@method_decorator(never_cache, name='dispatch')
+class CreateCategory(LoginRequiredMixin,View):
     def get(self, request):
         return render(request, 'pages/categories/create.html')
 
@@ -449,7 +489,9 @@ class CreateCategory(View):
         return redirect('list.category')
 
 
-class UpdateCategory(View):
+
+@method_decorator(never_cache, name='dispatch')
+class UpdateCategory(LoginRequiredMixin,View):
 
     def get(self, request, pk):
         category = get_object_or_404(Category, pk=pk)
@@ -484,7 +526,9 @@ class UpdateCategory(View):
         return redirect('list.category')
 
 
-class DeleteCaregory(View):
+
+@method_decorator(never_cache, name='dispatch')
+class DeleteCaregory(LoginRequiredMixin,View):
     def get(self, request, pk):
         category = get_object_or_404(Category, pk=pk)
         category.delete()
@@ -492,7 +536,9 @@ class DeleteCaregory(View):
         return redirect('list.category')
 
 
-class ListCategoryService(View):
+
+@method_decorator(never_cache, name='dispatch')
+class ListCategoryService(LoginRequiredMixin,View):
     def get(self, request):
         categories = Category.objects.all()
 
@@ -507,7 +553,7 @@ class ListCategoryService(View):
             if selected_category:
                 services = CategoryService.objects.filter(
                     category=selected_category
-                ).order_by('-created_at')
+                ).order_by('-categoryservice_created_at')
 
         paginator = Paginator(services, 5)
         page_number = request.GET.get('page')
@@ -521,7 +567,9 @@ class ListCategoryService(View):
         })
 
 
-class CreateCategoryService(View):
+
+@method_decorator(never_cache, name='dispatch')
+class CreateCategoryService(LoginRequiredMixin,View):
 
     def get(self, request):
         categories = Category.objects.all()
@@ -552,7 +600,9 @@ class CreateCategoryService(View):
         return redirect('list.category.services')
 
 
-class UpdateCategoryService(View):
+
+@method_decorator(never_cache, name='dispatch')
+class UpdateCategoryService(LoginRequiredMixin,View):
     def get(self, request, id):
         services = get_object_or_404(CategoryService, id=id)
         return render(request, 'pages/categoryservice/update.html', {'services': services})
@@ -571,7 +621,9 @@ class UpdateCategoryService(View):
         return redirect('list.category.services')
 
 
-class DeleteCategoryService(View):
+
+@method_decorator(never_cache, name='dispatch')
+class DeleteCategoryService(LoginRequiredMixin,View):
     def get(self, request, id):
         service = get_object_or_404(CategoryService, id=id)
         service.delete()
@@ -579,14 +631,18 @@ class DeleteCategoryService(View):
         return redirect('list.category.services')
 
 
-class ListServices(View):
+
+@method_decorator(never_cache, name='dispatch')
+class ListServices(LoginRequiredMixin,View):
     def get(self, request):
         services = ServicesCards.objects.all()
         page_obj = paginate_queryset(request,services,10)
         return render(request, 'pages/services/list.html', {'services': page_obj,'page_obj': page_obj,})
 
 
-class CreateService(View):
+
+@method_decorator(never_cache, name='dispatch')
+class CreateService(LoginRequiredMixin,View):
     def get(self, request):
         return render(request, 'pages/services/create.html')
 
@@ -608,7 +664,9 @@ class CreateService(View):
         return redirect('services.list')
 
 
-class UpdateServices(View):
+
+@method_decorator(never_cache, name='dispatch')
+class UpdateServices(LoginRequiredMixin,View):
     def get(self, request, id):
         services = get_object_or_404(ServicesCards, id=id)
         return render(request, 'pages/services/update.html', {'services': services})
@@ -626,7 +684,9 @@ class UpdateServices(View):
         return redirect('services.list')
 
 
-class DeleteServices(View):
+
+@method_decorator(never_cache, name='dispatch')
+class DeleteServices(LoginRequiredMixin,View):
     def get(self, request, id):
         services = get_object_or_404(ServicesCards, id=id)
         services.delete()
@@ -634,13 +694,17 @@ class DeleteServices(View):
         return redirect('services.list')
 
 
-class ListJobs(View):
+
+@method_decorator(never_cache, name='dispatch')
+class ListJobs(LoginRequiredMixin,View):
     def get(self, request):
-        jobs = Job.objects.all().order_by('-created_at')
+        jobs = Job.objects.all().order_by('-job_created_at')
         return render(request, 'pages/jobs/list.html', {'jobs': jobs})
 
 
-class CreateJob(View):
+
+@method_decorator(never_cache, name='dispatch')
+class CreateJob(LoginRequiredMixin,View):
 
     def get(self, request):
         return render(request, 'pages/jobs/create.html')
@@ -671,7 +735,8 @@ class CreateJob(View):
         return redirect('list.jobs')
 
 
-class UpdateJob(View):
+@method_decorator(never_cache, name='dispatch')
+class UpdateJob(LoginRequiredMixin,View):
     def get(self, request, id):
         job = get_object_or_404(Job, id=id)
         return render(request, 'pages/jobs/update.html', {'job': job})
@@ -694,12 +759,16 @@ class UpdateJob(View):
         return redirect('list.jobs')
 
 
-class DeleteJob(View):
+@method_decorator(never_cache, name='dispatch')
+class DeleteJob(LoginRequiredMixin,View):
     def get(self, request, id):
         job = get_object_or_404(Job, id=id)
         job.delete()
         messages.error(request, "Deleted Job!")
         return redirect('list.jobs')
+    
+    
+    
 
 class JobApplications(View):
 
@@ -777,11 +846,12 @@ class JobApplications(View):
         messages.success(request, "Application submitted successfully!")
         return redirect('job.apply', job_id=job.id)
 
+@method_decorator(never_cache, name='dispatch')
 class AdminJobApplicationsView(LoginRequiredMixin, View):
 
     def dispatch(self, request, *args, **kwargs):
 
-        if request.user.role not in ["admin", "superadmin"]:
+        if request.user.role not in mainly_allowed_roles:
 
             return redirect("dashboard")
 
@@ -808,32 +878,24 @@ class AdminJobApplicationsView(LoginRequiredMixin, View):
             )
 
 
-        page_obj = paginate_queryset(
-            request,
-            applications,
-            10
-        )
+        page_obj = paginate_queryset(request,applications,10)
 
-
-        return render(
-            request,
-            "admin/job_applications.html",
-            {
+        context=            {
                 "applications": page_obj,
                 "page_obj": page_obj,
                 "q": q,
             }
-        )
+        return render(request,"admin/job_applications.html",context)
 
 
-
-class ListFooter(View):
+@method_decorator(never_cache, name='dispatch')
+class ListFooter(LoginRequiredMixin,View):
     def get(self, request):
         footers = Footer.objects.all().order_by('-id')
         return render(request, 'pages/footer/list.html', {'footers': footers})
 
-
-class CreateFooter(View):
+@method_decorator(never_cache, name='dispatch')
+class CreateFooter(LoginRequiredMixin,View):
 
     def get(self, request):
         return render(request, 'pages/footer/create.html')
@@ -894,8 +956,8 @@ class CreateFooter(View):
         messages.success(request, "Footer created successfully ")
         return redirect('list.footer')
 
-
-class UpdateFooter(View):
+@method_decorator(never_cache, name='dispatch')
+class UpdateFooter(LoginRequiredMixin,View):
 
     def get(self, request, id):
         footer = get_object_or_404(Footer, id=id)
@@ -964,8 +1026,8 @@ class UpdateFooter(View):
         messages.success(request, "Footer updated successfully ")
         return redirect('list.footer')
 
-
-class DeleteFooter(View):
+@method_decorator(never_cache, name='dispatch')
+class DeleteFooter(LoginRequiredMixin,View):
     def get(self, request, id):
         footer = get_object_or_404(Footer, id=id)
         footer.delete()
@@ -982,3 +1044,5 @@ class PrivacyPolicyView(View):
         return render(request,
             "privacy_policy.html"
         )
+        
+

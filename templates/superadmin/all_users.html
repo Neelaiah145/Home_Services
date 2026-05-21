@@ -17,7 +17,17 @@ body{
 .page-wrap{
     padding:24px;
 }
+#locationFilter{
+    min-width:132px;
+    background:#fff;
+    padding:10px 20px;
+}
 
+.user-location{
+    font-size:13px;
+    font-weight:600;
+    color:#374151;
+}
 /* =========================
    HEADER
 ========================= */
@@ -505,13 +515,7 @@ tbody tr:hover{
     cursor:pointer;
 }
 
-/* =========================
-   PAGINATION
-========================= */
 
-/* =========================
-   PAGINATION
-========================= */
 
 .tbl-footer{
     width:100%;
@@ -688,7 +692,32 @@ tbody tr:hover{
 }
 
 /* FORM FIX */
+.user-avatar{
 
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    overflow:hidden;
+
+    background:#2563eb;
+    color:#fff;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:16px;
+    font-weight:700;
+
+}
+
+.user-profile-img{
+
+    width:100%;
+    height:100%;
+    object-fit:cover;
+
+}
 .actions form{
     margin:0;
 }
@@ -733,18 +762,18 @@ tbody tr:hover{
 <div class="page-wrap">
 
     <div class="page-header">
-
         <div>
 
-            <h6 class="fw-semibold mb-0">
+            <h2 class="dashboard-heading">
                 User Management
-            </h6>
+            </h2>
 
-            <p class="page-subtitle">
+            <p class="dashboard-subheading">
                 Manage all users and behaviour
             </p>
 
         </div>
+
 
     </div>
 
@@ -855,6 +884,26 @@ tbody tr:hover{
                        class="date-input"
                        onchange="applyFilters()">
 
+                    <select id="locationFilter"
+            class="date-input"
+            onchange="applyFilters()">
+
+        <option value="">
+            All Locations
+        </option>
+
+        {% for location in locations %}
+
+        <option value="{{ location|lower }}">
+
+            {{ location }}
+
+        </option>
+
+        {% endfor %}
+
+    </select>
+
             </div>
 
         </div>
@@ -870,9 +919,10 @@ tbody tr:hover{
                         <th>Sl.No</th>
                         <th>User</th>
                         <th>Role</th>
+                        <th>Location</th>
                         <th>Joined</th>
                         <th>Block</th>
-                        <th>Behaviour</th>
+                        <th>User Response</th>
                         <th>Action</th>
 
                     </tr>
@@ -892,11 +942,23 @@ tbody tr:hover{
                         <td>
 
                             <div class="user-cell">
+<div class="user-avatar">
 
-                                <div class="user-avatar">
-                                    {{ user.first_name|first }}
-                                </div>
+    {% if user.profile_image %}
 
+        <img
+            src="{{ user.profile_image.url }}"
+            alt="{{ user.first_name }}"
+            class="user-profile-img"
+        >
+
+    {% else %}
+
+        {{ user.first_name|first|upper }}
+
+    {% endif %}
+
+</div>
                                 <div>
 
                                     <div class="user-name">
@@ -926,6 +988,23 @@ tbody tr:hover{
                             </span>
 
                         </td>
+<td class="user-location">
+
+    {% if user.role == "customer" %}
+
+        {% with booking=user.booking_set.first %}
+
+            {{ booking.city|default:"Not Added" }}
+
+        {% endwith %}
+
+    {% else %}
+
+        {{ user.city|default:"Not Added" }}
+
+    {% endif %}
+
+</td>
 
                         <td class="joined-date"
                             data-date="{{ user.date_joined|date:'Y-m-d' }}">
@@ -1146,7 +1225,9 @@ let currentRole = "";
 
 function setRole(role, el){
 
-    currentRole = role;
+    currentRole = role
+        .toLowerCase()
+        .trim();
 
     document.querySelectorAll(".filter-btn").forEach(btn => {
 
@@ -1160,48 +1241,127 @@ function setRole(role, el){
 
 }
 
+/* =========================
+   FILTER FUNCTION
+========================= */
+
 function applyFilters(){
 
     const q = document
         .getElementById("searchInput")
         .value
-        .toLowerCase();
+        .toLowerCase()
+        .trim();
 
     const selectedDate = document
         .getElementById("dateFilter")
         .value;
 
+    const selectedLocation = document
+        .getElementById("locationFilter")
+        .value
+        .toLowerCase()
+        .trim();
+
     document.querySelectorAll(".user-row").forEach(row => {
 
-        const text = row.innerText.toLowerCase();
+        /* USER TEXT */
 
-        const role = row
-            .querySelector(".role")
-            ?.innerText.toLowerCase();
+        const text = row.innerText
+            .toLowerCase()
+            .trim();
 
-        const date = row
-            .querySelector(".joined-date")
-            ?.dataset.date;
+        /* ROLE */
+
+        const roleElement = row.querySelector(".role");
+
+        const role = roleElement
+            ? roleElement.innerText
+                .toLowerCase()
+                .trim()
+            : "";
+
+        /* DATE */
+
+        const joinedDateElement = row.querySelector(".joined-date");
+
+        const date = joinedDateElement
+            ? joinedDateElement.dataset.date
+            : "";
+
+        /* LOCATION */
+
+        const locationElement = row.querySelector(".user-location");
+
+        const location = locationElement
+            ? locationElement.innerText
+                .toLowerCase()
+                .trim()
+            : "";
 
         let show = true;
 
-        if(q && !text.includes(q)){
-            show = false;
+        /* SEARCH FILTER */
+
+        if(q){
+
+            if(!text.includes(q)){
+
+                show = false;
+
+            }
+
         }
 
-        if(currentRole && !role.includes(currentRole)){
-            show = false;
+        /* ROLE FILTER */
+
+        if(currentRole){
+
+            if(!role.includes(currentRole)){
+
+                show = false;
+
+            }
+
         }
 
-        if(selectedDate && date !== selectedDate){
-            show = false;
+        /* DATE FILTER */
+
+        if(selectedDate){
+
+            if(date !== selectedDate){
+
+                show = false;
+
+            }
+
         }
 
-        row.style.display = show ? "" : "none";
+        /* LOCATION FILTER */
+
+        if(selectedLocation){
+
+            if(!location.includes(selectedLocation)){
+
+                show = false;
+
+            }
+
+        }
+
+        /* FINAL SHOW/HIDE */
+
+        row.style.display = show
+            ? ""
+            : "none";
 
     });
 
 }
+
+/* =========================
+   CSRF TOKEN
+========================= */
 
 function getCSRFToken(){
 
@@ -1215,7 +1375,9 @@ function getCSRFToken(){
 
         if(cookie.startsWith("csrftoken=")){
 
-            cookieValue = cookie.substring("csrftoken=".length);
+            cookieValue = cookie.substring(
+                "csrftoken=".length
+            );
 
         }
 
@@ -1224,6 +1386,10 @@ function getCSRFToken(){
     return cookieValue;
 
 }
+
+/* =========================
+   UPDATE BEHAVIOUR
+========================= */
 
 function updateBehaviour(userId){
 

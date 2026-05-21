@@ -12,7 +12,25 @@
   --green:#16a34a;
   --yellow:#d97706;
 }
+.toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:18px;
+    padding:15px 18px;
+    flex-wrap:wrap;
+}
 
+.card-title{
+    font-size:18px;
+    font-weight:700;
+    color:#111827;
+    margin-right:18px;
+}
+
+.filter-group{
+    margin-left:auto;
+}
 .page-wrap{ padding:30px; background:var(--bg); min-height:100vh; }
 .page-header{ margin-bottom:22px; }
 .page-title{ font-size:24px; font-weight:700; color:var(--text); }
@@ -313,17 +331,28 @@ tr:hover{ background:#fafafa; }
 <div class="page-wrap">
 
 <!-- HEADER -->
-<div class="page-header">
-  <div>
-    <h6 class="fw-semibold mb-0">All payemnts</h6>
-    <p class="page-subtitle">Service Payment</p>
-  </div>
-</div>
+        <div>
+            <h2 class="dashboard-heading">
+              All payemnts
+            </h2>
+            <p class="dashboard-subheading">
+              Service Payment
+            </p>
+
+        </div>
 
 <div class="card">
 
+
+
 <!--  TOOLBAR -->
 <div class="toolbar">
+          
+            <div class="card-title">
+               Payments
+            </div>
+
+      
 
   <!-- FILTER -->
   <div class="filter-group">
@@ -398,10 +427,10 @@ tr:hover{ background:#fafafa; }
 </td>
 
 <!-- SERVICE -->
-<td>{{ p.service.name|default:"-" }}</td>
+<td>{{ p.service.s_title|default:"-" }}</td>
 
 <!-- AMOUNT -->
-<td><strong>₹{{ p.amount }}</strong></td>
+<td><strong>₹{{ p.total_amount }}</strong></td>
 
 <!-- STATUS -->
 <td>
@@ -411,23 +440,38 @@ tr:hover{ background:#fafafa; }
 </td>
 
 <!-- TRANSACTION -->
-<td>{{ p.transaction_id|default:"—" }}</td>
+<td>
+    {{ p.transaction_id|default:"—" }}
+</td>
 
 <!-- PROOF -->
 <td>
-  {% if p.screenshot %}
-    <img src="{{ p.screenshot.url }}" class="img"
-         onclick="window.open(this.src)">
-  {% else %}
-    —
-  {% endif %}
+
+    {% if p.screenshot %}
+
+        <img
+            src="{{ p.screenshot.url }}"
+            class="img"
+            onclick="window.open(this.src)"
+        >
+
+    {% else %}
+
+        —
+
+    {% endif %}
+
 </td>
 
 <!-- DATE -->
-<td class="pay-date" data-date="{{ p.created_at|date:'Y-m-d' }}">
-  {{ p.created_at|date:"d M Y" }}
-</td>
+<td
+    class="pay-date"
+    data-date="{{ p.payment_updated_at|date:'Y-m-d' }}"
+>
 
+    {{ p.payment_updated_at|date:"d M Y" }}
+
+</td>
 <!-- INVOICE -->
 <td>
   <a href="{% url 'payment_invoice' p.id %}" target="_blank" class="btn-invoice">
