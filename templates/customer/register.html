@@ -67,7 +67,23 @@
             line-height: 1.8;
             color: var(--text-gray);
         }
+.login-text{
+    margin-top:18px;
+    text-align:center;
+    font-size:14px;
+    color:var(--text-gray);
+}
 
+.login-text a{
+    color:var(--primary);
+    text-decoration:none;
+    font-weight:700;
+    margin-left:4px;
+}
+
+.login-text a:hover{
+    text-decoration:underline;
+}
         .form-side {
             flex: 1.2;
             padding: 40px 60px;
@@ -219,7 +235,9 @@
             font-size: 15px;
             line-height: 1.7;
         }
-
+.hidden{
+    display:none;
+}
         .terms-check-wrapper {
             margin-top: 18px;
             margin-bottom: 5px;
@@ -483,22 +501,51 @@
                     <label class="terms-check-box">
 
                         <input type="checkbox" id="termsCheck">
+<span>
 
-                        <span>
+    I agree to the
 
-                            I agree to the
+    <!-- CUSTOMER TERMS -->
 
-                            <a href="/terms/">
-                                Terms & Conditions
-                            </a>
+    <a
+        id="customerTermsLink"
+        href="{% url 'customer_termsandconditions' %}"
+    >
+        Terms & Conditions
+    </a>
 
-                            and
+    <!-- VENDOR TERMS -->
 
-                            <a href="/privacy/">
-                                Privacy Policy
-                            </a>
+    <a
+        id="vendorTermsLink"
+        href="{% url 'vendor_termsandconditions' %}"
+        class="hidden"
+    >
+        Terms & Conditions
+    </a>
 
-                        </span>
+    and
+
+    <!-- CUSTOMER PRIVACY -->
+
+    <a
+        id="customerPrivacyLink"
+        href="{% url 'customer_privacy' %}"
+    >
+        Privacy Policy
+    </a>
+
+    <!-- VENDOR PRIVACY -->
+
+    <a
+        id="vendorPrivacyLink"
+        href="{% url 'vendor_privacy' %}"
+        class="hidden"
+    >
+        Privacy Policy
+    </a>
+
+</span>
 
                     </label>
 
@@ -509,6 +556,15 @@
                 </button>
 
             </div>
+            <div class="login-text">
+
+    Already have an account?
+
+    <a href="{% url 'login' %}">
+        Login
+    </a>
+
+</div>
 
             <div id="step2" class="hidden">
 
@@ -572,37 +628,76 @@
 
 <script>
 
-    function setRole(role) {
+function setRole(role) {
 
-        document.getElementById("role").value = role;
+    document.getElementById("role").value = role;
 
-        const customer =
-            document.getElementById("tabCustomer");
+    const customer =
+        document.getElementById("tabCustomer");
 
-        const vendor =
-            document.getElementById("tabVendor");
+    const vendor =
+        document.getElementById("tabVendor");
 
-        const vendorBox =
-            document.getElementById("vendorBox");
+    const vendorBox =
+        document.getElementById("vendorBox");
 
-        if (role === "vendor") {
+    /* TERMS LINKS */
 
-            vendor.classList.add("active");
+    const customerTermsLink =
+        document.getElementById("customerTermsLink");
 
-            customer.classList.remove("active");
+    const vendorTermsLink =
+        document.getElementById("vendorTermsLink");
 
-            vendorBox.classList.remove("hidden");
+    /* PRIVACY LINKS */
 
-        } else {
+    const customerPrivacyLink =
+        document.getElementById("customerPrivacyLink");
 
-            customer.classList.add("active");
+    const vendorPrivacyLink =
+        document.getElementById("vendorPrivacyLink");
 
-            vendor.classList.remove("active");
+    if (role === "vendor") {
 
-            vendorBox.classList.add("hidden");
-        }
+        vendor.classList.add("active");
+
+        customer.classList.remove("active");
+
+        vendorBox.classList.remove("hidden");
+
+        /* SHOW VENDOR LINKS */
+
+        vendorTermsLink.classList.remove("hidden");
+
+        vendorPrivacyLink.classList.remove("hidden");
+
+        /* HIDE CUSTOMER LINKS */
+
+        customerTermsLink.classList.add("hidden");
+
+        customerPrivacyLink.classList.add("hidden");
+
+    } else {
+
+        customer.classList.add("active");
+
+        vendor.classList.remove("active");
+
+        vendorBox.classList.add("hidden");
+
+        /* SHOW CUSTOMER LINKS */
+
+        customerTermsLink.classList.remove("hidden");
+
+        customerPrivacyLink.classList.remove("hidden");
+
+        /* HIDE VENDOR LINKS */
+
+        vendorTermsLink.classList.add("hidden");
+
+        vendorPrivacyLink.classList.add("hidden");
     }
-
+}
     function show(message, error = true) {
 
         const box =

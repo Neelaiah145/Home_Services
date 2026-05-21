@@ -19,9 +19,22 @@
 
     <!-- CSS FILES -->
 
-    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/fontawesome.min.css' %}">
-    <link rel="stylesheet" href="{% static 'assets/css/style1.css' %}">
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+  <!-- Fontawesome Icon -->
+  <link rel="stylesheet" href="{% static 'assets/css/fontawesome.min.css' %}">
+  <!-- Magnific Popup -->
+  <link rel="stylesheet" href="{% static 'assets/css/magnific-popup.min.css' %}">
+  <!-- Slick Slider -->
+  <link rel="stylesheet" href="{% static 'assets/css/slick.min.css' %}">
+  <!-- nice-select -->
+  <link rel="stylesheet" href="{% static 'assets/css/nice-select.min.css' %}">
+  <!-- animate js -->
+  <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
+  <!-- nouislider js -->
+  <link rel="stylesheet" href="{% static 'assets/css/nouislider.css' %}">
+  <!-- Theme Custom CSS -->
+  <link rel="stylesheet" href="{% static 'assets/css/style1.css' %}">
 
     <style>
 
@@ -30,119 +43,7 @@
             background:#f4f7fb;
         }
 
-        /* =========================
-           HEADER
-        ========================= */
-
-        .header-top{
-            background:#074c7d;
-            padding:10px 0;
-        }
-
-        .contact-item{
-            color:#fff;
-            font-size:13px;
-            font-weight:500;
-            margin-right:20px;
-        }
-
-        .contact-item a{
-            color:#fff;
-            text-decoration:none;
-        }
-
-        .header-social a{
-            width:34px;
-            height:34px;
-            border-radius:50%;
-            background:rgba(255,255,255,.15);
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            color:#fff;
-            margin-left:8px;
-            transition:.2s ease;
-        }
-
-        .header-social a:hover{
-            background:#ea6e12;
-        }
-
-        /* =========================
-           NEWS BAR
-        ========================= */
-
-        .news-ticker{
-            background:#ea6e12;
-            color:#fff;
-            padding:10px 0;
-            overflow:hidden;
-            white-space:nowrap;
-        }
-
-        .news-track{
-            display:inline-block;
-            animation:scrollNews 25s linear infinite;
-            font-size:13px;
-            font-weight:500;
-        }
-
-        .news-track span{
-            margin-right:60px;
-        }
-
-        @keyframes scrollNews{
-            from{
-                transform:translateX(100%);
-            }
-            to{
-                transform:translateX(-100%);
-            }
-        }
-
-        /* =========================
-           NAVBAR
-        ========================= */
-
-        .sticky-wrapper{
-            background:#fff;
-            box-shadow:0 2px 20px rgba(0,0,0,.05);
-        }
-
-        .main-menu ul li a{
-            font-size:14px;
-            font-weight:600;
-            color:#111827;
-            transition:.2s ease;
-        }
-
-        .main-menu ul li a:hover{
-            color:#ea6e12;
-        }
-
-        .vs-btn{
-            height:44px;
-            border:none;
-            border-radius:12px;
-            padding:0 22px;
-            background:#2563eb;
-            color:#fff;
-            font-size:13px;
-            font-weight:700;
-            transition:.2s ease;
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-        }
-
-        .vs-btn:hover{
-            background:#1d4ed8;
-            color:#fff;
-        }
-
-        .logo_news{
-            max-height:70px;
-        }
+      
 
         /* =========================
            BREADCRUMB
@@ -162,8 +63,8 @@
             inset:0;
             background:linear-gradient(
                 135deg,
-                rgba(7,76,125,.85),
-                rgba(0,0,0,.65)
+                rgba(7,76,125,.5),
+                rgba(0,0,0,.5)
             );
         }
 
@@ -224,7 +125,7 @@
             border-radius:24px;
             overflow:hidden;
             height:100%;
-            min-height:620px;
+          
             box-shadow:0 8px 30px rgba(0,0,0,.10);
         }
 
@@ -309,65 +210,6 @@
            FOOTER
         ========================= */
 
-        .footer-layout1{
-            background:#fff;
-            padding-top:70px;
-        }
-
-        .footer-text{
-            color:#6b7280;
-            font-size:14px;
-            line-height:1.8;
-        }
-
-        .footer-social-media a{
-            width:40px;
-            height:40px;
-            border-radius:12px;
-            background:#f4f7fb;
-            color:#111827;
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            margin-right:8px;
-            transition:.2s ease;
-        }
-
-        .footer-social-media a:hover{
-            background:#2563eb;
-            color:#fff;
-        }
-
-        .widget_title{
-            font-size:20px;
-            font-weight:700;
-            color:#111827;
-            margin-bottom:22px;
-        }
-
-        .footer-widget .menu li{
-            margin-bottom:12px;
-        }
-
-        .footer-widget .menu li a{
-            color:#6b7280;
-            text-decoration:none;
-            font-size:14px;
-            transition:.2s ease;
-        }
-
-        .footer-widget .menu li a:hover{
-            color:#2563eb;
-            padding-left:4px;
-        }
-
-        .copyright-wrap{
-            border-top:1px solid #e5e7eb;
-            margin-top:50px;
-            padding:22px 0;
-            text-align:center;
-        }
-
         .copyright-text{
             margin:0;
             font-size:14px;
@@ -431,88 +273,299 @@
 
 <body>
 
-    <!-- HEADER -->
+   <button class="back-to-top" id="backToTop" aria-label="Back to Top">
+    <span class="progress-circle">
+      <svg viewBox="0 0 100 100">
+        <circle class="bg" cx="50" cy="50" r="40"></circle>
+        <circle class="progress" cx="50" cy="50" r="40"></circle>
+      </svg>
+      <span class="progress-percentage" id="progressPercentage">0%</span>
+    </span>
+  </button>
+  <!--==============================
+    	Mobile Menu
+  	============================== -->
+  <div class="vs-menu-wrapper">
+    <div class="vs-menu-area text-center">
+      <div class="mobile-logo">
+        <a href="#"><img
+            src="{% if footer.logo_image %} {{ footer.logo_image.url }} {% else %} {% static 'assets/img/new_image/sridixitha-logo.gif' %} {% endif %}"
+            alt="Sridixitha" class="logo logo_news"></a>
+        <button class="vs-menu-toggle"><i class="fal fa-times"></i></button>
+      </div>
+      <div class="vs-mobile-menu">
+        <ul>
+          <li class="">
+            <a href="{% url 'indexpage' %}">Home</a>
 
-    <header class="vs-header header-layout2">
+          <li class="">
+            <a href="#categories">Categories</a>
+            <a href="#services">Services</a>
 
-        <!-- TOP BAR -->
+          </li>
+          <li class="menu-item-has-children mega-menu-wrap">
+            <a href="#services">Services</a>
 
-        <div class="header-top">
+          </li>
+          <li>
+            <a href="#jobs">Careers</a>
+          </li>
+          <li>
+            <a href="#Testimonials">Testimonials</a>
+          </li>
+          <li>
+            <a href="{% url 'feedbackform' %}" style="color: #ea6e12 !important;">FeedBack & Suggestions</a>
+          </li>
+          <li>
+            <a href="{% url 'contact' %}">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <!--==============================
+	Sidemenu
+	============================== -->
+  <div class="sidemenu-wrapper d-none d-lg-block">
+    <div class="sidemenu-content">
+      <button class="closeButton sideMenuCls"><i class="far fa-times"></i></button>
+      <div class="widget">
+        <div class="vs-widget-about">
+          <div class="mb-4">
+            <a href="#"><img src="{% static 'assets/images/new_image/sridixitha-logo.gif' %}" alt="logo"
+                class="logo"></a>
+          </div>
+          <p class="sidemenu-text">
+            Welcome to Hoerseno, your ultimate for destination all things equestrian! Whether you're a seasoned
+            rider.
+          </p>
+          <ul class="social-links">
+            <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+            <li><a href="#" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>
+            <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
+            <li><a href="#" target="_blank"><i class="fab fa-dribbble"></i></a></li>
+          </ul>
 
-            <div class="container">
 
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
+        </div>
+      </div>
+      <div class="widget  ">
+        <h4 class="widget_title">Recent Posts</h4>
+        <div class="widget footer-widget">
+          <div class="recent-post-wrap">
+            <div class="recent-post">
+              <div class="media-img">
+                <a href="blog-details.html"><img src="{% static 'assets/img/blog/recent-post-1-1.jpg' %}"
+                    alt="Blog Image"></a>
+              </div>
+              <div class="media-body">
+                <h4 class="post-title"><a href="blog-details.html">How to Improve Your Riding...</a>
+                </h4>
+                <div class="recent-post-meta">
+                  <i class="fas fa-calendar-alt"></i> 09 Aug, 2025
+                </div>
+              </div>
+            </div>
+            <div class="recent-post">
+              <div class="media-img">
+                <a href="blog-details.html"><img src="{% static 'assets/img/blog/recent-post-1-2.jpg' %}"
+                    alt="Blog Image"></a>
+              </div>
+              <div class="media-body">
+                <h4 class="post-title"><a href="blog-details.html">Choosing the Right Gear...</a>
+                </h4>
+                <div class="recent-post-meta">
+                  <i class="fas fa-calendar-alt"></i> 09 Aug, 2025
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="widget  ">
+        <h3 class="widget_title">Office Maps</h3>
+        <div class="footer-map">
+          <iframe title="office location map"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d163720.11965853968!2d8.496481908353967!3d50.121347879150306!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bd096f477096c5%3A0x422435029b0c600!2sFrankfurt%2C%20Germany!5e0!3m2!1sen!2sbd!4v1651732317319!5m2!1sen!2sbd"
+            width="200" height="150" style="border:0;" allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--==============================
+    Popup Search Box
+    ============================== -->
 
-                    <div>
+  <!--==============================
+        Header Area
+    ==============================-->
+  <header class="vs-header header-layout2">
+    <!--contact numbers-->
+    <div class="header-top">
+      <div class="top-container">
+        <div class="social-media-header">
+          <div class="">
+            <div class="header-links ">
+              <ul>
+                <li class="contact-info">
 
-                        <span class="contact-item">
+                  <span class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:+919876543210">+91 {{ footer.phone_num }}</a>
+                  </span>
 
-                            <i class="fas fa-phone"></i>
+                  <span class="contact-item">
+                    <i class="fab fa-whatsapp"></i>
+                    <a href="https://wa.me/919876543210" target="_blank">+91 {{ footer.whatsapp_num }}</a>
+                  </span>
 
-                            +91 {{ footer.phone_num }}
+                </li>
 
-                        </span>
+              </ul>
+            </div>
+          </div>
+          <div class="">
+            <div class="header-right">
 
-                        <span class="contact-item">
+              <div class="header-social">
+                {% if footer.facebook %}
+                <a href="{{ footer.facebook }}"><i class="fab fa-facebook-f"></i></a>
+                {% else %}
+                <a href=""><i class="fab fa-facebook-f"></i></a>
+                {% endif %}
+                {% if footer.twitter %}
+                <a href="{% url 'footer.twitter' %}"><i class="fa-brands fa-x-twitter"></i></a>
+                {% else %}
+                <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                {% endif %}
+                {% if footer.instagram %}
+                <a href="{% url 'footer.instagram' %}"><i class="fab fa-instagram"></i></a>
+                {% else %}
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--news area-->
+    <div class="news-ticker">
+      <div class="news-track">
+        {% for i in news %}
+        <span> <i class="fa-solid fa-circle dot-icon"></i> {{ i.content }}</span>
+        {% empty %}
+        <span>No latest updates available</span>
+        {% endfor %}
 
-                            <i class="fab fa-whatsapp"></i>
+      </div>
+    </div>
 
-                            +91 {{ footer.whatsapp_num }}
+    <!-nav area->
+      <div class="sticky-wrapper">
+        <div class="sticky-active">
+          <div class="container-fluid">
+            <div class="row justify-content-between align-items-center gx-sm-0">
+              <div class="col-auto">
+                <div class="header-logo">
+                  <a href="{% url 'indexpage' %}">
 
-                        </span>
+                    {% if footer.logo_image %}
+                    <img src="{{ footer.logo_image.url }}" alt="Logo" class="logo logo_news">
+                    {% else %}
+                    <span>No Image</span>
+                    {% endif %}
 
-                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="col-auto d-inline-flex align-items-center">
+                <nav class="main-menu menu-style1 d-none d-lg-block">
+                  <ul>
 
-                    <div class="header-social">
+                    <li>
+                      <a href="{% url 'indexpage' %}">Home</a>
+                    </li>
 
-                        <a href="{{ footer.facebook }}"><i class="fab fa-facebook-f"></i></a>
+                    <li>
+                      <a href="#categories">categories </a>
 
-                        <a href="{{ footer.instagram }}"><i class="fab fa-instagram"></i></a>
+                    </li>
+                    <li>
+                      <a href="#services">Services </a>
+                    </li>
 
-                        <a href="{{ footer.twitter }}"><i class="fa-brands fa-x-twitter"></i></a>
+                    <li>
+                      <a href="#jobs">Careers </a>
+                    </li>
+                    <li>
+                      <a href="#Testimonials">Testimonials </a>
+                    </li>
+                    <li>
+                      <a href="{% url 'feedbackform' %}" style="color: #ea6e12;">Feedback & Suggestions</a>
+                    </li>
+                    <li>
+                      <a href="{% url 'contact' %}">Contact</a>
+                    </li>
 
-                    </div>
+                  </ul>
+                </nav>
+                <div class="header-buttons d-inline-block d-xl-none me-2 dropdown">
+
+                  <button class="vs-btn dropdown-toggle" data-bs-toggle="dropdown">
+                    Account
+                  </button>
+
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Login</a></li>
+                    <li><a class="dropdown-item" href="#">Register</a></li>
+                  </ul>
 
                 </div>
+                <button class="vs-menu-toggle d-inline-block d-lg-none"><i class="fal fa-bars"></i></button>
 
+              </div>
+          
+
+              <div class="col-auto d-xl-block d-none">
+                <div class="header-buttons dropdown account-dropdown">
+
+                  <!-- Account Button -->
+                  <button class="vs-btn dropdown-toggle" data-bs-toggle="dropdown">
+                    Account
+                  </button>
+
+                  <!-- Dropdown -->
+                  <ul class="dropdown-menu dropdown-menu-end">
+
+                    <li>
+                      <a class="dropdown-item" href="{% url 'login' %}">
+                        <i class="fa-regular fa-user me-2"></i> Login
+                      </a>
+                    </li>
+
+                    <li>
+                      <a class="dropdown-item" href="{% url 'register' %}">
+                        <i class="fa-regular fa-user-plus me-2"></i> Register
+                      </a>
+                    </li>
+
+                  </ul>
+
+                </div>
+              </div>
+
+         
             </div>
-
+          </div>
         </div>
-
-        <!-- NEWS -->
-
-        <div class="news-ticker">
-
-            <div class="news-track">
-
-                {% for i in news %}
-
-                <span>
-
-                    {{ i.content }}
-
-                </span>
-
-                {% empty %}
-
-                <span>
-
-                    No latest updates available
-
-                </span>
-
-                {% endfor %}
-
-            </div>
-
-        </div>
-
-    </header>
-
+      </div>
+  </header>
+  
     <!-- BREADCRUMB -->
 
-    <div class="breadcumb-wrapper"
-         data-bg-src="{% static 'assets/images/bg/contact_us_banner.webp' %}">
+ <div class="breadcumb-wrapper" style="background-image: url('{% static "assets/images/bg/contact_us_banner.webp" %}');">
 
         <div class="container">
 
@@ -768,151 +821,159 @@
 
     <!-- FOOTER -->
 
-    <footer class="footer-layout1">
+  <footer class="footer-layout1 bg-body z-index-common" data-bg-src="assets/img/bg/">
+    <!-- Cta Area -->
 
-        <div class="container">
+    <!-- Cta Area End -->
+    <div class="footer-top">
+      <div class="container">
+        <div class="row g-5 justify-content-between">
+          <div class="col-md-6 col-lg-6 col-xl-auto">
+            <div class="newsletter-area">
+              <div class="footer-logo">
+                <a href="{% url 'indexpage' %}">
+                  <img
+                    src="{% if footer.logo_image  %} {{ footer.logo_image.url }} {% else %} {% static 'assets/img/new_image/sridixitha-logo.gif' %} {% endif %}"
+                    alt="Sridixitha" class="logo logo_news">
+                </a>
+              </div>
+              <p class="footer-text">{{ footer.footer_description }}</p>
+              <div class="footer-social-media">
+                {% if footer.whatsapp %}
+                <a href="{{ footer.whatsapp }}"><i class="fa-brands fa-whatsapp"></i></a>
+                {% else %}
+                <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+                {% endif %}
+                {% if footer.facebook %}
+                <a href="{{ footer.facebook }}"><i class="fa-brands fa-facebook-f"></i></a>
+                {% else %}
+                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                {% endif %}
+                {% if footer.instagram %}
+                <a href="{{ footer.instagram }}"><i class="fa-brands fa-instagram"></i></a>
+                {% else %}
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                {% endif %}
+                {% if footer.twitter %}
+                <a href="{{ footer.twitter }}"><i class="fa-brands fa-x-twitter"></i></a>
+                {% else %}
+                <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                {% endif %}
 
-            <div class="row g-5 justify-content-between">
-
-                <!-- LOGO -->
-
-                <div class="col-lg-4">
-
-                    <div class="footer-logo mb-4">
-
-                        <img src="{{ footer.logo_image.url }}"
-                             alt="Logo"
-                             class="logo_news">
-
-                    </div>
-
-                    <p class="footer-text">
-
-                        {{ footer.footer_description }}
-
-                    </p>
-
-                    <div class="footer-social-media mt-4">
-
-                        <a href="{{ footer.facebook }}">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-
-                        <a href="{{ footer.instagram }}">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-
-                        <a href="{{ footer.twitter }}">
-                            <i class="fa-brands fa-x-twitter"></i>
-                        </a>
-
-                    </div>
-
-                </div>
-
-                <!-- COMPANY -->
-
-                <div class="col-lg-3">
-
-                    <div class="widget footer-widget">
-
-                        <h3 class="widget_title">
-
-                            Company
-
-                        </h3>
-
-                        <ul class="menu">
-
-                            <li><a href="#">Our Services</a></li>
-                            <li><a href="#">Careers</a></li>
-                            <li><a href="#">Contact Us</a></li>
-                            <li><a href="#">Join as Vendor</a></li>
-
-                        </ul>
-
-                    </div>
-
-                </div>
-
-                <!-- CONTACT -->
-
-                <div class="col-lg-3">
-
-                    <div class="widget footer-widget">
-
-                        <h3 class="widget_title">
-
-                            Need Help?
-
-                        </h3>
-
-                        <ul class="menu">
-
-                            <li>
-                                <a href="#">
-                                    +91 {{ footer.phone_num }}
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#">
-                                    +91 {{ footer.whatsapp_num }}
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#">
-                                    {{ footer.email }}
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="#">
-                                    {{ footer.address }}
-                                </a>
-                            </li>
-
-                        </ul>
-
-                    </div>
-
-                </div>
-
+              </div>
             </div>
-
-            <!-- COPYRIGHT -->
-
-            <div class="copyright-wrap">
-
-                <p class="copyright-text">
-
-                    Copyright ©
-                    <script>
-                        document.write(new Date().getFullYear())
-                    </script>
-
-                    <a href="{% url 'indexpage' %}">
-
-                        Sri Dixitha
-
-                    </a>
-
-                    . All Rights Reserved.
-
-                </p>
-
+          </div>
+          <div class="col-md-6 col-lg-6 col-xl-auto">
+            <div class="widget widget_nav_menu footer-widget">
+              <h3 class="widget_title">Company<span class="title-shape"><img
+                    src="{% static 'assets/images/shapes/footer-line-shape.svg' %}" alt="Shape Image"></span></h3>
+              <ul class="menu">
+                <li><a href="#"><i style="color: #074c7d;" class="far fa-angle-right"></i>Our Services</a></li>
+                <li><a href="#"><i style="color: #074c7d;" class="far fa-angle-right"></i>Careers</a></li>
+                <li><a href="#"><i style="color: #074c7d;" class="far fa-angle-right"></i> Contact Us</a></li>
+                <li><a href="#"><i style="color: #074c7d;" class="far fa-angle-right"></i>Join as Vendor</a></li>
+                <li><a href="#"><i style="color: #074c7d;" class="far fa-angle-right"></i> Client Reviews</a></li>
+              </ul>
             </div>
+          </div>
+          <div class="col-md-6 col-lg-6 col-xl-auto">
+            <div class="widget widget_nav_menu footer-widget">
+              <h3 class="widget_title"> Our Services <span class="title-shape"><img
+                    src="{% static 'assets/images/shapes/footer-line-shape.svg' %}" alt="Shape Image"></span></h3>
+              <ul class="menu">
+                <li><a href="#"><i style="color: #074c7d;" class="far fa-angle-right"></i>Female Cook</a></li>
+                <li><a href="#"><i style="color: #074c7d;" class="far fa-angle-right"></i> Brahmin Cook</a></li>
+                <li><a href="#"><i style="color: #074c7d;" class="far fa-angle-right"></i> Baby Care</a></li>
+                <li><a href="#"><i style="color: #074c7d;" class="far fa-angle-right"></i>Patient Care</a></li>
+                <li><a href="#"><i style="color: #074c7d;" class="far fa-angle-right"></i> Japa Maid</a></li>
+                <li><a href="#"><i style="color: #074c7d;" class="far fa-angle-right"></i>Catering Services</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-6 col-xl-auto">
+            <div class="widget widget_nav_menu footer-widget">
+              <h3 class="widget_title"> Need Help?<span class="title-shape"><img
+                    src="{% static 'assets/images/shapes/footer-line-shape.svg' %}" alt="line footer"></span></h3>
+              <ul class="menu footer-menu">
+
+                <li><a href="#"><i style="color: #ea6e12" class="fa-solid fa-phone"></i>+91 {{ footer.phone_num }}</a>
+                </li>
+                <li><a href="#"><i style="color: #ea6e12" class="fa-brands fa-square-whatsapp">
+
+                    </i>+91 {{ footer.whatsapp_num }}</a>
+                </li>
+                <li><a href="#"><i style="color: #ea6e12" class="fa-solid fa-envelope"></i>{{ footer.email }}</a>
+                </li>
+                <li><a href="#"><i style="color: #ea6e12" class="fa-solid fa-location-dot"></i>{{ footer.address }}</a>
+                </li>
+
+
+              </ul>
+            </div>
+          </div>
 
         </div>
+      </div>
+    </div>
 
-    </footer>
+    <div class="container">
+      <div class="copyright-wrap">
+        <div class="row g-2  justify-content-center">
+          <div class="col-xl-6">
+            <p class="copyright-text">
+              Copyright <i class="fal fa-copyright"></i>
+              <script>
+                document.write(new Date().getFullYear())
+              </script>
+              <a href="{% url 'indexpage' %}">Sri Dixitha </a>.
+              All Rights Reserved.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </footer>
 
     <!-- JS -->
+  <!-- Jquery -->
+  <script src="{% static 'assets/js/vendor/jquery-3.7.1.min.js' %}"></script>
+  <!-- Bootstrap -->
+  <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+  <!-- Slick Slider -->
+  <script src="{% static 'assets/js/slick.min.js' %}"></script>
+  <!-- Magnific Popup -->
+  <script src="{% static 'assets/js/jquery.magnific-popup.min.js' %}"></script>
+  <!-- imagesloaded -->
+  <script src="{% static 'assets/js/imagesloaded.pkgd.min.js' %}"></script>
+  <!-- Isotope Filter -->
+  <script src="{% static 'assets/js/isotope.pkgd.min.js' %}"></script>
+  <!-- Gsap -->
+  <script src="{% static 'assets/js/gsap.min.js' %}"></script>
+  <!-- ScrollTrigger -->
+  <script src="{% static  'assets/js/ScrollTrigger.min.js' %}"></script>
+  <!-- Gsap ScrollTo Plugin -->
+  <script src="{% static 'assets/js/gsap-scroll-to-plugin.js' %}"></script>
+  <!-- Split Text -->
+  <script src="{% static 'assets/js/SplitText.js' %}"></script>
+  <!-- lenis -->
+  <script src="{% static 'assets/js/lenis.min.js' %}"></script>
+  <!-- wow js -->
+  <script src="{% static 'assets/js/wow.min.js' %}"></script>
+  <!-- nice-select -->
+  <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+  <!-- nouislider -->
+  <script src="{% static 'assets/js/nouislider.min.js' %}"></script>
+  <!-- Main Js File -->
+  <script src="{% static 'assets/js/main.js' %}"></script>
 
-    <script src="{% static 'assets/js/vendor/jquery-3.7.1.min.js' %}"></script>
-    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/wowjs/dist/wow.min.js"></script>
+  <script src="{% static 'assets/js/protect.js' %}"></script>
 </body>
 
 </html>

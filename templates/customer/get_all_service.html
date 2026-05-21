@@ -3,8 +3,8 @@
 {% block content %}
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-<style>
+<link rel="stylesheet" href="{% static 'assets/css/dashboards_style/customer.css' %}">
+<!-- <style>
 
 /* ========================= GLOBAL ========================= */
 
@@ -430,7 +430,7 @@ body {
     .cat-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-</style>
+</style> -->
 
 <div class="vsl-main-wrapper">
     <div class="vsl-container">
@@ -440,17 +440,17 @@ body {
             <!-- HEADER -->
     <div class="page-header">
 
-        <div>
+    <div>
 
-            <h6 class="fw-semibold mb-0">
-                My Bookings
-            </h6>
+        <h2 class="dashboard-heading">
+           All Services 
+        </h2>
 
-            <div class="page-sub">
-                View all your booked services and booking details
-            </div>
+        <p class="dashboard-subheading">
+      See all your services and stay updated with live booking progress
+        </p>
 
-        </div>
+    </div>
 
     </div>
 

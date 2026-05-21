@@ -555,6 +555,32 @@ tbody tr:hover{
     font-size:14px;
 }
 
+.user-avatar{
+
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    overflow:hidden;
+
+    background:#2563eb;
+    color:#fff;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:16px;
+    font-weight:700;
+
+}
+
+.user-profile-img{
+
+    width:100%;
+    height:100%;
+    object-fit:cover;
+
+}
 /* ===== MOBILE ===== */
 
 @media(max-width:768px){
@@ -593,15 +619,19 @@ tbody tr:hover{
 
 <div class="page-wrap">
 
-    <div class="page-header">
 
-        <h6 class="fw-semibold mb-0">
-            User Management
-        </h6>
 
-        <div class="page-subtitle">
+    <div>
+
+            <h2 class="dashboard-heading">
+            All Payments
+            </h2>
+
+            <p class="dashboard-subheading">
             View and manage all customer and vendor accounts
-        </div>
+            </p>
+
+      
 
     </div>
 
@@ -691,11 +721,23 @@ tbody tr:hover{
 
                             <div class="user-cell">
 
-                                <div class="user-avatar">
+<div class="user-avatar">
 
-                                    {{ user.first_name|first }}
+    {% if user.profile_image %}
 
-                                </div>
+        <img
+            src="{{ user.profile_image.url }}"
+            alt="{{ user.first_name }}"
+            class="user-profile-img"
+        >
+
+    {% else %}
+
+        {{ user.first_name|first|upper }}
+
+    {% endif %}
+
+</div>
 
                                 <div>
 

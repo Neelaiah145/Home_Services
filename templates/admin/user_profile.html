@@ -5,194 +5,247 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-
-body{
-    background:#f4f7fb;
-    font-family:'DM Sans',sans-serif;
-}
-
-.profile-page{
-    max-width:1150px;
-    margin:auto;
-    padding:30px 20px;
-}
-
-/* HEADER */
-
-.profile-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:24px;
-    flex-wrap:wrap;
-    gap:12px;
-}
-
-.profile-title{
-    font-size:30px;
-    font-weight:700;
-    color:#111827;
-}
-
-.back-btn{
-    height:44px;
-    padding:0 18px;
-    border-radius:12px;
-    background:#2563eb;
-    color:#fff;
-    text-decoration:none;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:14px;
-    font-weight:700;
-}
-
-.back-btn:hover{
-    background:#1d4ed8;
-    color:#fff;
-}
-
-/* CARD */
-
-.profile-card{
-    background:#fff;
-    border-radius:24px;
-    padding:30px;
-    border:1px solid #e5e7eb;
-}
-
-/* TOP */
-
-.profile-top{
-    display:flex;
-    align-items:center;
-    gap:24px;
-    flex-wrap:wrap;
-    margin-bottom:35px;
-}
-
-.profile-avatar{
-
-    width:120px;
-    height:120px;
-    border-radius:50%;
-    overflow:hidden;
-    flex-shrink:0;
-    background:#2563eb;
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:42px;
-    font-weight:700;
-
-}
-
-.profile-avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.profile-info h2{
-    font-size:34px;
-    font-weight:700;
-    color:#111827;
-    margin-bottom:10px;
-}
-
-/* ROLE BADGES */
-
-.role-badge{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    padding:8px 16px;
-    border-radius:30px;
-    font-size:13px;
-    font-weight:700;
-    text-transform:capitalize;
-}
-
-.role-badge.customer{
-    background:#dbeafe;
-    color:#2563eb;
-}
-
-.role-badge.vendor{
-    background:#dcfce7;
-    color:#15803d;
-}
-
-.role-badge.admin{
-    background:#ede9fe;
-    color:#7c3aed;
-}
-
-.role-badge.superadmin{
-    background:#fee2e2;
-    color:#dc2626;
-}
-
-/* DETAILS */
-
-.details-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-    gap:20px;
-}
-
-.detail-box{
-    background:#f9fafb;
-    border-radius:18px;
-    border:1px solid #eef2f7;
-    padding:20px;
-}
-
-.detail-label{
-    font-size:12px;
-    font-weight:700;
-    color:#6b7280;
-    margin-bottom:10px;
-    text-transform:uppercase;
-    letter-spacing:.5px;
-}
-
-.detail-value{
-    font-size:16px;
-    font-weight:600;
-    color:#111827;
-    word-break:break-word;
-}
-
-/* MOBILE */
-
-@media(max-width:768px){
-
-    .profile-page{
-        padding:15px;
+    body {
+        background: #f4f7fb;
+        font-family: 'DM Sans', sans-serif;
     }
 
-    .profile-card{
-        padding:20px;
+    .profile-page {
+        max-width: 1150px;
+        margin: auto;
+        padding: 30px 20px;
     }
 
-    .profile-title{
-        font-size:24px;
+    /* HEADER */
+
+    .profile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
     }
 
-    .profile-top{
-        flex-direction:column;
-        text-align:center;
+    .profile-title {
+        font-size: 30px;
+        font-weight: 700;
+        color: #111827;
     }
 
-    .profile-info h2{
-        font-size:24px;
+    .back-btn {
+        height: 44px;
+        padding: 0 18px;
+        border-radius: 12px;
+        background: #2563eb;
+        color: #fff;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 700;
     }
 
-}
+    .back-btn:hover {
+        background: #1d4ed8;
+        color: #fff;
+    }
 
+    /* CARD */
+
+    .profile-card {
+        background: #fff;
+        border-radius: 24px;
+        padding: 30px;
+        border: 1px solid #e5e7eb;
+    }
+
+    /* TOP */
+
+    .profile-top {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+        margin-bottom: 35px;
+    }
+
+    .profile-avatar {
+
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: #2563eb;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+        font-weight: 700;
+
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-info h2 {
+        font-size: 24px !important;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 10px;
+    }
+
+    /* ROLE BADGES */
+
+    .role-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: capitalize;
+    }
+
+    .role-badge.customer {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+
+    .role-badge.vendor {
+        background: #dcfce7;
+        color: #15803d;
+    }
+
+    .role-badge.admin {
+        background: #ede9fe;
+        color: #7c3aed;
+    }
+
+    .role-badge.superadmin {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    /* DETAILS */
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .detail-box {
+        background: #f9fafb;
+        border-radius: 18px;
+        border: 1px solid #eef2f7;
+        padding: 20px;
+    }
+
+    .detail-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #6b7280;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .detail-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #111827;
+        word-break: break-word;
+    }
+
+    /* MOBILE */
+
+    @media(max-width:768px) {
+
+        .profile-page {
+            padding: 15px;
+        }
+
+        .profile-card {
+            padding: 20px;
+        }
+
+        .profile-title {
+            font-size: 24px;
+        }
+
+        .profile-top {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .profile-info h2 {
+            font-size: 24px;
+        }
+
+    }
+
+    .user-avatar {
+
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        overflow: hidden;
+
+        background: #2563eb;
+        color: #fff;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 16px;
+        font-weight: 700;
+
+    }
+
+    .user-profile-img {
+
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+
+
+    }
+
+    .user-avatar {
+
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        overflow: hidden;
+
+        background: #2563eb;
+        color: #fff;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 16px;
+        font-weight: 700;
+
+    }
+
+    .user-profile-img {
+
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+
+    }
 </style>
 
 <div class="profile-page">
@@ -219,15 +272,16 @@ body{
 
         <div class="profile-top">
 
-            <div class="profile-avatar">
+            <div class="user-avatar">
 
                 {% if user_obj.profile_image %}
 
-                    <img src="{{ user_obj.profile_image.url }}">
+                <img src="{{ user_obj.profile_image.url }}" alt="{{ user_obj.first_name }}"
+                    class="user_obj-profile-img">
 
                 {% else %}
 
-                    {{ user_obj.username|slice:":1"|upper }}
+                {{ user_obj.first_name|first|upper }}
 
                 {% endif %}
 
@@ -236,7 +290,7 @@ body{
             <div class="profile-info">
 
                 <h2>
-                    {{ user_obj.username }}
+                    {{ user_obj.first_name }}
                 </h2>
 
                 <div class="role-badge {{ user_obj.role }}">
@@ -258,7 +312,7 @@ body{
                 </div>
 
                 <div class="detail-value">
-                    {{ user_obj.username }}
+                    {{ user_obj.first_name}}
                 </div>
 
             </div>
@@ -282,7 +336,7 @@ body{
                 </div>
 
                 <div class="detail-value">
-                    {{ user_obj.mobile }}
+                    {{ user_obj.phone }}
                 </div>
 
             </div>
@@ -302,11 +356,11 @@ body{
             <div class="detail-box">
 
                 <div class="detail-label">
-                    Address
+                   Area
                 </div>
 
                 <div class="detail-value">
-                    {{ user_obj.address }}
+                    {{ user_obj.city }}
                 </div>
 
             </div>
@@ -345,11 +399,11 @@ body{
 
                     {% if user_obj.is_active %}
 
-                        Active
+                    Active
 
                     {% else %}
 
-                        Inactive
+                    Inactive
 
                     {% endif %}
 

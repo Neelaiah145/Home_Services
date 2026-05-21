@@ -10,8 +10,8 @@ from django.utils import timezone
 
 class News(models.Model):
     content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    create_date = models.DateTimeField(auto_now=True)
+    news_created_at = models.DateTimeField(auto_now_add=True)
+    news_updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.content if self.content else "News"
@@ -21,7 +21,8 @@ class HeroBanner(models.Model):
     heading = models.CharField(max_length=255)
     sub_heading = models.CharField(max_length=255, blank=True)
     image = models.ImageField(upload_to='hero/')
-    created_at = models.DateTimeField(auto_now_add=True)
+    herosection_created_at = models.DateTimeField(auto_now_add=True)
+    herosection_updated_at = models.DateField(auto_now=True)
 
     def __str__(self):
         return self.heading
@@ -47,8 +48,8 @@ class Category(models.Model):
         upload_to='categories/about/', blank=True)
     is_active = models.BooleanField(default=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)   # added
+    category_created_at = models.DateTimeField(auto_now_add=True)
+    category_updated_at = models.DateTimeField(auto_now=True)   
 
     def get_tags_list(self):
         return [tag.strip() for tag in self.tags.split(',') if tag.strip()]
@@ -83,9 +84,9 @@ class CategoryService(models.Model):
     image = models.ImageField(
         upload_to='categories_service_images/', blank=True, null=True)
 
-    #  NEW FIELDS
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+   
+    categoryservice_created_at = models.DateTimeField(auto_now_add=True)
+    Categoryservice_updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.s_title
@@ -98,8 +99,8 @@ class ServicesCards(models.Model):
     serviceicon = models.ImageField(upload_to='cardSeries/icons/')
     service_image = models.ImageField(upload_to='cardSeries/card_images/')
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    servicecard_created_at = models.DateTimeField(auto_now_add=True)
+    servicecard_updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
@@ -135,8 +136,8 @@ class Job(models.Model):
     work_mode = models.CharField(
         max_length=20, choices=MODE_CHOICES, default='on_site')
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    job_created_at = models.DateTimeField(auto_now_add=True)
+    job_updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
@@ -156,7 +157,8 @@ class JobApplication(models.Model):
     resume = models.FileField(upload_to='jobs/resumes/')
     photo = models.ImageField(upload_to='jobs/photos/', null=True, blank=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    jobapplication_created_at = models.DateTimeField(auto_now_add=True)
+    jobapplication_updated_at = models.DateField(auto_now=True)
 
     def __str__(self):
         return f"{self.name} - {self.job.title}"
@@ -198,7 +200,8 @@ class ServiceFeedback(models.Model):
 
     description = models.TextField()
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    feedback_created_at = models.DateTimeField(auto_now_add=True)
+    feedback_updated_at = models.DateField(auto_now = True)
 
     def __str__(self):
         return f"{self.customer_name} - {self.service_name}"
@@ -223,7 +226,8 @@ class Footer(models.Model):
     twitter=models.URLField(blank=True,null=True)
     
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    footer_created_at = models.DateTimeField(auto_now_add=True)
+    footer_updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"Footer - {self.phone_num}"
@@ -251,7 +255,8 @@ class Contact(models.Model):
         default='pending'
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    contact_created_at = models.DateTimeField(auto_now_add=True)
+    contact_updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name

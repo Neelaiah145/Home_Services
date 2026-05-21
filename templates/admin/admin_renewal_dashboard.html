@@ -23,6 +23,46 @@ body{
     border-top:1px solid #eef2f7;
     background:#fff;
 }
+.expiry-alert-wrap{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-bottom:16px;
+}
+
+.expiry-alert{
+    background:#fffbeb;
+    border:1px solid #fde68a;
+    color:#92400e;
+    border-radius:10px;
+    padding:10px 14px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.expiry-alert-text{
+    font-size:12px;
+    font-weight:600;
+    line-height:1.5;
+}
+
+.expiry-close{
+    border:none;
+    background:none;
+    color:#dc2626;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:0;
+    margin-left:10px;
+}
 
 .page-btns{
     display:flex;
@@ -406,14 +446,68 @@ body{
         </div>
 
     </div>
+<!-- notofication bar -->
+
+<!-- EXPIRY NOTIFICATIONS -->
+
+<div class="expiry-alert-wrap">
+
+    {% for booking in expiring_bookings %}
+
+        {% if booking.show_renew_button %}
+
+        <div
+            class="expiry-alert"
+            id="expiry-alert-{{ booking.id }}"
+             data-id="{{ booking.id }}"
+        >
+
+            <div class="expiry-alert-text">
+
+                🔔
+
+                <strong>
+                    {{ booking.user.first_name }}
+                </strong>
+
+                service
+
+                <strong>
+                    {{ booking.service.s_title }}
+                </strong>
+
+                is expiring soon
+
+            </div>
+
+            <button
+                class="expiry-close"
+                onclick="closeExpiryAlert('{{ booking.id }}')"
+            >
+
+                ✕
+
+            </button>
+
+        </div>
+
+        {% endif %}
+
+    {% endfor %}
+
+</div>
+
+<!-- end notification bar -->
 
     <div class="table-card">
 
         <div class="table-header">
 
-            <div class="table-title">
-                Renewal Tracking Leads
+       
+               <div class="card-title">
+               Renewal Tracking Leads
             </div>
+            
 
             <form method="GET" class="filter-bar">
 
@@ -988,6 +1082,57 @@ window.onclick = function(e){
     }
 
 }
+
+window.onload = function(){
+
+    const alerts = document.querySelectorAll(
+        ".expiry-alert"
+    );
+
+    alerts.forEach(function(alert){
+
+        const bookingId = alert.dataset.id;
+
+        // CHECK CLOSED STATUS
+
+        if(
+            localStorage.getItem(
+                "expiry_closed_" + bookingId
+            ) === "true"
+        ){
+
+            alert.style.display = "none";
+
+        }
+
+    });
+
+}
+
+
+// CLOSE ALERT
+
+function closeExpiryAlert(id){
+
+    const alertBox = document.getElementById(
+        "expiry-alert-" + id
+    );
+
+    if(alertBox){
+
+        alertBox.style.display = "none";
+
+        // SAVE CLOSED STATUS
+
+        localStorage.setItem(
+            "expiry_closed_" + id,
+            "true"
+        );
+
+    }
+
+}
+
 
 </script>
 
