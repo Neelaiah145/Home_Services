@@ -370,6 +370,7 @@
   border-style: solid;
   border-width: 0;
   font-size: 15px;
+  /* text-align:center; */
 }
 
 html {
@@ -14129,10 +14130,10 @@ html[data-theme=dark] .text-style .apexcharts-text.apexcharts-yaxis-label {
   box-shadow: -13px -8px 24px -7px rgba(46, 45, 116, 0.09);
 }
 
-.dropdown>button.show {
+/* .dropdown>button.show {
   background-color: var(--primary-50);
   color: var(--primary-600) !important;
-}
+} */
 
 .dropdown>button.show .text-primary-light {
   color: var(--primary-600) !important;

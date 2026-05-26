@@ -4,11 +4,12 @@ from core.views import *
 urlpatterns = [
     path("", IndexView.as_view(), name="indexpage"),
     path("categories/listing/",CategoryListing.as_view(),name='categoy.listings'),
+    
     path('sridixitha/servicespagelist/<int:pk>/',
          ServicesListView.as_view(), name='category.services.listing'),
     # New AJAX endpoint
-    path('api/category/<int:category_id>/services/',
-         CategoryServicesAPIView.as_view(), name='category.services.api'),
+path('api/category/<int:category_id>/services/',CategoryServicesAPIView.as_view(),name='category.services.api'),
+
 
     path('sridixitha/contact/', ContactForm.as_view(), name='contact'),
     path('list/contact/', ContactListView.as_view(), name='list.contact'),

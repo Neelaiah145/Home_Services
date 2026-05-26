@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
- <link rel="icon" type="image/png" href="{% static 'assets/images/logo/top_sridixitha_logo.gif' %}">
+  <link rel="icon" type="image/png" href="{% static 'assets/images/logo/top_sridixitha_logo.gif' %}">
   <title>SriDixitha Services</title>
   <!-- <meta name="author" content="">
   <meta name="description" content="">
@@ -55,22 +55,7 @@
 </head>
 
 <body>
-  <!--[if lte IE 9]>
-    	<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-  <![endif]-->
-  <!--********************************
-   		Code Start From Here 
-	******************************** -->
-  <!--==============================
-	Preloader
-	==============================-->
-  <!-- <div class="preloader">
-    <button class="vs-btn preloaderCls">Cancel Preloader </button>
-    <div class="preloader-inner">
-      <img src="assets/img/new_image/sridixitha-logo.gif" alt="logo">
-      <span class="loader"></span>
-    </div>
-  </div> -->
+
   <button class="back-to-top" id="backToTop" aria-label="Back to Top">
     <span class="progress-circle">
       <svg viewBox="0 0 100 100">
@@ -134,8 +119,7 @@
                 class="logo"></a>
           </div>
           <p class="sidemenu-text">
-            Welcome to Hoerseno, your ultimate for destination all things equestrian! Whether you're a seasoned
-            rider.
+     
           </p>
           <ul class="social-links">
             <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
@@ -260,7 +244,7 @@
       </div>
     </div>
 
-    <!-nav area->
+    <!-- <!-nav area-> -->
       <div class="sticky-wrapper">
         <div class="sticky-active">
           <div class="container-fluid">
@@ -333,7 +317,7 @@
                 </a> -->
 
                   <!-- Account Button -->
-                  <button class="vs-btn dropdown-toggle">
+                  <button class="vs-btn dropdown-toggle ">
                     Account
                   </button>
 
@@ -362,94 +346,239 @@
   <!--==============================
   Hero Area
   ==============================-->
-  <section class="vs-hero hero-layout1">
 
-    <div class=" position-relative">
+<section class="jd-hero">
 
-      <!-- Slider -->
-      <div class="vs-carousel hero-slider1">
+    <!-- BG IMAGES -->
+    {% for banner in banners %}
+    <div
+        class="jd-bg {% if forloop.first %}active{% endif %}"
+        style="background-image:url('{% if banner.image %}{{ banner.image.url }}{% else %}{% static 'assets/img/default-banner.jpg' %}{% endif %}');"
+    ></div>
+    {% endfor %}
 
-        <!-- Slide 1 -->
-        {% for banner in banners %}
-        <div class="hero-item"
-          style="background-image: url('{% if banner.image %}{{ banner.image.url }}{% else %} {% static "/assets/img/default-banner.jpg" %}{% endif %}');">
+    <!-- OVERLAY -->
+    <div class="jd-overlay"></div>
 
-          <div class="row g-5 gx-50 align-items-center">
-            <div class="col-xl-7 col-lg-10">
-              <div class="hero-content">
-                <h1 class="hero-title">{{ banner.heading }}</h1>
-                <p class="hero-text">
-                  {{ banner.sub_heading }}
-                </p>
-                <a class="vs-btn" href="{% url 'book_service' %}">Book a Service</a>
-              </div>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
+    <!-- CONTENT -->
+    <div class="jd-inner">
 
+        <!-- TITLE -->
+<h1 class="jd-title">
 
+    Search across
 
-      </div>
+    <span>
 
-      <!-- Navigation Arrows -->
-      <button class="hero-prev diamond">
-        <i class="fa-solid fa-chevron-left"></i>
-      </button>
+        {{ count_service }}+ Services
 
-      <button class="hero-next diamond">
-        <i class="fa-solid fa-chevron-right"></i>
-      </button>
+    </span>
 
-    </div>
+</h1>
 
-    <!-- Listing Area -->
-    <div class="listing-style1">
-      <div class="sub-container">
-        <div class="listing-body">
-          <form method="GET" id="search-form" class="form-style2 search-horizontal">
+        <!-- SEARCH -->
+        <form
+            method="GET"
+            action=""
+            id="heroSearchForm"
+            class="jd-bar"
+            autocomplete="off"
+        >
 
             <!-- CATEGORY -->
-            <div class="form-group">
-              <label>Category</label>
-              <select name="category" id="category-select" class="form-control" onchange="this.form.submit()">
-                <option value="">-- select category --</option>
-                {% for cat in categories %}
-                <option value="{{ cat.id }}"
-                  {% if selected_category and selected_category.id == cat.id %}selected{% endif %}>
-                  {{ cat.title }}
-                </option>
+            <div class="jd-cat">
+
+                <i class="fa-solid fa-layer-group"></i>
+
+                <select
+                    name="category"
+                    id="category-select"
+                    class="jd-cat-sel"
+                    size="1"
+
+                    onmousedown="
+                        if(!('ontouchstart' in window))
+                        this.size = 4;
+                    "
+
+                    onchange="
+                        this.size = 1;
+                        this.blur();
+                        this.form.submit();
+                    "
+
+                    onblur="
+                        setTimeout(() => {
+                            this.size = 1;
+                        }, 400);
+                    "
+                >
+
+                    <option value="">
+                        All Categories
+                    </option>
+
+                    {% for cat in categories %}
+
+                    <option
+                        value="{{ cat.id }}"
+                        {% if request.GET.category == cat.id|stringformat:'s' %}
+                        selected
+                        {% endif %}
+                    >
+                        {{ cat.title }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- DIVIDER -->
+            <span class="jd-sep"></span>
+
+            <!-- SERVICES -->
+            <div class="jd-svc">
+
+                <select
+                    name="service"
+                    id="service-select"
+                    class="jd-svc-select"
+                    size="1"
+
+                    onmousedown="
+                        if(!('ontouchstart' in window))
+                        this.size = 4;
+                    "
+
+                    onchange="
+                        this.size = 1;
+                        this.blur();
+                    "
+
+                    onblur="
+                        setTimeout(() => {
+                            this.size = 1;
+                        }, 400);
+                    "
+                >
+
+                    <option value="">
+                        Select Service
+                    </option>
+
+                    {% for service in cat_services %}
+
+                    <option
+                        value="{{ service.id }}"
+                        {% if request.GET.service == service.id|stringformat:'s' %}
+                        selected
+                        {% endif %}
+                    >
+                        {{ service.s_title }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <!-- SEARCH BUTTON -->
+            <button
+                type="submit"
+                class="jd-btn-search"
+            >
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+            </button>
+
+        </form>
+
+        <!-- TEXT AREA -->
+        <div class="jd-text-area">
+
+            <!-- PREV -->
+            <button
+                class="jd-arr jd-arr-l"
+                id="heroPrev"
+            >
+                &#8249;
+            </button>
+
+            <!-- TEXT CENTER -->
+            <div class="jd-text-center">
+
+                {% for banner in banners %}
+
+                <div
+                    class="jd-slide-item {% if forloop.first %}active{% endif %}"
+                >
+
+                    <h2 class="jd-slide-h">
+                        {{ banner.heading }}
+                    </h2>
+
+                    <p class="jd-slide-p">
+                        {{ banner.sub_heading }}
+                    </p>
+
+                    <a
+                        href="#services"
+                        class="jd-expl-btn"
+                    >
+                        Explore More
+                    </a>
+
+                </div>
+
                 {% endfor %}
-              </select>
+
             </div>
 
-            <!-- SERVICES (populated dynamically) -->
-            <div class="form-group">
-              <label>Services</label>
-              <select name="cat_service" id="service-select" class="form-control">
-                <option value="">-- select service --</option>
-                {% for serv in cat_services %}
-                <option value="{{ serv.id }}">{{ serv.s_title }}</option>
-                {% endfor %}
-              </select>
-            </div>
+            <!-- NEXT -->
+            <button
+                class="jd-arr jd-arr-r"
+                id="heroNext"
+            >
+                &#8250;
+            </button>
 
-            <div class="form-group btn-group">
-              <button type="submit" class="vs-btn">Search</button>
-            </div>
-
-          </form>
         </div>
-      </div>
+
+        <!-- DOTS -->
+        <div
+            class="jd-dots"
+            id="heroDots"
+        >
+
+            {% for banner in banners %}
+
+            <span
+                class="jd-dot {% if forloop.first %}active{% endif %}"
+                data-index="{{ forloop.counter0 }}"
+            ></span>
+
+            {% endfor %}
+
+        </div>
+
     </div>
 
-  </section>
+</section>
+
+
+
+
   <!-- Categories-->
 
   <section class="svc-section" id="categories">
-    <div class="svc-header">
-      <span class="sec-subtitle">Explore our Categories</span>
-      <h2>Everything you need, all in one place</h2>
+
+    <div class="title-area text-center animation-style5 title-anime">
+      <span class="tes-sec-subtitle" style="color:#074c7d"> Explore our Categories</span>
+      <h2 class="sec-title title-anime__title">Everything you need, all in one place </h2>
     </div>
     <div class="svc-grid">
 
@@ -490,11 +619,11 @@
         </div>
 
       </a>
-      {% endfor %}
+    {% endfor %}
 
 
     </div>
-    <a href="{% url 'categoy.listings' %}" class="viewall-btn">View all</a>
+    <a href="{% url 'categoy.listings' %}" class="viewall-btn jd-expl-btn">View All</a>
   </section>
 
   <!--Catrgories section ends-->
@@ -502,13 +631,10 @@
   <!-- Services Area Start-->
 
   <section class="cat-section" id="services">
-    <div class="sec-header">
-      <div class="sec-left">
-        <span class="sec-subtitle">Our Services</span>
-        <h2 class="sec-title title-anime__title">Explore Our Services </h2>
-      </div>
+    <div class="title-area text-center animation-style5 title-anime">
+      <span class="tes-sec-subtitle" style="color:#074c7d"> Our Services </span>
+      <h2 class="sec-title title-anime__title"> Explore Our Services </h2>
     </div>
-
     <!-- Cards Grid: 4 per row, 2 rows = 8 cards -->
     <div class="cat-grid">
       <!-- Card 1 -->
@@ -551,11 +677,10 @@
   <section class="jbs-section" id="jobs">
     <div class="jbs-wrap">
 
-      <div class="jbs-head">
-        <span class="jbs-sub">Careers</span>
-        <h2 class="jbs-title">Explore Career Opportunities</h2>
+      <div class="title-area text-center animation-style5 title-anime">
+        <span class="tes-sec-subtitle" style="color:#074c7d"> Careers</span>
+        <h2 class="sec-title title-anime__title">Explore Career Opportunities </h2>
       </div>
-
       <div class="jbs-stats">
         <div class="jbs-stat">
           <div class="jbs-stat-num">{{ jobs.count }}</div>
@@ -620,7 +745,7 @@
 
       </div>
     </div>
-    <a href="{% url 'jobs.listing' %}" class="viewall-btn">View All</a>
+    <a href="{% url 'jobs.listing' %}" class="viewall-btn jd-expl-btn">View All</a>
   </section>
   <!--==============================
     end-job postingarea 
@@ -636,7 +761,7 @@
         <div class="col-xl-8">
           <div class="title-area text-center animation-style5 title-anime">
             <span class="tes-sec-subtitle">Testimonials</span>
-            <h2 class="sec-title title-anime__title" style="color: #f9ba53;">What Our Clients Say</h2>
+            <h2 class="sec-title title-anime__title" style="color: #fd9f0a">What Our Clients Say</h2>
           </div>
         </div>
       </div>
@@ -846,12 +971,100 @@
   <!-- Main Js File -->
   <script src="{% static 'assets/js/main.js' %}"></script>
 
+  <script src="{% static 'assets/js/main1.js' %}"></script>
+
 
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/wowjs/dist/wow.min.js"></script>
+
+  <script>
+
+    window.onload = function () {
+
+      const form =
+        document.getElementById(
+          "heroSearchForm"
+        );
+
+      const categorySelect =
+        document.getElementById(
+          "category-select"
+        );
+
+      const serviceSelect =
+        document.getElementById(
+          "service-select"
+        );
+
+      // CATEGORY CHANGE
+      categorySelect.onchange =
+        function () {
+
+          const categoryId =
+            this.value;
+
+          // EMPTY
+          if (!categoryId) {
+
+            window.location.href = "/";
+
+            return;
+
+          }
+
+          // RELOAD PAGE
+          window.location.href =
+            "/?category=" +
+            categoryId;
+
+        };
+
+      // FORM SUBMIT
+      form.onsubmit =
+        function (e) {
+
+          e.preventDefault();
+
+          const categoryId =
+            categorySelect.value;
+
+          const serviceId =
+            serviceSelect.value;
+
+          // CHECK
+          if (
+            !categoryId ||
+            !serviceId
+          ) {
+
+            alert(
+              "Please select category and service"
+            );
+
+            return false;
+
+          }
+
+          // REDIRECT
+          window.location.href =
+            "/sridixitha/servicespagelist/" +
+            categoryId +
+            "/?service=" +
+            serviceId;
+
+        };
+
+    };
+
+
+  </script>
+
+
+
+
 </body>
 
 

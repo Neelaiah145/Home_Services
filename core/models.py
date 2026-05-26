@@ -98,7 +98,7 @@ class ServicesCards(models.Model):
     # Card images
     serviceicon = models.ImageField(upload_to='cardSeries/icons/')
     service_image = models.ImageField(upload_to='cardSeries/card_images/')
-
+    
     servicecard_created_at = models.DateTimeField(auto_now_add=True)
     servicecard_updated_at = models.DateTimeField(auto_now=True)
 

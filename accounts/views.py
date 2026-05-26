@@ -1156,6 +1156,7 @@ class AdminUsersView(LoginRequiredMixin, View):
             return JsonResponse({"success": False,"error": str(e)})
 
 
+
 # admin all leads see and assign the vendors 
 @method_decorator(never_cache,name='dispatch')
 class AdminOrdersView(LoginRequiredMixin,View):

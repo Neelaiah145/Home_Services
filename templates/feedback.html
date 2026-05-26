@@ -43,6 +43,18 @@
 </head>
 
 <body>
+  <button class="back-to-top" id="backToTop" aria-label="Back to Top">
+    <span class="progress-circle">
+      <svg viewBox="0 0 100 100">
+        <circle class="bg" cx="50" cy="50" r="40"></circle>
+        <circle class="progress" cx="50" cy="50" r="40"></circle>
+      </svg>
+      <span class="progress-percentage" id="progressPercentage">0%</span>
+    </span>
+  </button>
+  <!--==============================
+    	Mobile Menu
+  	============================== -->
   <div class="vs-menu-wrapper">
     <div class="vs-menu-area text-center">
       <div class="mobile-logo">
@@ -72,19 +84,91 @@
             <a href="#Testimonials">Testimonials</a>
           </li>
           <li>
-            <a href="{% url 'feedbackform' %}">FeedBack</a>
+            <a href="{% url 'feedbackform' %}" style="color: #ea6e12 !important;">FeedBack & Suggestions</a>
           </li>
           <li>
             <a href="{% url 'contact' %}">Contact</a>
           </li>
-
         </ul>
       </div>
     </div>
   </div>
+  <!--==============================
+	Sidemenu
+	============================== -->
+  <div class="sidemenu-wrapper d-none d-lg-block">
+    <div class="sidemenu-content">
+      <button class="closeButton sideMenuCls"><i class="far fa-times"></i></button>
+      <div class="widget">
+        <div class="vs-widget-about">
+          <div class="mb-4">
+            <a href="#"><img src="{% static 'assets/images/new_image/sridixitha-logo.gif' %}" alt="logo"
+                class="logo"></a>
+          </div>
+          <p class="sidemenu-text">
+     
+          </p>
+          <ul class="social-links">
+            <li><a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
+            <li><a href="#" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>
+            <li><a href="#" target="_blank"><i class="fab fa-instagram"></i></a></li>
+            <li><a href="#" target="_blank"><i class="fab fa-dribbble"></i></a></li>
+          </ul>
 
 
+        </div>
+      </div>
+      <div class="widget  ">
+        <h4 class="widget_title">Recent Posts</h4>
+        <div class="widget footer-widget">
+          <div class="recent-post-wrap">
+            <div class="recent-post">
+              <div class="media-img">
+                <a href="blog-details.html"><img src="{% static 'assets/img/blog/recent-post-1-1.jpg' %}"
+                    alt="Blog Image"></a>
+              </div>
+              <div class="media-body">
+                <h4 class="post-title"><a href="blog-details.html">How to Improve Your Riding...</a>
+                </h4>
+                <div class="recent-post-meta">
+                  <i class="fas fa-calendar-alt"></i> 09 Aug, 2025
+                </div>
+              </div>
+            </div>
+            <div class="recent-post">
+              <div class="media-img">
+                <a href="blog-details.html"><img src="{% static 'assets/img/blog/recent-post-1-2.jpg' %}"
+                    alt="Blog Image"></a>
+              </div>
+              <div class="media-body">
+                <h4 class="post-title"><a href="blog-details.html">Choosing the Right Gear...</a>
+                </h4>
+                <div class="recent-post-meta">
+                  <i class="fas fa-calendar-alt"></i> 09 Aug, 2025
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="widget  ">
+        <h3 class="widget_title">Office Maps</h3>
+        <div class="footer-map">
+          <iframe title="office location map"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d163720.11965853968!2d8.496481908353967!3d50.121347879150306!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47bd096f477096c5%3A0x422435029b0c600!2sFrankfurt%2C%20Germany!5e0!3m2!1sen!2sbd!4v1651732317319!5m2!1sen!2sbd"
+            width="200" height="150" style="border:0;" allowfullscreen="" loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--==============================
+    Popup Search Box
+    ============================== -->
 
+  <!--==============================
+        Header Area
+    ==============================-->
   <header class="vs-header header-layout2">
     <!--contact numbers-->
     <div class="header-top">
@@ -147,7 +231,7 @@
       </div>
     </div>
 
-    <!-nav area->
+    <!-- <!-nav area-> -->
       <div class="sticky-wrapper">
         <div class="sticky-active">
           <div class="container-fluid">
@@ -203,8 +287,8 @@
                   </button>
 
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Login</a></li>
-                    <li><a class="dropdown-item" href="#">Register</a></li>
+                    <li><a class="dropdown-item" href="{% url 'login' %}">Login</a></li>
+                    <li><a class="dropdown-item" href="{% url 'register' %}">Register</a></li>
                   </ul>
 
                 </div>
@@ -220,7 +304,7 @@
                 </a> -->
 
                   <!-- Account Button -->
-                  <button class="vs-btn dropdown-toggle">
+                  <button class="vs-btn dropdown-toggle ">
                     Account
                   </button>
 

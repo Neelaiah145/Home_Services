@@ -16,13 +16,41 @@ from accounts.utils import paginate_queryset
 
 from accounts.views import mainly_allowed_roles
 
-class CategoryServicesAPIView(View):
-    def get(self, request, category_id):
-        services = CategoryService.objects.filter(
-            category_id=category_id
-        ).order_by('s_title').values('id', 's_title')
-        return JsonResponse({'services': list(services)})
 
+
+
+
+class CategoryServicesAPIView(View):
+
+    def get(self, request):
+        banners = HeroBanner.objects.all()
+        categories = Category.objects.all()
+        total_services = CategoryService.objects.all()
+     
+        category_id = request.GET.get('category')
+
+        cat_services = CategoryService.objects.none()
+     
+  
+        if category_id:
+
+            cat_services = CategoryService.objects.filter(
+                    category_id=category_id
+                ).order_by(
+                    's_title'
+                )
+
+        context = {
+            'banners': banners,
+            'categories': categories,
+            'cat_services': cat_services,
+            'total_services': total_services,
+            'count_service':count_service,
+            
+           
+        }
+
+        return render(request,'index.html',context)
 
 
 
@@ -35,6 +63,7 @@ class IndexView(View):
         services_cards = ServicesCards.objects.all().order_by('servicename')
         jobs = Job.objects.all().order_by('title')
         feedbacks = ServiceFeedback.objects.all().order_by('-id')
+        count_service = CategoryService.objects.count()
 
         category_id = request.GET.get('category')
         service_id = request.GET.get('cat_service')
@@ -65,6 +94,7 @@ class IndexView(View):
             'jobs': jobs,
             'feedbacks': feedbacks,
             'cat_services': cat_services,
+            'count_service':count_service,
         }
         return render(request, 'index.html',context )
 
@@ -72,32 +102,73 @@ class IndexView(View):
 
 
 class ServicesListView(View):
+
     def get(self, request, pk):
+
         footer = Footer.objects.first()
-        selected_category = get_object_or_404(Category, pk=pk)
-        news = News.objects.all().order_by('id')
 
-        service_id = request.GET.get('service')  # optional filter
+        news = News.objects.all().order_by(
+                'id'
+            )
 
+        # CATEGORY
+        selected_category = get_object_or_404(
+                Category,
+                pk=pk
+            )
+
+        # SERVICE ID
+        service_id = request.GET.get(
+                'service'
+            )
+
+        # ALL SERVICES
         category_services = CategoryService.objects.filter(
-            category=selected_category
-        ).order_by('s_title')
+                category=selected_category
+            ).order_by(
+                's_title'
+            )
 
-        # If a specific service was selected, filter down to just that one
+        # FILTER SINGLE SERVICE
         if service_id:
-            category_services = category_services.filter(id=service_id)
 
-        paginator = Paginator(category_services, 3)
-        page_number = request.GET.get('page')
-        category_servicess = paginator.get_page(page_number)
-        context={
-            'selected_category': selected_category,
-            'category_servicess': category_servicess,
-            'category_services': CategoryService.objects.filter(category=selected_category),
-            'footer': footer,
-            'news': news,
+            category_services = category_services.filter(
+                    id=service_id
+                )
+
+        # PAGINATION
+        paginator = Paginator(category_services,3)
+
+        page_number = request.GET.get(
+                'page'
+            )
+
+        category_servicess = paginator.get_page(
+                page_number
+            )
+
+        context = {
+
+            'selected_category':
+                selected_category,
+
+            'category_servicess':
+                category_servicess,
+
+            'category_services':
+                CategoryService.objects.filter(
+                    category=selected_category
+                ),
+
+            'footer':
+                footer,
+
+            'news':
+                news,
+
         }
-        return render(request, 'serviceslist.html',context)
+
+        return render(request,'serviceslist.html',context)
         
         
 
