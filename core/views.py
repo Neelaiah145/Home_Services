@@ -12,6 +12,7 @@ from django.http import JsonResponse
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from accounts.utils import paginate_queryset
+from accounts.utils import permission_required
 # Create your views here.
 
 from accounts.views import mainly_allowed_roles
@@ -45,7 +46,7 @@ class CategoryServicesAPIView(View):
             'categories': categories,
             'cat_services': cat_services,
             'total_services': total_services,
-            'count_service':count_service,
+           
             
            
         }
@@ -404,6 +405,7 @@ class NewsListView(LoginRequiredMixin,View):
             }
         )
 
+
 @method_decorator(never_cache, name='dispatch')
 class CreateNews(LoginRequiredMixin,View):
     def get(self, request):
@@ -421,6 +423,7 @@ class CreateNews(LoginRequiredMixin,View):
         return redirect('news.list')
     
     
+
 
 @method_decorator(never_cache, name='dispatch')
 class UpdateNews(LoginRequiredMixin,View):

@@ -990,19 +990,7 @@ tbody tr:hover{
                         </td>
 <td class="user-location">
 
-    {% if user.role == "customer" %}
-
-        {% with booking=user.booking_set.first %}
-
-            {{ booking.city|default:"Not Added" }}
-
-        {% endwith %}
-
-    {% else %}
-
-        {{ user.city|default:"Not Added" }}
-
-    {% endif %}
+    {{ user.city|default:"Not Added" }}
 
 </td>
 

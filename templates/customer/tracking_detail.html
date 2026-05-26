@@ -8,7 +8,7 @@
 
 body{
     background:#f4f7fb;
-   
+    font-family:'DM Sans',sans-serif;
 }
 
 .timeline-page{
@@ -17,8 +17,6 @@ body{
     padding:20px;
 }
 
-/* CARD */
-
 .timeline-card{
     background:#fff;
     border-radius:24px;
@@ -26,8 +24,6 @@ body{
     border:1px solid #e5e7eb;
     box-shadow:0 2px 16px rgba(0,0,0,0.04);
 }
-
-/* HEADER */
 
 .page-title{
     font-size:32px;
@@ -41,8 +37,6 @@ body{
     color:#6b7280;
     margin-bottom:30px;
 }
-
-/* BOOKING BOX */
 
 .booking-box{
     background:#f9fafb;
@@ -78,8 +72,6 @@ body{
     color:#111827;
 }
 
-/* TIMELINE */
-
 .timeline{
     position:relative;
     margin-left:12px;
@@ -95,8 +87,6 @@ body{
     background:#dbeafe;
 }
 
-/* TIMELINE ITEM */
-
 .timeline-item{
     position:relative;
     padding-left:46px;
@@ -106,8 +96,6 @@ body{
 .timeline-item:last-child{
     padding-bottom:0;
 }
-
-/* DOT */
 
 .timeline-dot{
     position:absolute;
@@ -120,8 +108,6 @@ body{
     border:5px solid #dbeafe;
 }
 
-/* STATUS */
-
 .timeline-status{
     font-size:17px;
     font-weight:700;
@@ -130,8 +116,6 @@ body{
     text-transform:capitalize;
 }
 
-/* MESSAGE */
-
 .timeline-message{
     font-size:14px;
     color:#4b5563;
@@ -139,22 +123,16 @@ body{
     margin-bottom:8px;
 }
 
-/* HIGHLIGHT */
-
 .highlight-text{
     font-weight:700;
     color:#2563eb;
 }
-
-/* DATE */
 
 .timeline-date{
     font-size:13px;
     color:#9ca3af;
     font-weight:500;
 }
-
-/* EMPTY */
 
 .empty-box{
     text-align:center;
@@ -177,8 +155,6 @@ body{
     font-size:14px;
     color:#6b7280;
 }
-
-/* MOBILE */
 
 @media(max-width:768px){
 
@@ -211,8 +187,6 @@ body{
 
     <div class="timeline-card">
 
-        <!-- HEADER -->
-
         <div class="page-title">
             Order Timeline
         </div>
@@ -221,13 +195,9 @@ body{
             Track all booking status updates and activity history
         </div>
 
-        <!-- BOOKING DETAILS -->
-
         <div class="booking-box">
 
             <div class="booking-grid">
-
-                <!-- ORDER -->
 
                 <div class="booking-item">
 
@@ -241,8 +211,6 @@ body{
 
                 </div>
 
-                <!-- SERVICE -->
-
                 <div class="booking-item">
 
                     <div class="booking-label">
@@ -254,8 +222,6 @@ body{
                     </div>
 
                 </div>
-
-                <!-- VENDOR -->
 
                 <div class="booking-item">
 
@@ -283,8 +249,6 @@ body{
 
         </div>
 
-        <!-- TIMELINE -->
-
         {% if history %}
 
         <div class="timeline">
@@ -293,11 +257,7 @@ body{
 
             <div class="timeline-item">
 
-                <!-- DOT -->
-
                 <div class="timeline-dot"></div>
-
-                <!-- STATUS -->
 
                 <div class="timeline-status">
 
@@ -305,27 +265,29 @@ body{
 
                 </div>
 
-                <!-- MESSAGE -->
-
                 <div class="timeline-message">
 
                     {% if h.updated_by.role == "admin" %}
 
-                        Admin updated booking status to
+                        {% if h.status == "assigned" %}
 
-                        <span class="highlight-text">
-
-                            {{ h.get_status_display }}
-
-                        </span>
-
-                        {% if h.status == "assigned" and booking.vendor %}
-
-                            and assigned vendor
+                            Admin assigned vendor
 
                             <span class="highlight-text">
 
                                 {{ booking.vendor.first_name }}
+
+                            </span>
+
+                            to this booking
+
+                        {% else %}
+
+                            Admin changed booking status to
+
+                            <span class="highlight-text">
+
+                                {{ h.get_status_display }}
 
                             </span>
 
@@ -355,11 +317,9 @@ body{
 
                 </div>
 
-                <!-- DATE -->
-
                 <div class="timeline-date">
 
-                    {{ h.booking_created_at|date:"d M Y • h:i A" }}
+                    {{ h.created_at|date:"d M Y • h:i A" }}
 
                 </div>
 
@@ -370,8 +330,6 @@ body{
         </div>
 
         {% else %}
-
-        <!-- EMPTY -->
 
         <div class="empty-box">
 

@@ -12,7 +12,7 @@
 
   <title>SriDixitha Dashboard </title>
 
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- remix icon font css -->
   <link rel="stylesheet" href="{% static 'assets/css/remixicon.css' %}">
@@ -58,7 +58,10 @@
 
   <!-- main css -->
   <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+  
    <link rel="stylesheet" href="{% static 'assets/css/dashboards.css' %}">
+ 
+  
   
 
 </head>
@@ -76,7 +79,30 @@
       <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
     </button>
     <div>
-      <a href="index.html" class="sidebar-logo">
+     <a href="
+{% if request.user.role == 'superadmin' %}
+
+    {% url 'superadmin_dashboard' %}
+
+{% elif request.user.role == 'admin' %}
+
+    {% url 'admin_dashboard' %}
+
+{% elif request.user.role == 'vendor' %}
+
+    {% url 'vendor_dashboard' %}
+
+{% elif request.user.role == 'customer' %}
+
+    {% url 'customer_dashboard' %}
+
+{% else %}
+
+    /
+
+{% endif %}
+"
+class="sidebar-logo">
 
         <img src="{% static 'assets/images/logo/sridixitha_logo.gif' %}" alt="site1 logo" class="light-logo">
 
@@ -159,6 +185,18 @@
             <span>T&C Approvals</span>
           </a>
         </li>
+                <li class="sidebar__item {% if request.resolver_match.url_name == 'admin_permissions' %}active{% endif %}">
+          <a href="{% url 'admin_permissions' %}">
+              <iconify-icon
+                icon="mdi:shield-account-outline"
+               class="menu-icon">
+            </iconify-icon>
+            <span>
+               Admin Permissions
+            </span>
+          </a>
+        </li>
+
 
         <li class="sidebar-menu-group-title">Dashboard</li>
 
@@ -320,6 +358,10 @@
             <span>Remarks</span>
           </a>
         </li>
+     
+
+
+
 
 
         
@@ -328,13 +370,15 @@
 
 
         <li class="sidebar-menu-group-title">Dashboard</li>
-
+       
         <li class="sidebar__item {% if request.resolver_match.url_name == 'news.list' %}active{% endif %}">
           <a href="{% url 'news.list' %}">
             <iconify-icon icon="mdi:newspaper-variant-multiple-outline" class="menu-icon"></iconify-icon>
             <span>News</span>
           </a>
         </li>
+
+       
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'list.banner' %}active{% endif %}">
           <a href="{% url 'list.banner' %}">

@@ -173,11 +173,39 @@ $(window).on('load', function () {
       });
 
       // Menu Show & Hide On Toggle Btn click
-      $(opt.menuToggleBtn).each(function () {
-        $(this).on("click", function () {
-          menuToggle();
-        });
-      });
+// Menu Show & Hide On Toggle Btn click
+$(opt.menuToggleBtn).each(function () {
+  $(this).on("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    menu.toggleClass(opt.bodyToggleClass);
+  });
+});
+
+
+// Close mobile menu when clicking menu links
+menu.find("a").on("click", function () {
+
+  // ignore submenu expand button click
+  if ($(this).find("." + opt.meanExpandClass).length) {
+    return;
+  }
+
+  // mobile only
+  if ($(window).width() < 992) {
+
+    menu.removeClass(opt.bodyToggleClass);
+
+    // optional close submenu also
+    menu.find("." + opt.subMenuClass)
+      .removeClass(opt.subMenuToggleClass)
+      .slideUp(opt.toggleSpeed);
+
+    menu.find("." + opt.subMenuParent)
+      .removeClass(opt.subMenuParentToggle);
+  }
+});
 
       // Hide Menu On out side click
       menu.on("click", function (e) {

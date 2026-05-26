@@ -19978,6 +19978,7 @@ section.contact-layout1.space-top {
 @media (max-width: 768px) {
   #category-select[size="4"] { left: 0px; width: 20px !important; } 
   #service-select[size="4"]  { left: -25px; right: -5px; }
+  .sec-title{font-size: 25px !;}
 }
 
 

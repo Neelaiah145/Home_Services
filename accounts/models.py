@@ -124,7 +124,7 @@ class User(AbstractUser):
 
 
 def generate_order_id():
-    return "SDXETS" + uuid.uuid4().hex[:8].upper()
+    return "SDXETS" + uuid.uuid4().hex[:6].upper()
 
 # bookings
 
@@ -503,3 +503,39 @@ class TermsAcceptance(models.Model):
     def __str__(self):
 
         return self.customer.email
+    
+
+
+
+
+    class Meta:
+        permissions = [
+            ("manage_news",
+             "Can Manage News"),
+            
+            ("manage_hero_section",
+             "Can Manage Hero Section"),
+            
+            ("manage_categories",
+             "Can Manage Categories"),
+            
+            ("manage_categories_service",
+             "Can Manage Categories Service"),
+            
+            ("manage_service",
+             "Can Manage Service"),
+            
+            ("manage_job_application",
+             "Can Manage Job Application"),
+            
+            ("manage_feedback",
+             "Can Manage Feedback"),
+            
+            ("manage_inquery_contact",
+             "Can Manage Inquery Contact"),
+            
+            ("manage_footer",
+             "Can Manage Footer"),
+            
+            
+        ]
