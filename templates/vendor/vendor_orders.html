@@ -379,6 +379,7 @@ tbody tr:hover{
     align-items:center;
     flex-wrap:wrap;
     gap:15px;
+    transition: .25s ease;
 }
 
 .renew-left{
@@ -409,6 +410,45 @@ tbody tr:hover{
     font-weight:700;
     cursor:pointer;
 }
+
+/* Close/Dismiss Button Style */
+.close-notification-btn{
+    width:34px;
+    height:34px;
+    border:none;
+    border-radius:50%;
+    background:#ffedd5;
+    color:#ea580c;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:700;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.close-notification-btn:hover {
+    background:#fed7aa;
+}
+
+.renew-view-more-wrap{
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:20px;
+}
+
+.renew-view-more-btn{
+    font-size:13px;
+    font-weight:700;
+    color:#2563eb;
+    cursor:pointer;
+}
+
+.renew-view-more-btn:hover{
+    color:#1d4ed8;
+}
+
 .renew-badge{
     margin-top:8px;
     display:inline-flex;
@@ -448,48 +488,63 @@ tbody tr:hover{
 
     </div>
 
+    <div class="renew-notifications-wrapper">
     {% for b in bookings %}
+        {% if b.renewal_requested %}
+        <div class="renew-notification" id="renew-notification-{{ b.id }}" data-id="{{ b.id }}">
 
-    {% if b.renewal_requested %}
+            <div class="renew-left">
 
-    <div class="renew-notification">
+                <div class="renew-title">
 
-        <div class="renew-left">
+                    🔔 Renewal Request
 
-            <div class="renew-title">
+                </div>
 
-                🔔 Renewal Request
+                <div class="renew-sub">
+
+                    {{ b.user.first_name }}
+                    extended
+                    {{ b.service.s_title }}
+
+                    service until
+
+                    {{ b.end_date }}
+
+                </div>
 
             </div>
 
-            <div class="renew-sub">
-
-                {{ b.user.first_name }}
-                extended
-                {{ b.service.s_title }}
-
-                service until
-
-                {{ b.end_date }}
-
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button
+                    class="accept-renew-btn"
+                    onclick="acceptRenewal('{{ b.id }}')"
+                >
+                    Accept Renewal
+                </button>
+                <button 
+                    type="button" 
+                    class="close-notification-btn" 
+                    onclick="dismissRenewalNotification('{{ b.id }}')"
+                >
+                    ✕
+                </button>
             </div>
 
         </div>
+        {% endif %}
+    {% endfor %}
 
-        <button
-            class="accept-renew-btn"
-            onclick="acceptRenewal('{{ b.id }}')"
-        >
-
-            Accept Renewal
-
-        </button>
-
+        <div class="renew-view-more-wrap" id="renewToggleContainer" style="display: none;">
+            <span
+                class="renew-view-more-btn"
+                onclick="toggleVendorRenewAlerts()"
+                id="renewToggleBtn"
+            >
+                View More
+            </span>
+        </div>
     </div>
-
-    {% endif %}
-
-{% endfor %}
 
     <div class="table-card">
 
@@ -562,8 +617,6 @@ tbody tr:hover{
                         <th>Status</th>
                         <th>Update Status</th>
                         <th>Details</th>
-                        <!-- <th>Payment</th> -->
-
                     </tr>
 
                 </thead>
@@ -656,8 +709,6 @@ tbody tr:hover{
                                 <select id="status-{{ b.id }}"
                                         class="custom-select">
 
-                    
-
                                     <option value="accepted"
                                         {% if b.status == "accepted" %}selected{% endif %}>
                                         Accepted
@@ -702,65 +753,6 @@ tbody tr:hover{
                             </a>
 
                         </td>
-<!-- 
-                        <td>
-
-                            {% if b.status == "accepted" or b.status == "in_progress" or b.status == "completed" %}
-
-                                {% with payment=b.payments.first %}
-
-                                    {% if payment %}
-
-                                        <div class="paid-box">
-
-                                            <div class="paid-title">
-                                                Payment Done
-                                            </div>
-
-                                            {% if payment.transaction_id %}
-
-                                            <div class="txn-id">
-                                                {{ payment.transaction_id }}
-                                            </div>
-
-                                            {% endif %}
-
-                                            {% if payment.screenshot %}
-
-                                            <a href="{{ payment.screenshot.url }}"
-                                               target="_blank"
-                                               class="screenshot-btn">
-
-                                                Screenshot
-
-                                            </a>
-
-                                            {% endif %}
-
-                                        </div>
-
-                                    {% else %}
-
-                                        <a href="{% url 'vendor_payment_page' b.id %}"
-                                           class="payment-btn">
-
-                                            Upload
-
-                                        </a>
-
-                                    {% endif %}
-
-                                {% endwith %}
-
-                            {% else %}
-
-                                <div class="payment-pending">
-                                    Complete first
-                                </div>
-
-                            {% endif %}
-
-                        </td> -->
 
                     </tr>
 
@@ -782,15 +774,11 @@ tbody tr:hover{
                 </tbody>
 
             </table>
-            <!-- PAGINATION -->
-
-{% if page_obj %}
+            {% if page_obj %}
 
 <div class="tbl-footer">
 
     <div class="page-btns">
-
-        <!-- PREVIOUS -->
 
         {% if page_obj.has_previous %}
 
@@ -803,15 +791,11 @@ tbody tr:hover{
 
         {% endif %}
 
-        <!-- CURRENT PAGE -->
-
         <span class="pg-btn active">
 
             {{ page_obj.number }}
 
         </span>
-
-        <!-- NEXT PAGE -->
 
         {% if page_obj.has_next %}
 
@@ -821,8 +805,6 @@ tbody tr:hover{
             {{ page_obj.next_page_number }}
 
         </a>
-
-        <!-- NEXT -->
 
         <a class="pg-btn"
            href="?page={{ page_obj.next_page_number }}">
@@ -839,12 +821,6 @@ tbody tr:hover{
 
 {% endif %}
 
-
-
-
-
-
-
         </div>
 
     </div>
@@ -852,6 +828,79 @@ tbody tr:hover{
 </div>
 
 <script>
+
+window.onload = function(){
+    const alerts = Array.from(document.querySelectorAll('.renew-notification'));
+    let activeVisibleCount = 0;
+
+    alerts.forEach(function(alert){
+        const bookingId = alert.dataset.id;
+        
+        // Persistent check for closed items
+        if(localStorage.getItem("vendor_renew_closed_" + bookingId) === "true"){
+            alert.style.display = "none";
+        } else {
+            activeVisibleCount++;
+            if(activeVisibleCount > 1){
+                alert.style.display = "none";
+                alert.classList.add('collapsible-notification');
+            } else {
+                alert.style.display = "flex";
+            }
+        }
+    });
+
+    const totalRemainingHidden = alerts.filter(el => el.classList.contains('collapsible-notification') && el.style.display === "none").length;
+    if(totalRemainingHidden > 0){
+        document.getElementById('renewToggleContainer').style.display = 'flex';
+    }
+}
+
+function dismissRenewalNotification(id){
+    const targetBox = document.getElementById("renew-notification-" + id);
+
+    if(targetBox){
+        targetBox.style.opacity = "0";
+        targetBox.style.transform = "translateY(-10px)";
+        
+        setTimeout(function(){
+            targetBox.style.display = "none";
+            localStorage.setItem("vendor_renew_closed_" + id, "true");
+            
+            // Promote next hidden alert contextually
+            const remainingCollapsible = Array.from(document.querySelectorAll('.renew-notification.collapsible-notification'));
+            const currentlyVisible = Array.from(document.querySelectorAll('.renew-notification')).filter(el => el.style.display === 'flex' || el.style.display === '');
+            
+            if(currentlyVisible.length === 0 && remainingCollapsible.length > 0){
+                const nextAlert = remainingCollapsible[0];
+                nextAlert.style.display = 'flex';
+                nextAlert.classList.remove('collapsible-notification');
+            }
+
+            const stillHidden = Array.from(document.querySelectorAll('.renew-notification.collapsible-notification')).filter(el => el.style.display === 'none');
+            if(stillHidden.length === 0){
+                document.getElementById('renewToggleContainer').style.display = 'none';
+            }
+        }, 250);
+    }
+}
+
+function toggleVendorRenewAlerts(){
+    const hiddenAlerts = document.querySelectorAll('.renew-notification.collapsible-notification');
+    const btn = document.getElementById("renewToggleBtn");
+
+    if(btn.innerText === "View More"){
+        hiddenAlerts.forEach(function(alert){
+            alert.style.display = "flex";
+        });
+        btn.innerText = "Show Less";
+    } else {
+        hiddenAlerts.forEach(function(alert){
+            alert.style.display = "none";
+        });
+        btn.innerText = "View More";
+    }
+}
 
 let currentStatus = "";
 
@@ -1018,7 +1067,6 @@ function acceptRenewal(id){
     });
 
 }
-
 
 </script>
 

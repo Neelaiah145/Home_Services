@@ -443,7 +443,7 @@ body {
                 <thead>
                     <tr>
                         <th>Sl.No</th>
-                        <th>Order ID </th>
+                        <th>Service ID </th>
                         <th>Service Name</th>
                         <th>Vendor Details</th>
                         <th>Date Booked</th>
@@ -478,7 +478,7 @@ body {
 
                         <!-- DATE ONLY -->
                         <td>
-                            <div class="cp-vendor-name">{{ booking.created_at|date:"d M Y" }}</div>
+                            <div class="cp-vendor-name">{{ booking.booking_created_at|date:"d M Y" }}</div>
                         </td>
 
                         <!-- STATUS -->

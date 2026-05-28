@@ -4,7 +4,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
- <style>
+<style>
 
 :root{
     --bg:#f4f7fb;
@@ -17,7 +17,6 @@
 
 body{
     background:var(--bg);
-   
 }
 
 /* PAGINATION */
@@ -401,54 +400,81 @@ tbody tr:hover{
     color:#6b7280;
     font-size:14px;
 }
+
 /* NOTIFICATION */
 
-.due-notification{
-    display:none;
-    align-items:flex-start;
-    gap:14px;
-    background:#fff7ed;
-    border:1px solid #fdba74;
-    padding:16px 18px;
-    border-radius:16px;
+.notification-wrapper{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
     margin-top:18px;
     margin-bottom:18px;
 }
 
-.notify-icon{
-    width:44px;
-    height:44px;
-    border-radius:12px;
-    background:#ffedd5;
+.due-notification{
+    background:#fffaf0;
+    border-left:4px solid #f59e0b;
+    border-radius:10px;
+    padding:14px;
     display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:20px;
-    flex-shrink:0;
+    justify-content:space-between;
+    align-items:flex-start;
+    transition:0.3s ease;
+}
+
+.notify-left{
+    display:flex;
+    gap:12px;
+}
+
+.notify-icon{
+    font-size:22px;
 }
 
 .notify-title{
     font-size:15px;
-    font-weight:700;
-    color:#9a3412;
+    font-weight:600;
+    color:#222;
     margin-bottom:4px;
 }
 
 .notify-text{
-    font-size:13px;
-    color:#7c2d12;
-    line-height:1.7;
+    font-size:14px;
+    color:#666;
+    line-height:1.5;
 }
-/* MOBILE */
 
+.close-notify{
+    border:none;
+    background:none;
+    cursor:pointer;
+    font-size:15px;
+    color:#777;
+    flex-shrink:0;
+    padding:0;
+    margin-left:10px;
+}
+
+.view-more-wrap{
+    display:flex;
+    justify-content:flex-end;
+}
+
+.view-more-btn{
+    color:#2563eb;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:500;
+    background:none;
+    border:none;
+    padding:0;
+}
 
 @media(max-width:768px){
 
     .orders-page{
         padding:14px;
     }
-
-    /* HEADER */
 
     .dashboard-heading{
         font-size:24px;
@@ -466,20 +492,15 @@ tbody tr:hover{
         text-overflow:ellipsis;
     }
 
-    /* NOTIFICATION */
-
     .due-notification{
         padding:12px;
         border-radius:14px;
         gap:10px;
-        margin-top:14px;
-        margin-bottom:14px;
+        margin-top:0;
+        margin-bottom:0;
     }
 
     .notify-icon{
-        width:38px;
-        height:38px;
-        border-radius:10px;
         font-size:16px;
     }
 
@@ -491,8 +512,6 @@ tbody tr:hover{
         font-size:12px;
         line-height:1.5;
     }
-
-    /* CARD */
 
     .table-card{
         border-radius:16px;
@@ -508,8 +527,6 @@ tbody tr:hover{
     .card-title{
         font-size:15px;
     }
-
-    /* TOOLBAR */
 
     .toolbar{
         display:grid;
@@ -548,8 +565,6 @@ tbody tr:hover{
         box-shadow:0 4px 10px rgba(37,99,235,.15);
     }
 
-    /* TABLE */
-
     .table-wrap{
         overflow-x:auto;
         border-radius:0 0 16px 16px;
@@ -568,8 +583,6 @@ tbody tr:hover{
         padding:12px;
         font-size:13px;
     }
-
-    /* BUTTONS */
 
     .request-btn,
     .submit-btn,
@@ -597,8 +610,6 @@ tbody tr:hover{
         line-height:1.5;
     }
 
-    /* PAGINATION */
-
     .tbl-footer{
         justify-content:center;
         padding:14px;
@@ -615,7 +626,7 @@ tbody tr:hover{
         font-size:12px;
     }
 }
-</style> 
+</style>
 
 <div class="orders-page">
 
@@ -624,59 +635,61 @@ tbody tr:hover{
     <div>
 
         <h2 class="dashboard-heading">
-             Payment History
+            Payment History
         </h2>
 
         <p class="dashboard-subheading">
-          View all your payment transactions and payment details
+            View all your payment transactions and payment details
         </p>
 
     </div>
 
+    <!-- NOTIFICATION SECTION -->
+    <!-- All notifications rendered, JS controls visibility -->
 
+    <div class="notification-wrapper" id="notificationWrapper">
 
-    <!-- DUE DATE NOTIFICATIONS -->
+        {% for item in booking_data %}
+            {% if item.payment and item.payment.due_date %}
+            <div
+                class="due-notification"
+                id="payment-alert-{{ item.payment.id }}"
+                style="display:none;"
+            >
+                <div class="notify-left">
+                    <div class="notify-icon">🔔</div>
+                    <div>
+                        <div class="notify-title">Payment Due Reminder</div>
+                        <div class="notify-text">
+                            Your payment due date is
+                            <strong>{{ item.payment.due_date }}</strong>
+                        </div>
+                    </div>
+                </div>
+                <button
+                    class="close-notify"
+                    onclick="closeNotification('{{ item.payment.id }}')"
+                    aria-label="Close notification"
+                >
+                    ✕
+                </button>
+            </div>
+            {% endif %}
+        {% endfor %}
 
-{% for item in booking_data %}
+    </div>
 
-    {% if item.payment and item.payment.due_date %}
+    <!-- VIEW MORE / VIEW LESS BUTTON -->
 
-        <div
-            class="due-notification"
-            data-date="{{ item.payment.due_date|date:'Y-m-d' }}"
+    <div class="view-more-wrap" id="toggleWrap" style="display:none; margin-top:4px; margin-bottom:18px;">
+        <button
+            class="view-more-btn"
+            id="toggleNotifyBtn"
+            onclick="toggleNotifications()"
         >
-
-            <div class="notify-icon">
-                🔔
-            </div>
-
-            <div>
-
-                <div class="notify-title">
-
-                    Payment Due Reminder
-
-                </div>
-
-                <div class="notify-text">
-
-                    Your payment due date is
-                    <strong>
-                        {{ item.payment.due_date }}
-                    </strong>
-
-                    Please pay the amount before due date
-                    or contact admin for support.
-
-                </div>
-
-            </div>
-
-        </div>
-
-    {% endif %}
-
-{% endfor %}
+            View More
+        </button>
+    </div>
 
     <!-- CARD -->
 
@@ -688,17 +701,13 @@ tbody tr:hover{
 
             <div class="card-header-flex">
 
-                <div class="card-title">
-                    Transactions
-                </div>
+                <div class="card-title">Transactions</div>
 
                 <div class="toolbar">
 
                     <div class="search-container">
 
-                        <span class="search-icon">
-                            🔍
-                        </span>
+                        <span class="search-icon">🔍</span>
 
                         <input
                             type="text"
@@ -709,45 +718,21 @@ tbody tr:hover{
 
                     </div>
 
-                    <select
-                        name="payment_status"
-                        class="filter-select"
-                    >
+                    <select name="payment_status" class="filter-select">
 
-                        <option value="">
-                            All Status
-                        </option>
+                        <option value="">All Status</option>
 
                         <option value="paid"
-                            {% if request.GET.payment_status == "paid" %}
-                            selected
-                            {% endif %}
-                        >
-
-                            Paid
-
-                        </option>
+                            {% if request.GET.payment_status == "paid" %}selected{% endif %}
+                        >Paid</option>
 
                         <option value="pending"
-                            {% if request.GET.payment_status == "pending" %}
-                            selected
-                            {% endif %}
-                        >
-
-                            Pending
-
-                        </option>
+                            {% if request.GET.payment_status == "pending" %}selected{% endif %}
+                        >Pending</option>
 
                     </select>
 
-                    <button
-                        type="submit"
-                        class="filter-btn"
-                    >
-
-                        Apply Filters
-
-                    </button>
+                    <button type="submit" class="filter-btn">Apply Filters</button>
 
                 </div>
 
@@ -762,10 +747,9 @@ tbody tr:hover{
             <table>
 
                 <thead>
-
                     <tr>
                         <th>Sl.No</th>
-                        <th>Order</th>
+                        <th>Service ID</th>
                         <th>Service</th>
                         <th>Vendor</th>
                         <th>Total Amount</th>
@@ -776,9 +760,7 @@ tbody tr:hover{
                         <th>Request</th>
                         <th>Due Date</th>
                         <th>Invoice</th>
-
                     </tr>
-
                 </thead>
 
                 <tbody>
@@ -787,130 +769,66 @@ tbody tr:hover{
 
                     <tr>
 
-                        <!-- ORDER -->
+                        <!-- SL NO -->
                         <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+
+                        <!-- ORDER ID -->
                         <td>
-
-                            <div class="order-id">
-                                {{ item.booking.order_id }}
-                            </div>
-
-                            <div class="small-text">
-                                {{ item.booking.created_at|date:"d M Y" }}
-                            </div>
-
+                            <div class="order-id">{{ item.booking.order_id }}</div>
+                            <div class="small-text">{{ item.booking.created_at|date:"d M Y" }}</div>
                         </td>
 
                         <!-- SERVICE -->
-
                         <td>
-
-                            <div class="service-title">
-                                {{ item.booking.service.s_title }}
-                            </div>
-
-                            <div class="small-text">
-                                {{ item.booking.category }}
-                            </div>
-
+                            <div class="service-title">{{ item.booking.service.s_title }}</div>
+                            <div class="small-text">{{ item.booking.category }}</div>
                         </td>
 
                         <!-- VENDOR -->
-
                         <td>
-
                             {% if item.booking.vendor %}
-
-                                <div class="vendor-name">
-                                    {{ item.booking.vendor.first_name }}
-                                </div>
-
-                                <div class="small-text">
-                                    {{ item.booking.vendor.mobile }}
-                                </div>
-
+                                <div class="vendor-name">{{ item.booking.vendor.first_name }}</div>
+                                <div class="small-text">{{ item.booking.vendor.mobile }}</div>
                             {% else %}
-
-                                <div class="small-text">
-                                    Not Assigned
-                                </div>
-
+                                <div class="small-text">Not Assigned</div>
                             {% endif %}
-
                         </td>
 
                         <!-- TOTAL -->
-
-                        <td class="amount-text">
-
-                            ₹{{ item.payment.total_amount|default:"0" }}
-
-                        </td>
+                        <td class="amount-text">₹{{ item.payment.total_amount|default:"0" }}</td>
 
                         <!-- PAID -->
-
-                        <td class="amount-text"
-                            style="color:#2563eb;">
-
+                        <td class="amount-text" style="color:#2563eb;">
                             ₹{{ item.payment.paid_amount|default:"0" }}
-
                         </td>
 
                         <!-- REMAINING -->
-
-                        <td class="amount-text"
-                            style="color:#dc2626;">
-
+                        <td class="amount-text" style="color:#dc2626;">
                             ₹{{ item.payment.remaining_amount|default:"0" }}
-
                         </td>
 
                         <!-- STATUS -->
-
                         <td>
-
                             <span class="status-badge {% if item.payment %}{{ item.payment.status }}{% else %}pending{% endif %}">
-
                                 {% if item.payment %}
-
                                     {{ item.payment.get_status_display }}
-
                                 {% else %}
-
                                     Pending
-
                                 {% endif %}
-
                             </span>
-
                         </td>
 
                         <!-- TRANSACTION -->
-
                         <td>
-
                             {% if item.payment.transaction_id %}
-
-                                <span class="transaction-box">
-
-                                    {{ item.payment.transaction_id }}
-
-                                </span>
-
+                                <span class="transaction-box">{{ item.payment.transaction_id }}</span>
                             {% else %}
-
-                                <span class="small-text">
-                                    N/A
-                                </span>
-
+                                <span class="small-text">N/A</span>
                             {% endif %}
-
                         </td>
 
                         <!-- REQUEST -->
-
                         <td>
-
                             {% if item.payment %}
 
                             <button
@@ -918,126 +836,55 @@ tbody tr:hover{
                                 class="request-btn"
                                 onclick="toggleRequestBox('{{ forloop.counter }}')"
                             >
-
                                 Request
-
                             </button>
 
-                            <!-- FORM -->
-
-                            <div
-                                id="requestBox_{{ forloop.counter }}"
-                                class="request-form"
-                            >
+                            <div id="requestBox_{{ forloop.counter }}" class="request-form">
 
                                 <form method="POST">
-
                                     {% csrf_token %}
-
-                                    <input
-                                        type="hidden"
-                                        name="payment_id"
-                                        value="{{ item.payment.id }}"
-                                    >
-
+                                    <input type="hidden" name="payment_id" value="{{ item.payment.id }}">
                                     <textarea
                                         name="payment_request"
                                         rows="3"
                                         placeholder="Enter payment request..."
                                         class="request-textarea"
                                     ></textarea>
-
-                                    <button
-                                        type="submit"
-                                        class="submit-btn"
-                                    >
-
-                                        Submit
-
-                                    </button>
-
+                                    <button type="submit" class="submit-btn">Submit</button>
                                 </form>
 
                             </div>
 
-                            <!-- REQUEST MESSAGE -->
-
                             {% if item.payment.payment_request %}
-
-                            <div class="request-message">
-
-                                {{ item.payment.payment_request }}
-
-                            </div>
-
-                            <div class="success-message">
-
-                                Request submitted successfully
-
-                            </div>
-
+                            <div class="request-message">{{ item.payment.payment_request }}</div>
+                            <div class="success-message">Request submitted successfully</div>
                             {% endif %}
 
                             {% else %}
-
-                            <span class="small-text">
-                                No Payment
-                            </span>
-
+                            <span class="small-text">No Payment</span>
                             {% endif %}
-
                         </td>
 
                         <!-- DUE DATE -->
-
                         <td>
-
                             {% if item.payment.due_date %}
-
-                            <div class="due-date-box">
-
-                                Payment Due Date :
-                                {{ item.payment.due_date }}
-
-                            </div>
-
+                                <div class="due-date-box">
+                                    Payment Due Date : {{ item.payment.due_date }}
+                                </div>
                             {% else %}
-
-                            <span class="small-text">
-
-                                Not Updated
-
-                            </span>
-
+                                <span class="small-text">Not Updated</span>
                             {% endif %}
-
                         </td>
 
                         <!-- INVOICE -->
-
                         <td>
-
                             {% if item.booking %}
-
-                            <a
-                                href="{% url 'customer_invoice' item.booking.id %}"
-                                class="invoice-btn"
-                            >
-
-                                Invoice
-
-                            </a>
-
+                                <a href="{% url 'customer_invoice' item.booking.id %}" class="invoice-btn">
+                                    Invoice
+                                </a>
                             {% else %}
-
-                            <span class="small-text">
-
-                                No Invoice
-
-                            </span>
-
+                                <span class="small-text">No Invoice</span>
                             {% endif %}
-
                         </td>
 
                     </tr>
@@ -1045,17 +892,9 @@ tbody tr:hover{
                     {% empty %}
 
                     <tr>
-
-                        <td colspan="11">
-
-                            <div class="empty-box">
-
-                                No payment records found
-
-                            </div>
-
+                        <td colspan="12">
+                            <div class="empty-box">No payment records found</div>
                         </td>
-
                     </tr>
 
                     {% endfor %}
@@ -1064,62 +903,32 @@ tbody tr:hover{
 
             </table>
 
-            <!-- PAGINATION -->
+        </div>
 
-            {% if page_obj %}
+        <!-- PAGINATION — outside table-wrap so it never scrolls -->
 
-            <div class="tbl-footer">
+        {% if page_obj %}
 
-                <div class="page-btns">
+        <div class="tbl-footer">
 
-                    {% if page_obj.has_previous %}
+            <div class="page-btns">
 
-                    <a
-                        class="pg-btn"
-                        href="?page={{ page_obj.previous_page_number }}"
-                    >
+                {% if page_obj.has_previous %}
+                <a class="pg-btn" href="?page={{ page_obj.previous_page_number }}">‹</a>
+                {% endif %}
 
-                        ‹
+                <span class="pg-btn active">{{ page_obj.number }}</span>
 
-                    </a>
-
-                    {% endif %}
-
-                    <span class="pg-btn active">
-
-                        {{ page_obj.number }}
-
-                    </span>
-
-                    {% if page_obj.has_next %}
-
-                    <a
-                        class="pg-btn"
-                        href="?page={{ page_obj.next_page_number }}"
-                    >
-
-                        {{ page_obj.next_page_number }}
-
-                    </a>
-
-                    <a
-                        class="pg-btn"
-                        href="?page={{ page_obj.next_page_number }}"
-                    >
-
-                        ›
-
-                    </a>
-
-                    {% endif %}
-
-                </div>
+                {% if page_obj.has_next %}
+                <a class="pg-btn" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                <a class="pg-btn" href="?page={{ page_obj.next_page_number }}">›</a>
+                {% endif %}
 
             </div>
 
-            {% endif %}
-
         </div>
+
+        {% endif %}
 
     </div>
 
@@ -1127,55 +936,123 @@ tbody tr:hover{
 
 <script>
 
-function toggleRequestBox(id){
+document.addEventListener("DOMContentLoaded", function () {
 
-    const box = document.getElementById(
-        "requestBox_" + id
-    );
+    var wrapper = document.getElementById("notificationWrapper");
+    if (!wrapper) return;
 
-    if(box.style.display === "none" || box.style.display === ""){
+    // Get all notification boxes from DOM
+    var all = wrapper.querySelectorAll(".due-notification");
+    if (all.length === 0) return;
 
-        box.style.display = "block";
-
-    }else{
-
-        box.style.display = "none";
-
-    }
-
-}
-
-document.addEventListener("DOMContentLoaded", function(){
-
-    const notifications = document.querySelectorAll(
-        ".due-notification"
-    );
-
-    notifications.forEach(function(box){
-
-        const dueDate = new Date(
-            box.dataset.date
-        );
-
-        const today = new Date();
-
-        const diffTime = dueDate - today;
-
-        const diffDays = Math.ceil(
-            diffTime / (1000 * 60 * 60 * 24)
-        );
-
-        // SHOW BEFORE 5 DAYS
-
-        if(diffDays <= 5 && diffDays >= 0){
-
-            box.style.display = "flex";
-
+    // Filter out permanently dismissed ones
+    var visible = [];
+    all.forEach(function(box) {
+        var key = "dismissed-" + box.id;
+        if (localStorage.getItem(key) === "1") {
+            // Permanently dismissed — remove from DOM silently
+            box.parentNode.removeChild(box);
+        } else {
+            visible.push(box);
         }
-
     });
 
+    if (visible.length === 0) return;
+
+    // Show only the first notification by default
+    visible[0].style.display = "flex";
+
+    // Show "View More" button only if there are more than 1 remaining
+    var toggleWrap = document.getElementById("toggleWrap");
+    var btn = document.getElementById("toggleNotifyBtn");
+
+    if (visible.length > 1) {
+        toggleWrap.style.display = "flex";
+        btn.textContent = "View More";
+    }
 });
+
+
+function closeNotification(paymentId) {
+    var boxId = "payment-alert-" + paymentId;
+    var key = "dismissed-" + boxId;
+
+    // Save as permanently dismissed
+    localStorage.setItem(key, "1");
+
+    var box = document.getElementById(boxId);
+    if (!box) return;
+
+    // Animate out
+    box.style.transition = "opacity 0.25s ease, transform 0.25s ease";
+    box.style.opacity = "0";
+    box.style.transform = "translateX(14px)";
+
+    setTimeout(function() {
+        if (box.parentNode) {
+            box.parentNode.removeChild(box);
+        }
+
+        var wrapper = document.getElementById("notificationWrapper");
+        var toggleWrap = document.getElementById("toggleWrap");
+        var btn = document.getElementById("toggleNotifyBtn");
+
+        if (!wrapper) return;
+
+        var remaining = wrapper.querySelectorAll(".due-notification");
+
+        if (remaining.length === 0) {
+            toggleWrap.style.display = "none";
+            return;
+        }
+
+        // If no notification is currently visible, show the first remaining one
+        var anyVisible = false;
+        remaining.forEach(function(b) {
+            if (b.style.display === "flex") anyVisible = true;
+        });
+
+        if (!anyVisible) {
+            remaining[0].style.display = "flex";
+        }
+
+        // Update toggle button visibility
+        if (remaining.length > 1) {
+            toggleWrap.style.display = "flex";
+        } else {
+            toggleWrap.style.display = "none";
+        }
+
+    }, 260);
+}
+
+
+function toggleNotifications() {
+    var wrapper = document.getElementById("notificationWrapper");
+    var btn = document.getElementById("toggleNotifyBtn");
+    if (!wrapper || !btn) return;
+
+    var all = wrapper.querySelectorAll(".due-notification");
+    var isExpanded = btn.textContent.trim() === "View Less";
+
+    all.forEach(function(box, i) {
+        if (i === 0) {
+            box.style.display = "flex"; // first always stays visible
+        } else {
+            box.style.display = isExpanded ? "none" : "flex";
+        }
+    });
+
+    btn.textContent = isExpanded ? "View More" : "View Less";
+}
+
+
+function toggleRequestBox(id) {
+    var box = document.getElementById("requestBox_" + id);
+    if (!box) return;
+    box.style.display = (box.style.display === "none" || box.style.display === "") ? "block" : "none";
+}
+
 </script>
 
 {% endblock %}

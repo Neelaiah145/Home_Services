@@ -864,7 +864,7 @@ class AllUsersView(LoginRequiredMixin,View):
             admin_count = 0
 
 
-
+        total_users = (customer_count+ vendor_count + admin_count)
         context = {
 
             "page_obj": page_obj,
@@ -875,6 +875,7 @@ class AllUsersView(LoginRequiredMixin,View):
             "customer_count": customer_count,
             "vendor_count": vendor_count,
             "admin_count": admin_count,
+            "total_users":total_users,
 
         }
 

@@ -416,7 +416,112 @@ body{
     font-weight:700;
     cursor:pointer;
 }
+/* view more*/ 
+.expiry-alert-wrap{
 
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+    margin-bottom:20px;
+}
+
+.expiry-alert{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:10px;
+
+    background:#fff7ed;
+
+    border:1px solid #fed7aa;
+
+    border-radius:12px;
+
+    padding:14px 16px;
+}
+
+.expiry-alert-text{
+
+    font-size:13px;
+
+    color:#9a3412;
+
+    line-height:1.6;
+}
+
+.expiry-close{
+
+    width:28px;
+
+    height:28px;
+
+    border:none;
+
+    border-radius:50%;
+
+    background:#fff;
+
+    color:#9a3412;
+
+    font-size:13px;
+
+    cursor:pointer;
+
+    flex-shrink:0;
+}
+
+/* HIDE EXTRA */
+
+.extra-alert{
+
+    display:none;
+}
+
+/* VIEW MORE */
+
+.view-more-wrap{
+
+    display:flex;
+
+    justify-content:flex-end;
+}
+
+.view-more-btn{
+
+    font-size:13px;
+
+    color:#2563eb;
+
+    font-weight:700;
+
+    cursor:pointer;
+}
+
+.view-more-btn:hover{
+
+    text-decoration:underline;
+}
+
+@media(max-width:768px){
+
+    .expiry-alert{
+
+        align-items:flex-start;
+    }
+
+    .expiry-alert-text{
+
+        font-size:12px;
+    }
+
+}
 /* =========================================
    MOBILE RESPONSIVE FIX
 ========================================= */
@@ -543,85 +648,61 @@ body{
 
 </style>
 
-    <div class="pg-wrap">
+<div class="pg-wrap">
 
-    <!-- PAGE HEADER -->
-        <h2 class="dashboard-heading">
-           Admin Renewal Management
-        </h2>
+    <h2 class="dashboard-heading">
+       Admin Renewal Management
+    </h2>
 
-        <p class="dashboard-subheading">
-            Track renewals and booking lifecycle
-        </p>
+    <p class="dashboard-subheading">
+        Track renewals and booking lifecycle
+    </p>
 
-      
-    </div>
-    
-<!-- notofication bar -->
-
-<!-- EXPIRY NOTIFICATIONS -->
-
-<div class="expiry-alert-wrap">
-
-    {% for booking in expiring_bookings %}
-
-        {% if booking.show_renew_button %}
-
-        <div
-            class="expiry-alert"
-            id="expiry-alert-{{ booking.id }}"
-             data-id="{{ booking.id }}"
-        >
-
-            <div class="expiry-alert-text">
-
-                🔔
-
-                <strong>
-                    {{ booking.user.first_name }}
-                </strong>
-
-                service
-
-                <strong>
-                     {{ booking.order_id }}
-                </strong>
-
-                is expiring soon
-
-            </div>
-
-            <button
-                class="expiry-close"
-                onclick="closeExpiryAlert('{{ booking.id }}')"
+    <div class="expiry-alert-wrap">
+        {% for booking in expiring_bookings %}
+            {% if booking.show_renew_button %}
+            <div
+                class="expiry-alert {% if forloop.counter > 2 %}extra-alert{% endif %}"
+                id="expiry-alert-{{ booking.id }}"
+                data-id="{{ booking.id }}"
             >
+                <div class="expiry-alert-text">
+                    🔔 
+                    <strong>{{ booking.user.first_name }}</strong> 
+                    service 
+                    <strong>{{ booking.order_id }}</strong> 
+                    is expiring soon
+                </div>
 
-                ✕
+                <button
+                    class="expiry-close"
+                    onclick="closeExpiryAlert('{{ booking.id }}')"
+                >
+                    ✕
+                </button>
+            </div>
+            {% endif %}
+        {% endfor %}
 
-            </button>
-
+        {% if expiring_bookings|length > 2 %}
+        <div class="view-more-wrap">
+            <span
+                class="view-more-btn"
+                onclick="toggleAlerts()"
+                id="toggleBtn"
+            >
+                View More
+            </span>
         </div>
-
         {% endif %}
-
-    {% endfor %}
-
-</div>
-
-<!-- end notification bar -->
-
+    </div>
     <div class="table-card">
-
         <div class="table-header">
-
-       
-               <div class="card-title">
+            <div class="card-title">
                Renewal Tracking Leads
             </div>
-            
 
             <form method="GET" class="filter-bar">
-
                 <input
                     type="text"
                     name="customer"
@@ -640,40 +721,18 @@ body{
                     name="renewal_status"
                     class="filter-select"
                 >
-
-                    <option value="">
-                        All Renewals
-                    </option>
-
-                    <option value="renewed">
-                        Renewed
-                    </option>
-
-                    <option value="pending">
-                        Pending
-                    </option>
-
+                    <option value="">All Renewals</option>
+                    <option value="renewed">Renewed</option>
+                    <option value="pending">Pending</option>
                 </select>
 
-                <button
-                    type="submit"
-                    class="filter-btn"
-                >
-
-                    Apply
-
-                </button>
-
+                <button type="submit" class="filter-btn">Apply</button>
             </form>
-
         </div>
 
         <div class="table-responsive">
-
             <table class="lead-table">
-
                 <thead>
-
                     <tr>
                         <th>Sl.No</th>
                         <th>Service ID</th>
@@ -684,211 +743,79 @@ body{
                         <th>Duration</th>
                         <th>Timeline</th>
                         <th>Edit</th>
-
                     </tr>
-
                 </thead>
-
                 <tbody>
-
                     {% for booking in bookings %}
-
                     <tr>
                         <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
                         <td>
-
-                            <div class="order-id">
-                                {{ booking.order_id }}
-                            </div>
-
-                            <div class="small-text">
-                                {{ booking.created_at|date:"d M Y" }}
-                            </div>
-
+                            <div class="order-id">{{ booking.order_id }}</div>
+                            <div class="small-text">{{ booking.created_at|date:"d M Y" }}</div>
                         </td>
-
                         <td>
-
-                            <div class="customer-name">
-                                {{ booking.user.first_name }}
-                            </div>
-
-                            <div class="small-text">
-                                {{ booking.phone }}
-                            </div>
-
+                            <div class="customer-name">{{ booking.user.first_name }}</div>
+                            <div class="small-text">{{ booking.phone }}</div>
                         </td>
-
                         <td>
-
-                            <div class="service-title">
-                                {{ booking.service.s_title }}
-                            </div>
-
-                            <div class="small-text">
-                                {{ booking.category }}
-                            </div>
-
+                            <div class="service-title">{{ booking.service.s_title }}</div>
+                            <div class="small-text">{{ booking.category }}</div>
                         </td>
-
                         <td>
-
                             <div class="status-badge status-{{ booking.status|lower }}">
-
                                 {{ booking.get_status_display }}
-
                             </div>
-
                         </td>
-
                         <td>
-
                             {% if booking.renewal_requested %}
-
-                            <div class="renew-status pending">
-
-                                Renewal Requested
-
-                            </div>
-
+                            <div class="renew-status pending">Renewal Requested</div>
                             {% elif booking.is_renewed %}
-
-                            <div class="renew-status success">
-
-                                Renewed
-
-                            </div>
-
+                            <div class="renew-status success">Renewed</div>
                             {% else %}
-
-                            <div class="renew-status gray">
-
-                                No Renewal
-
-                            </div>
-
+                            <div class="renew-status gray">No Renewal</div>
                             {% endif %}
-
                         </td>
-
                         <td>
-
                             {% if booking.start_date and booking.end_date %}
-
                             <div class="renew-details">
-
                                 <div class="renew-item">
-
-                                    <span class="label">
-                                        Start
-                                    </span>
-
-                                    <span class="value">
-
-                                        {{ booking.start_date }}
-
-                                    </span>
-
+                                    <span class="label">Start</span>
+                                    <span class="value">{{ booking.start_date }}</span>
                                 </div>
-
                                 <div class="renew-item">
-
-                                    <span class="label">
-                                        End
-                                    </span>
-
-                                    <span class="value">
-
-                                        {{ booking.end_date }}
-
-                                    </span>
-
+                                    <span class="label">End</span>
+                                    <span class="value">{{ booking.end_date }}</span>
                                 </div>
-
                                 <div class="renew-item">
-
-                                    <span class="label">
-                                        Days
-                                    </span>
-
-                                    <span class="value">
-
-                                        {{ booking.total_days }}
-
-                                    </span>
-
+                                    <span class="label">Days</span>
+                                    <span class="value">{{ booking.total_days }}</span>
                                 </div>
-
                             </div>
-
                             {% else %}
-
                             <div class="renew-details">
-
                                 <div class="renew-item">
-
-                                    <span class="label">
-                                        Date
-                                    </span>
-
-                                    <span class="value">
-
-                                        {{ booking.scheduled_date }}
-
-                                    </span>
-
+                                    <span class="label">Date</span>
+                                    <span class="value">{{ booking.scheduled_date }}</span>
                                 </div>
-
                                 <div class="renew-item">
-
-                                    <span class="label">
-                                        Time
-                                    </span>
-
-                                    <span class="value">
-
-                                        {{ booking.scheduled_time }}
-
-                                    </span>
-
+                                    <span class="label">Time</span>
+                                    <span class="value">{{ booking.scheduled_time }}</span>
                                 </div>
-
                             </div>
-
                             {% endif %}
-
                         </td>
-
                         <td>
-
                             <div class="timeline-box">
-
-                                <div class="timeline-step step-created">
-                                    Created
-                                </div>
-
+                                <div class="timeline-step step-created">Created</div>
                                 {% if booking.renewal_requested %}
-
-                                <div class="timeline-step step-renew">
-                                    Renewal Requested
-                                </div>
-
+                                <div class="timeline-step step-renew">Renewal Requested</div>
                                 {% endif %}
-
                                 {% if booking.is_renewed %}
-
-                                <div class="timeline-step step-accept">
-                                    Vendor Accepted
-                                </div>
-
+                                <div class="timeline-step step-accept">Vendor Accepted</div>
                                 {% endif %}
-
                             </div>
-
                         </td>
-
                         <td>
-
                             <button
                                 onclick="openEditModal(
                                     '{{ booking.id }}',
@@ -899,352 +826,136 @@ body{
                                 )"
                                 class="edit-btn"
                             >
-
                                 Edit
-
                             </button>
-
                         </td>
-
                     </tr>
-
                     {% endfor %}
-
                 </tbody>
-
             </table>
-
-
         </div>
-        <!-- PAGINATION -->
 
-{% if page_obj %}
+        {% if page_obj %}
+        <div class="tbl-footer">
+            <div class="page-btns">
+                {% if page_obj.has_previous %}
+                <a class="pg-btn" href="?page={{ page_obj.previous_page_number }}">‹</a>
+                {% endif %}
 
-<div class="tbl-footer">
+                <span class="pg-btn active">{{ page_obj.number }}</span>
 
-    <div class="page-btns">
-
-        <!-- PREVIOUS -->
-
-        {% if page_obj.has_previous %}
-
-        <a class="pg-btn"
-           href="?page={{ page_obj.previous_page_number }}">
-
-            ‹
-
-        </a>
-
+                {% if page_obj.has_next %}
+                <a class="pg-btn" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                <a class="pg-btn" href="?page={{ page_obj.next_page_number }}">›</a>
+                {% endif %}
+            </div>
+        </div>
         {% endif %}
-
-        <!-- CURRENT PAGE -->
-
-        <span class="pg-btn active">
-
-            {{ page_obj.number }}
-
-        </span>
-
-        <!-- NEXT PAGE -->
-
-        {% if page_obj.has_next %}
-
-        <a class="pg-btn"
-           href="?page={{ page_obj.next_page_number }}">
-
-            {{ page_obj.next_page_number }}
-
-        </a>
-
-        <!-- NEXT -->
-
-        <a class="pg-btn"
-           href="?page={{ page_obj.next_page_number }}">
-
-            ›
-
-        </a>
-
-        {% endif %}
-
     </div>
-
 </div>
-
-{% endif %}
-
-
-
-
-
-
-
-    </div>
-
-</div>
-
-<!-- MODAL -->
 
 <div class="modal-overlay" id="editModal">
-
     <div class="modal-card">
-
-        <div class="modal-title">
-            Update Booking
-        </div>
-
-        <form
-            method="POST"
-            action="{% url 'admin_renewal_dashboard' %}"
-        >
-
+        <div class="modal-title">Update Booking</div>
+        <form method="POST" action="{% url 'admin_renewal_dashboard' %}">
             {% csrf_token %}
-
-            <input
-                type="hidden"
-                name="booking_id"
-                id="booking_id"
-            >
-
-            <!-- MULTIPLE DAYS -->
+            <input type="hidden" name="booking_id" id="booking_id">
 
             <div id="multipleDaysBox">
-
                 <div class="form-group">
-
-                    <label class="form-label">
-                        Start Date
-                    </label>
-
-                    <input
-                        type="date"
-                        name="start_date"
-                        id="start_date"
-                        class="form-control"
-                    >
-
+                    <label class="form-label">Start Date</label>
+                    <input type="date" name="start_date" id="start_date" class="form-control">
                 </div>
-
                 <div class="form-group">
-
-                    <label class="form-label">
-                        End Date
-                    </label>
-
-                    <input
-                        type="date"
-                        name="end_date"
-                        id="end_date"
-                        class="form-control"
-                    >
-
+                    <label class="form-label">End Date</label>
+                    <input type="date" name="end_date" id="end_date" class="form-control">
                 </div>
-
             </div>
-
-            <!-- SINGLE DAY -->
 
             <div id="singleDayBox">
-
                 <div class="form-group">
-
-                    <label class="form-label">
-                        Scheduled Date
-                    </label>
-
-                    <input
-                        type="date"
-                        name="scheduled_date"
-                        id="scheduled_date"
-                        class="form-control"
-                    >
-
+                    <label class="form-label">Scheduled Date</label>
+                    <input type="date" name="scheduled_date" id="scheduled_date" class="form-control">
                 </div>
-
                 <div class="form-group">
-
-                    <label class="form-label">
-                        Scheduled Time
-                    </label>
-
-                    <select
-                        name="scheduled_time"
-                        id="scheduled_time"
-                        class="form-control"
-                    >
-
-                        <option value="">
-                            Select Time
-                        </option>
-
-                        <option value="09 AM - 11 AM">
-                            09 AM - 11 AM
-                        </option>
-
-                        <option value="11 AM - 01 PM">
-                            11 AM - 01 PM
-                        </option>
-
-                        <option value="01 PM - 03 PM">
-                            01 PM - 03 PM
-                        </option>
-
-                        <option value="03 PM - 05 PM">
-                            03 PM - 05 PM
-                        </option>
-
+                    <label class="form-label">Scheduled Time</label>
+                    <select name="scheduled_time" id="scheduled_time" class="form-control">
+                        <option value="">Select Time</option>
+                        <option value="09 AM - 11 AM">09 AM - 11 AM</option>
+                        <option value="11 AM - 01 PM">11 AM - 01 PM</option>
+                        <option value="01 PM - 03 PM">01 PM - 03 PM</option>
+                        <option value="03 PM - 05 PM">03 PM - 05 PM</option>
                     </select>
-
                 </div>
-
             </div>
 
-            <button
-                type="submit"
-                class="save-btn"
-            >
-
-                Save Changes
-
-            </button>
-
+            <button type="submit" class="save-btn">Save Changes</button>
         </form>
-        
-
     </div>
-    
-
 </div>
 
 <script>
+function toggleAlerts(){
+    const alerts = document.querySelectorAll(".extra-alert");
+    const btn = document.getElementById("toggleBtn");
+    if (!alerts.length) return;
 
-function openEditModal(
-    bookingId,
-    startDate,
-    endDate,
-    scheduledDate,
-    scheduledTime
-){
+    let isHidden = alerts[0].style.display !== "flex";
 
-    document.getElementById(
-        "editModal"
-    ).style.display = "flex";
+    alerts.forEach(alert => {
+        // Only toggle alerts that haven't been dismissed by the user
+        const bookingId = alert.dataset.id;
+        if (localStorage.getItem("expiry_closed_" + bookingId) !== "true") {
+            alert.style.display = isHidden ? "flex" : "none";
+        }
+    });
 
-    document.getElementById(
-        "booking_id"
-    ).value = bookingId;
+    btn.innerText = isHidden ? "Show Less" : "View More";
+}
 
-    document.getElementById(
-        "start_date"
-    ).value = startDate;
-
-    document.getElementById(
-        "end_date"
-    ).value = endDate;
-
-    document.getElementById(
-        "scheduled_date"
-    ).value = scheduledDate;
-
-    document.getElementById(
-        "scheduled_time"
-    ).value = scheduledTime;
-
-    // MULTIPLE DAYS
+function openEditModal(bookingId, startDate, endDate, scheduledDate, scheduledTime){
+    document.getElementById("editModal").style.display = "flex";
+    document.getElementById("booking_id").value = bookingId;
+    document.getElementById("start_date").value = startDate;
+    document.getElementById("end_date").value = endDate;
+    document.getElementById("scheduled_date").value = scheduledDate;
+    document.getElementById("scheduled_time").value = scheduledTime;
 
     if(startDate && endDate){
-
-        document.getElementById(
-            "multipleDaysBox"
-        ).style.display = "block";
-
-        document.getElementById(
-            "singleDayBox"
-        ).style.display = "none";
-
+        document.getElementById("multipleDaysBox").style.display = "block";
+        document.getElementById("singleDayBox").style.display = "none";
+    } else {
+        document.getElementById("multipleDaysBox").style.display = "none";
+        document.getElementById("singleDayBox").style.display = "block";
     }
-
-    // SINGLE DAY
-
-    else{
-
-        document.getElementById(
-            "multipleDaysBox"
-        ).style.display = "none";
-
-        document.getElementById(
-            "singleDayBox"
-        ).style.display = "block";
-
-    }
-
 }
 
 window.onclick = function(e){
-
-    let modal = document.getElementById(
-        "editModal"
-    );
-
+    let modal = document.getElementById("editModal");
     if(e.target == modal){
-
         modal.style.display = "none";
-
     }
-
 }
 
 window.onload = function(){
-
-    const alerts = document.querySelectorAll(
-        ".expiry-alert"
-    );
-
+    const alerts = document.querySelectorAll(".expiry-alert");
     alerts.forEach(function(alert){
-
         const bookingId = alert.dataset.id;
-
-        // CHECK CLOSED STATUS
-
-        if(
-            localStorage.getItem(
-                "expiry_closed_" + bookingId
-            ) === "true"
-        ){
-
+        if(localStorage.getItem("expiry_closed_" + bookingId) === "true"){
             alert.style.display = "none";
-
+            // Remove extra-alert class if it's explicitly closed to balance layout math
+            alert.classList.remove("extra-alert"); 
         }
-
     });
-
 }
-
-
-// CLOSE ALERT
 
 function closeExpiryAlert(id){
-
-    const alertBox = document.getElementById(
-        "expiry-alert-" + id
-    );
-
+    const alertBox = document.getElementById("expiry-alert-" + id);
     if(alertBox){
-
         alertBox.style.display = "none";
-
-        // SAVE CLOSED STATUS
-
-        localStorage.setItem(
-            "expiry_closed_" + id,
-            "true"
-        );
-
+        localStorage.setItem("expiry_closed_" + id, "true");
     }
-
 }
-
-
 </script>
 
 {% endblock %}
