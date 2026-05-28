@@ -107,3 +107,43 @@ def create_notification(
         message=message
 
     )
+    
+    
+
+
+# permisions
+from django.shortcuts import redirect
+from django.contrib import messages
+
+def permission_required(permission):
+
+    def decorator(view_func):
+
+        def wrapper(
+            request,
+            *args,
+            **kwargs
+        ):
+
+            if not request.user.has_perm(
+                permission
+            ):
+
+                messages.error(
+                    request,
+                    "Permission Denied"
+                )
+
+                return redirect(
+                    "admin_dashboard"
+                )
+
+            return view_func(
+                request,
+                *args,
+                **kwargs
+            )
+
+        return wrapper
+
+    return decorator

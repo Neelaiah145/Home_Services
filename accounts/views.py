@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse, HttpResponse
 from .models import User,Booking, BookingHistory, Payment, VendorProfile, CustomerRemark,TermsAcceptance
 import random
+from django.db.models import Count, Q
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import get_user_model
 from accounts.mixins import RoleRequiredMixin
@@ -29,9 +30,12 @@ from django.views.generic import ListView
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from collections import OrderedDict
-
-
+from django.utils.timezone import now
+from datetime import timedelta
 from .utils import (send_otp,verify_otp)
+from django.contrib.auth.models import Permission
+from accounts.utils import permission_required
+from collections import defaultdict
 
 User = get_user_model()
 mainly_allowed_roles=["admin","superadmin"]
@@ -532,34 +536,61 @@ class SuperDashboardView(LoginRequiredMixin, RoleRequiredMixin, View):
 
 # 2.superadmin can create the admins
 @method_decorator(never_cache, name='dispatch')
-class CreateAdminView(LoginRequiredMixin,View):
-    """ create admin accounts with otp verification and display all admin users list """
+class CreateAdminView(LoginRequiredMixin, View):
+
+    """ create admin accounts """
 
     def get(self, request):
-        admins = User.objects.filter(role="admin").order_by("-id")
-        page_obj = paginate_queryset(request,admins,10)
-        context= {
-                "admins": page_obj,
-                "page_obj": page_obj,
-                "page_title": "Create_Admins"
-                }
-        return render(request,"superadmin/create_admin.html",context)
 
+        admins = User.objects.filter(
+            role="admin"
+        ).order_by("-id")
+
+        page_obj = paginate_queryset(request,admins,5)
+
+        context = {
+            "admins": page_obj,
+            "page_obj": page_obj,
+            "page_title": "Create_Admins"
+        }
+
+        return render(request,"superadmin/create_admin.html",context)
     def post(self, request):
 
         try:
 
             if request.user.role != "superadmin":
-                return JsonResponse({"error": "Unauthorized"}, status=403)
 
-            first_name = request.POST.get("first_name")
-            last_name = request.POST.get("last_name")
-            email = request.POST.get("email")
-            city = request.POST.get("city")
-            pincode = request.POST.get("pincode")
-            phone = request.POST.get("phone")
-            password = request.POST.get("password")
-            confirm_password = request.POST.get("confirm_password")
+                return JsonResponse({
+
+                    "error": "Unauthorized"
+
+                }, status=403)
+
+            first_name = request.POST.get(
+                "first_name"
+            )
+
+            last_name = request.POST.get(
+                "last_name"
+            )
+
+            email = request.POST.get(
+                "email"
+            )
+
+            city = request.POST.get(
+                "city"
+            )
+
+            pincode = request.POST.get(
+                "pincode"
+            )
+
+            phone = request.POST.get(
+                "phone"
+            )
+
             phone = normalize_phone(phone)
 
             if not all([
@@ -568,51 +599,124 @@ class CreateAdminView(LoginRequiredMixin,View):
                 email,
                 city,
                 pincode,
-                phone,
-                password,
-                confirm_password
+                phone
 
             ]):
 
-                return JsonResponse({"error": "All fields required"}, status=400)
+                return JsonResponse({
 
-            if len(phone) != 10 or not phone.isdigit():
-                return JsonResponse({"error": "Invalid phone number"}, status=400)
+                    "error":"All fields required"
 
-            if password != confirm_password:
-                return JsonResponse({"error": "Passwords do not match"}, status=400)
+                }, status=400)
 
-            if User.objects.filter(email=email).exists():
-                return JsonResponse({"error": "Email already exists"}, status=400)
+            verified_phone = request.session.get(
+                "verified_phone"
+            )
 
-            if User.objects.filter(phone=phone).exists():
-                return JsonResponse({"error": "Phone already exists"}, status=400)
-
-            verified_phone = request.session.get("verified_phone")
-            
             if verified_phone != phone:
-                return JsonResponse({"error": "Please verify OTP first"}, status=400)
+
+                return JsonResponse({
+
+                    "error":"Verify OTP first"
+
+                }, status=400)
 
             user = User.objects.create(
 
-                email=email,
                 first_name=first_name,
                 last_name=last_name,
+                email=email,
                 city=city,
                 pincode=pincode,
                 phone=phone,
                 role="admin"
+
             )
 
-            user.set_password(password)
+            user.set_password("Admin@123")
+
             user.save()
-            request.session.pop("verified_phone",None)
-            return JsonResponse({"status": "success"})
+
+            request.session.pop(
+                "verified_phone",
+                None
+            )
+
+            return JsonResponse({
+
+                "status":"success"
+
+            })
 
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-            
 
+            return JsonResponse({"error":str(e)}, status=500)
+
+# update/edit the admin profile
+@method_decorator(never_cache, name='dispatch')
+class EditAdminView(LoginRequiredMixin, View):
+
+    """ edit admin """
+
+    def get(self, request, id):
+
+        admin = User.objects.get(
+
+            id=id,
+            role="admin"
+        )
+
+        context = {
+
+            "admin": admin,
+            "page_title": "Edit_Admin"
+
+        }
+
+        return render( request,"superadmin/edit_admin.html",context)
+
+    def post(self, request, id):
+
+        try:
+
+            admin = User.objects.get(
+
+                id=id,
+                role="admin"
+            )
+
+            admin.city = request.POST.get(
+                "city"
+            )
+
+            admin.pincode = request.POST.get(
+                "pincode"
+            )
+
+            admin.save()
+
+            messages.success(
+
+                request,
+                "Admin updated successfully"
+            )
+
+            return redirect(
+                "create_admin"
+            )
+
+        except Exception as e:
+
+            messages.error(
+
+                request,
+                str(e)
+            )
+
+            return redirect(
+                "edit_admin",
+                id=id
+            )
 # 3.superadmin can see the user profile views code
 @method_decorator(never_cache, name='dispatch')
 class UserProfileView(LoginRequiredMixin,View):
@@ -648,73 +752,165 @@ class UserProfileView(LoginRequiredMixin,View):
 
 # superadmin can see the all users and update the behaviour
 @method_decorator(never_cache, name='dispatch')
-class AllUsersView(LoginRequiredMixin, View):
-    """ view all users and manage user behaviour and account status updates  """
+class AllUsersView(LoginRequiredMixin,View):
+    """ View All Users """
 
     def get(self, request):
+        current_user = request.user
 
-        if request.user.role not in ["superadmin","admin"]:
+        if current_user.role not in mainly_allowed_roles:
             return redirect("login")
+        if current_user.role == "superadmin":
 
-        users = User.objects.filter(
-            role__in=[
-                "customer",
-                "vendor",
-                "admin"
-            ]
-        ).order_by("-id")
+            users = User.objects.filter(
 
+                role__in=[
+                    "customer",
+                    "vendor",
+                    "admin"
+                ]
+
+            )
+
+        else:
+
+            users = User.objects.filter(
+
+                role__in=[
+                    "customer",
+                    "vendor"
+                ]
+
+            )
+
+            if current_user.city:
+
+                users = users.filter(
+
+                    city__iexact=
+                    current_user.city.strip()
+
+                )
+
+        users = users.distinct()
         role = request.GET.get("role")
+
         city = request.GET.get("city")
+
         if role:
-            users = users.filter(role=role)
+
+            users = users.filter(
+                role=role
+            )
+
         if city:
-            users = users.filter(city__iexact=city)
 
-        location_users = User.objects.filter(
-            role__in=[
-                "customer","vendor","admin"
-            ]
+            users = users.filter(
+                city__iexact=city
+            )
+
+        users = users.order_by("-id")
+        locations = (
+
+            users
+
+            .exclude(city__isnull=True)
+
+            .exclude(city="")
+
+            .values_list(
+                "city",
+                flat=True
+            )
+            .distinct()
+
         )
-
-        if role:
-            location_users = location_users.filter(role=role)
-        locations = location_users.exclude(city__isnull=True
-                                        ).exclude(city=""
-                                        ).values_list(
-                                            "city",
-                                            flat=True
-                                        ).distinct()
-
         page_obj = paginate_queryset(request,users,10)
 
-        customer_count = User.objects.filter(role="customer").count()
-        admin_count = User.objects.filter(role="admin").count()
+        if current_user.role == "superadmin":
 
-        vendor_count = User.objects.filter(
-            role="vendor"
-        ).count()
-        context= {
-                "page_obj": page_obj,
-                "users": users,
-                "locations": locations,
-                "selected_role": role,
-                "selected_city": city,
-                "customer_count": customer_count,
-                "admin_count": admin_count,
-                "vendor_count": vendor_count,
-            }
+            customer_count = User.objects.filter(
+                role="customer"
+            ).count()
+
+            vendor_count = User.objects.filter(
+                role="vendor"
+            ).count()
+
+            admin_count = User.objects.filter(
+                role="admin"
+            ).count()
+
+        else:
+
+            customer_count = User.objects.filter(
+
+                role="customer",
+
+                city__iexact=
+                current_user.city.strip()
+
+            ).count()
+
+            vendor_count = User.objects.filter(
+
+                role="vendor",
+
+                city__iexact=
+                current_user.city.strip()
+
+            ).count()
+
+            admin_count = 0
+
+
+
+        context = {
+
+            "page_obj": page_obj,
+            "users": page_obj,
+            "locations": locations,
+            "selected_role": role,
+            "selected_city": city,
+            "customer_count": customer_count,
+            "vendor_count": vendor_count,
+            "admin_count": admin_count,
+
+        }
+
         return render(request,"superadmin/all_users.html",context)
+
     def post(self, request):
-        if request.user.role not in ["superadmin","admin"]:
-            return JsonResponse({"success": False,"error": "Access Denied"})
+
+        if request.user.role not in [
+            "superadmin",
+            "admin"
+        ]:
+
+            return JsonResponse({
+
+                "success": False,
+
+                "error": "Access Denied"
+
+            })
 
         try:
 
-            data = json.loads(request.body)
-            user_id = data.get("user_id")
-            behaviour = data.get("behaviour")
+            data = json.loads(
+                request.body
+            )
+
+            user_id = data.get(
+                "user_id"
+            )
+
+            behaviour = data.get(
+                "behaviour"
+            )
+
             user = User.objects.filter(
+
                 id=user_id,
 
                 role__in=[
@@ -726,10 +922,21 @@ class AllUsersView(LoginRequiredMixin, View):
             ).first()
 
             if not user:
-                return JsonResponse({"success": False,"error": "User not found"})
+
+                return JsonResponse({
+
+                    "success": False,
+
+                    "error": "User not found"
+
+                })
+
+
 
             user.behaviour = behaviour
+
             user.save()
+
             return JsonResponse({
 
                 "success": True
@@ -737,57 +944,126 @@ class AllUsersView(LoginRequiredMixin, View):
             })
 
         except Exception as e:
-            return JsonResponse({"success": False,"error": str(e)})
 
+            return JsonResponse({
+
+                "success": False,
+
+                "error": str(e)
+
+            })
 
 # superadmin all leads tracking
 @method_decorator(never_cache, name='dispatch')
+@method_decorator(never_cache,name='dispatch')
 class SuperAdminOrdersView(LoginRequiredMixin,View):
-    """ view all services and service history details managed by users and vendors """
+    """ View all bookings and vendor assignment timings """
 
     def get(self, request):
 
-        bookings = Booking.objects.select_related(
-            'user', 'service', 'vendor'
-        ).prefetch_related("history").order_by('-booking_created_at')
+        bookings = Booking.objects.select_related("user","service","vendor"
+        ).prefetch_related(
+            "history"
+        ).order_by(
+            "-booking_created_at"
+        )
+
         services = CategoryService.objects.all()
         vendors = User.objects.filter(role="vendor")
+        q = request.GET.get("q")
 
-        q = request.GET.get('q')
         if q:
+
             bookings = bookings.filter(
+
                 Q(order_id__icontains=q) |
                 Q(user__first_name__icontains=q) |
                 Q(user__phone__icontains=q)
+
             )
 
-        service_id = request.GET.get('service')
+        service_id = request.GET.get(
+            "service"
+        )
+
         if service_id:
-            bookings = bookings.filter(service_id=service_id)
 
-        vendor_id = request.GET.get('vendor')
-        if vendor_id:
-            bookings = bookings.filter(vendor_id=vendor_id)
-
-        status = request.GET.get('status')
-        if status:
-            bookings = bookings.filter(status=status)
-
-        start_date = request.GET.get('start_date')
-        end_date = request.GET.get('end_date')
-        if start_date and end_date:
             bookings = bookings.filter(
-                created_at__date__range=[start_date, end_date]
+                service_id=service_id
             )
 
+        vendor_id = request.GET.get(
+            "vendor"
+        )
+
+        if vendor_id:
+
+            bookings = bookings.filter(
+                vendor_id=vendor_id
+            )
+
+        status = request.GET.get(
+            "status"
+        )
+
+        if status:
+
+            bookings = bookings.filter(
+                status=status
+            )
+
+        start_date = request.GET.get(
+            "start_date"
+        )
+
+        end_date = request.GET.get(
+            "end_date"
+        )
+
+        if start_date and end_date:
+
+            bookings = bookings.filter(
+
+                booking_created_at__date__range=[
+                    start_date,
+                    end_date
+                ]
+
+            )
+
+        for booking in bookings:
+            assigned_history = (
+                booking.history.filter(
+                    status="assigned"
+                ).order_by(
+                    "created_at"
+                ).first()
+            )
+
+            if assigned_history:
+                booking.assigned_time = (
+                    assigned_history.created_at
+                )
+
+                diff = (
+
+                    assigned_history.created_at
+                    - booking.booking_created_at
+
+                )
+                booking.assign_hours = round(diff.total_seconds() / 3600,2)
+            else:
+                booking.assigned_time = None
+                booking.assign_hours = None
         total_count = bookings.count()
         pending_count = bookings.filter(status="pending").count()
-        progress_count = bookings.filter(status="progress").count()
+        progress_count = bookings.filter(status="in_progress").count()
         completed_count = bookings.filter(status="completed").count()
+        # PAGINATION
         page_obj = paginate_queryset(request,bookings,10)
-
         context = {
-            "bookings": page_obj,   
+
+            "bookings": page_obj,
             "services": services,
             "vendors": vendors,
             "page_obj": page_obj,
@@ -795,9 +1071,9 @@ class SuperAdminOrdersView(LoginRequiredMixin,View):
             "pending_count": pending_count,
             "progress_count": progress_count,
             "completed_count": completed_count,
-        }
 
-        return render(request, "superadmin/superadmin_orders.html", context)
+        }
+        return render(request,"superadmin/superadmin_orders.html",context)
     
 
 
@@ -834,52 +1110,236 @@ class SuperAdminPaymentsView(LoginRequiredMixin,View):
                 "page_obj": page_obj
             }
         return render(request,"superadmin/superadmin_payments.html",context)
- 
 
+# permisison per admin in index page 
+class AdminPermissionsView(LoginRequiredMixin,View):
 
+    """
+    Superadmin Manage Admin Permissions
+    """
 
+    def get(self, request):
 
+        # ONLY SUPERADMIN
 
+        if request.user.role != "superadmin":
 
+            return redirect(
+                "login"
+            )
 
+        # SEARCH
+
+        search = request.GET.get(
+            "search"
+        )
+
+        # SELECTED ADMIN
+
+        selected_admin_id = request.GET.get(
+            "admin"
+        )
+
+        # ADMINS
+
+        admins = User.objects.filter(
+            role="admin"
+        ).order_by(
+            "-id"
+        )
+
+        # SEARCH FILTER
+
+        if search:
+
+            admins = admins.filter(
+
+                Q(first_name__icontains=search) |
+
+                Q(last_name__icontains=search) |
+
+                Q(email__icontains=search)
+
+            )
+
+        # ALL CORE PERMISSIONS
+
+        permissions = Permission.objects.filter(
+
+            content_type__app_label="core"
+
+        ).select_related(
+            "content_type"
+        ).order_by(
+            "content_type_id",
+            "id"
+        )
+        selected_admin = None
+        if selected_admin_id:
+            try:
+                selected_admin = User.objects.get(
+                    id=selected_admin_id,
+                    role="admin"
+                )
+
+            except User.DoesNotExist:
+                selected_admin = None
+        grouped_permissions = defaultdict(list)
+        for permission in permissions:
+            model_name = permission.content_type.model
+            grouped_permissions[
+                model_name
+            ].append(
+                permission
+            )
+
+        context = {
+
+            "admins": admins,
+            "search": search,
+            "selected_admin": selected_admin,
+            "grouped_permissions": dict(
+                grouped_permissions
+            )
+
+        }
+
+        return render(request,"superadmin/admin_permissions.html",context)
+
+    def post(self, request):
+        if request.user.role != "superadmin":
+            return redirect(
+                "login"
+            )
+
+        admin_id = request.POST.get(
+            "admin_id"
+        )
+        if not admin_id:
+
+            messages.error(request,"Please Select Admin")
+
+            return redirect(
+                "admin_permissions"
+            )
+
+        permission_ids = request.POST.getlist(
+            "permissions"
+        )
+
+        try:
+
+            admin = User.objects.get(
+
+                id=int(admin_id),
+
+                role="admin"
+
+            )
+
+        except User.DoesNotExist:
+
+            messages.error(
+
+                request,
+
+                "Admin Not Found"
+
+            )
+
+            return redirect(
+                "admin_permissions"
+            )
+
+        admin.user_permissions.clear()
+        permissions = Permission.objects.filter(
+            id__in=permission_ids
+        )
+        admin.user_permissions.add(
+            *permissions
+        )
+
+        messages.success(
+
+            request,
+
+            "Permissions Updated Successfully"
+
+        )
+
+        return redirect(f"/admin-permissions/?admin={admin.id}")
 
 # ===============================================================================================
 # admin dashboard
 # ================================================================================================
 
-from django.db.models import Count, Q
-
 
 @method_decorator(never_cache, name='dispatch')
-class AdminDashboardView(LoginRequiredMixin, RoleRequiredMixin, View):
+class AdminDashboardView(LoginRequiredMixin,RoleRequiredMixin,View):
 
-    ''' admin dashboard view for managing bookings, users, services, and analytics '''
+    """ Admin Dashboard """
 
     allowed_roles = ['admin']
 
     def get(self, request):
+        current_admin = request.user
 
-        # USERS
+        customers = User.objects.filter(
+    role="customer",
+    city__icontains=current_admin.city.strip(),
+    is_active=True
+)
 
-        user_counts = User.objects.aggregate(
-            total_customers=Count("id",filter=Q(role="customer")),
-            total_vendors=Count("id",filter=Q(role="vendor"))
+        vendors = User.objects.filter(
+    role="vendor",
+    city__icontains=current_admin.city.strip(),
+    is_active=True
+)
+
+        bookings = Booking.objects.filter(
+            city__iexact=current_admin.city
+                )
+        bookings = Booking.objects.filter(
+            admin=current_admin
         )
+        total_customers = customers.count()
 
-        # BOOKINGS
-
-        bookings = Booking.objects.all()
+        total_vendors = vendors.count()
         booking_counts = bookings.aggregate(
-            total_bookings=Count("id"),
-            total_pending=Count("id",filter=Q(status="pending")),
-            total_assigned=Count("id",filter=Q(status="assigned")),
-            total_accepted=Count("id",filter=Q(status="accepted")),
-            total_in_progress=Count("id",filter=Q(status="in_progress")),
-            total_completed=Count("id",filter=Q(status="completed")),
-            total_cancelled=Count("id",filter=Q(status="cancelled")),
-        )
 
-        # MONTHLY BOOKINGS
+            total_bookings=Count("id"),
+
+            total_pending=Count(
+                "id",
+                filter=Q(status="pending")
+            ),
+
+            total_assigned=Count(
+                "id",
+                filter=Q(status="assigned")
+            ),
+
+            total_accepted=Count(
+                "id",
+                filter=Q(status="accepted")
+            ),
+
+            total_in_progress=Count(
+                "id",
+                filter=Q(status="in_progress")
+            ),
+
+            total_completed=Count(
+                "id",
+                filter=Q(status="completed")
+            ),
+
+            total_cancelled=Count(
+                "id",
+                filter=Q(status="cancelled")
+            ),
+
+        )
 
         current_year = timezone.now().year
 
@@ -889,14 +1349,22 @@ class AdminDashboardView(LoginRequiredMixin, RoleRequiredMixin, View):
                 booking_created_at__year=current_year,
                 booking_created_at__month=month
             ).count()
+
             for month in range(1, 13)
-        ]
-        month_labels = [
-            datetime(current_year,month,1).strftime("%b")
-            for month in range(1, 13)
+
         ]
 
-        # SERVICES
+        month_labels = [
+
+            datetime(
+                current_year,
+                month,
+                1
+            ).strftime("%b")
+
+            for month in range(1, 13)
+
+        ]
 
         categories = Category.objects.all()
 
@@ -924,13 +1392,18 @@ class AdminDashboardView(LoginRequiredMixin, RoleRequiredMixin, View):
             ).count()
 
             for service in services
+
         ]
+
+        recent_bookings = bookings.order_by(
+            "-booking_created_at"
+        )[:5]
 
         context = {
 
             'page_title': 'Dashboard',
-            'total_customers': user_counts["total_customers"],
-            'total_vendors': user_counts["total_vendors"],
+            'total_customers': total_customers,
+            'total_vendors': total_vendors,
             'total_bookings': booking_counts["total_bookings"],
             'total_pending': booking_counts["total_pending"],
             'total_assigned': booking_counts["total_assigned"],
@@ -942,8 +1415,15 @@ class AdminDashboardView(LoginRequiredMixin, RoleRequiredMixin, View):
             'monthly_data': monthly_data,
             'categories': categories,
             'selected_category': selected_category,
-            'service_labels': json.dumps(service_labels),
-            'service_data': json.dumps(service_data),
+            'service_labels': json.dumps(
+                service_labels
+            ),
+
+            'service_data': json.dumps(
+                service_data
+            ),
+
+            'recent_bookings': recent_bookings,
         }
 
         return render(request,"admin/dashboard.html",context)
@@ -1014,136 +1494,115 @@ class AdminVendorApprovalView(LoginRequiredMixin, View):
 
 # admin  see all users and update the behaviour
 @method_decorator(never_cache, name='dispatch')
-class AdminUsersView(LoginRequiredMixin, View):
+class AdminUsersView(LoginRequiredMixin,View):
+
+    """ Admin Users View """
 
     def get(self, request):
 
-        if request.user.role not in [
-            "admin"
-        ]:
+        if request.user.role != "admin":
+
             return redirect("login")
 
-        role = request.GET.get("role")
-
-        search = request.GET.get("search")
-
-        #customer book the service based on the city
-
-        customer_ids = Booking.objects.filter(
-
-            city__iexact=request.user.city
-
-        ).values_list(
-
-            "user_id",
-
-            flat=True
-
+        role = request.GET.get(
+            "role"
         )
-
-        # USERS
-
+        search = request.GET.get(
+            "search"
+        )
+        admin_city = (
+            request.user.city or ""
+        ).strip()
         users = User.objects.filter(
 
-            Q(
-                role="vendor",
-                city__iexact=request.user.city
-            ) |
-
-            Q(
-                role="customer",
-                id__in=customer_ids
-            )
-
-        ).distinct().order_by("-id")
-
-        # ROLE FILTER
-        if role:
-            users = users.filter(role=role)
-        # SEARCH FILTER
-        if search:
+            role__in=[
+                "customer",
+                "vendor"
+            ],
+        )
+        if admin_city:
 
             users = users.filter(
 
+                city__icontains=
+                admin_city
+
+            )
+        users = users.distinct()
+
+        if role:
+            users = users.filter(
+                role=role
+            )
+
+        if search:
+            users = users.filter(
                 Q(first_name__icontains=search) |
                 Q(last_name__icontains=search) |
                 Q(username__icontains=search) |
                 Q(email__icontains=search)
 
             )
+        users = users.order_by("-id")
+        customer_count = users.filter(
+            role="customer"
+        ).count()
 
-        # COUNTS
-
-        customer_count = User.objects.filter(
-
-            role="customer",
-
-            id__in=customer_ids
-
-        ).distinct().count()
-
-        vendor_count = User.objects.filter(role="vendor",
-
-            city__iexact=request.user.city
-
+        vendor_count = users.filter(
+            role="vendor"
         ).count()
 
         total_users = users.count()
-
-        # PAGINATION
-
         page_obj = paginate_queryset(request,users,10)
-        context =  {
 
-                "page_obj": page_obj,
-                "users": page_obj,
-                "customer_count": customer_count,
-                "vendor_count": vendor_count,
-                "total_users": total_users,
-                "active_page": "admin_all_users",
+        context = {
 
-            }
+            "page_obj": page_obj,
+            "users": page_obj,
+            "customer_count": customer_count,
+            "vendor_count": vendor_count,
+            "total_users": total_users,
+            "active_page": "admin_all_users",
+
+        }
+
         return render(request,"admin/all_users.html",context)
 
-    def post(self, request):
 
+
+    def post(self, request):
         if request.user.role != "admin":
             return JsonResponse({
 
                 "success": False,
                 "error": "Access Denied"
+
             })
 
         try:
+
             data = json.loads(request.body)
             user_id = data.get("user_id")
             behaviour = data.get("behaviour")
-            # ONLY SAME CITY USER ACCESS
-            customer_ids = Booking.objects.filter(
-                city__iexact=request.user.city
-
-            ).values_list(
-                "user_id",
-                flat=True
-            )
+            admin_city = (
+                request.user.city or ""
+            ).strip()
             user = User.objects.filter(
+                id=user_id,
+                role__in=[
+                    "customer",
+                    "vendor"
+                ],
 
-                Q(
-                    id=user_id,
-                    role="vendor",
-                    city__iexact=request.user.city
-                ) |
-
-                Q(
-                    id=user_id,
-                    role="customer",
-                    id__in=customer_ids
-                )
+                city__icontains=
+                admin_city
 
             ).first()
 
             if not user:
+
                 return JsonResponse({
+
                     "success": False,
                     "error": "User not found"
 
@@ -1151,8 +1610,15 @@ class AdminUsersView(LoginRequiredMixin, View):
 
             user.behaviour = behaviour
             user.save()
-            return JsonResponse({"success": True })
+
+            return JsonResponse({
+
+                "success": True
+
+            })
+
         except Exception as e:
+
             return JsonResponse({"success": False,"error": str(e)})
 
 
@@ -1218,15 +1684,15 @@ class AdminOrdersView(LoginRequiredMixin,View):
             "city",flat=True
         ).distinct()
 
-        vendors=User.objects.filter(
-            role="vendor",
-            city__iexact=request.user.city
-        ).select_related(
-            "vendor_profile"
+        vendors = User.objects.filter(
+        role="vendor",
+        city__icontains=
+        request.user.city.strip(),
+        is_active=True).select_related(
+        "vendor_profile"
         ).prefetch_related(
-            "vendor_profile__services"
-        )
-
+        "vendor_profile__services"
+        ).distinct()
         if service_id:
             vendors=vendors.filter(
                 vendor_profile__services__id=service_id
@@ -1245,6 +1711,61 @@ class AdminOrdersView(LoginRequiredMixin,View):
         page_obj=paginate_queryset(
             request,bookings,10
         )
+        # LEAD NOTIFICATIONS
+
+        lead_notifications = []
+
+        pending_bookings = Booking.objects.filter(
+            city__iexact=request.user.city,
+            vendor__isnull=True
+        ).order_by("-booking_created_at")[:6]
+
+        for booking in pending_bookings:
+
+            diff = timezone.now() - booking.booking_created_at
+
+            hours = int(
+                diff.total_seconds() / 3600
+            )
+
+            booking.pending_hours = hours
+
+            # ALERT TYPES
+
+            if hours < 12:
+
+                booking.alert_type = "waiting"
+
+                booking.alert_title = "Lead Waiting"
+
+                booking.alert_message = (
+                    "Move to vendor soon"
+                )
+
+            elif hours < 24:
+
+                booking.alert_type = "urgent"
+
+                booking.alert_title = "Urgent Lead"
+
+                booking.alert_message = (
+                    "Pending vendor assignment"
+                )
+
+            else:
+
+                booking.alert_type = "delayed"
+
+                booking.alert_title = "Lead Delayed"
+
+                booking.alert_message = (
+                    "Assign vendor immediately"
+                )
+
+            lead_notifications.append(
+                booking
+            )       
+
         context ={
 
             "bookings":page_obj,
@@ -1258,6 +1779,7 @@ class AdminOrdersView(LoginRequiredMixin,View):
             "selected_city":city,
             "q":q,
             "postal_code":postal_code,
+            "lead_notifications":lead_notifications,
 
         }
 
@@ -2187,16 +2709,95 @@ class VendorHelpView(LoginRequiredMixin, View):
 # ==============================
 
 # customer dashboard
+
+
 @method_decorator(never_cache, name='dispatch')
-class CustomerDashboardView(LoginRequiredMixin, RoleRequiredMixin, View):
-    """ custoemr dashbaord page"""
+class CustomerDashboardView(LoginRequiredMixin,RoleRequiredMixin,View):
+    """ Customer Dashboard """
+
     login_url = "/login/"
     allowed_roles = ["customer"]
 
-    def get(self, request):
-        return render(request, "customer/dashboard.html", {
-            "user": request.user
-        })
+    def get(self, request, *args, **kwargs):
+
+        user = request.user
+
+        # Customer Bookings
+        bookings = Booking.objects.filter(
+            user=user
+        )
+        total_bookings = bookings.count()
+        pending_bookings = bookings.filter(status="pending").count()
+        completed_bookings = bookings.filter(status="completed").count()
+        cancelled_bookings = bookings.filter(status="cancelled").count()
+        completion_rate = 0
+        if total_bookings > 0:
+            completion_rate = round(
+                (completed_bookings / total_bookings) * 100
+            )
+        recent_bookings = bookings.order_by(
+            "-booking_created_at"
+        )[:5]
+
+        service_stats = (
+            bookings.values(
+                "service__s_title"
+            )
+            .annotate(
+                total=Count("id")
+            )
+            .order_by("-total")
+        )
+
+        service_labels = [
+            item["service__s_title"]
+            for item in service_stats
+        ]
+
+        service_counts = [
+            item["total"]
+            for item in service_stats
+        ]
+
+        today = now().date()
+
+        weekly_labels = []
+        weekly_counts = []
+
+        for i in range(6, -1, -1):
+
+            day = today - timedelta(days=i)
+
+            count = bookings.filter(
+                booking_created_at__date=day
+            ).count()
+
+            weekly_labels.append(
+                day.strftime("%a")
+            )
+
+            weekly_counts.append(count)
+
+
+
+        context = {
+
+            "total_bookings": total_bookings,
+            "pending_bookings": pending_bookings,
+            "completed_bookings": completed_bookings,
+            "cancelled_bookings": cancelled_bookings,
+            "completion_rate": completion_rate,
+            "recent_bookings": recent_bookings,
+            "service_labels": service_labels,
+            "service_counts": service_counts,
+            "weekly_labels": weekly_labels,
+            "weekly_counts": weekly_counts,
+        }
+
+        return render(request,"customer/dashboard.html",context)
+        
+
+
 
 
 # get the all service in customer dashboard
@@ -2417,34 +3018,43 @@ class CustomerTrackingView(LoginRequiredMixin, View):
 # custoern trackig orders in time line page
 @method_decorator(never_cache, name='dispatch')
 class CustomerTrackingDetailView(LoginRequiredMixin, View):
-    """ customer track the orders in a flow wise in clik button view"""
+    """ customer tracking order timeline """
 
     def get(self, request, id):
 
         booking = get_object_or_404(
-
             Booking.objects.select_related(
                 "service",
                 "vendor"
             ),
-
             id=id,
             user=request.user
-
         )
 
-        history = BookingHistory.objects.filter(
+        history_qs = BookingHistory.objects.filter(
             booking=booking
-        ).order_by("created_at")
+        ).select_related(
+            "updated_by"
+        ).order_by("-created_at")
 
-        return render(
-            request,
-            "customer/tracking_detail.html",
-            {
-                "booking": booking,
-                "history": history
-            })
-            
+        grouped_history = OrderedDict()
+
+        for item in history_qs:
+
+            status_key = item.status.lower().strip()
+
+            if status_key not in grouped_history:
+                grouped_history[status_key] = item
+
+        history = list(grouped_history.values())
+        history.reverse()
+
+        context = {
+            "booking": booking,
+            "history": history
+        }
+
+        return render(request,"customer/tracking_detail.html",context)
             
 # customer can see the orders in myservcie(detail)
 
@@ -2469,9 +3079,7 @@ class CustomerOrderDetailView(LoginRequiredMixin, View):
 
                 grouped_history[status_key] = item
 
-            else:
-           
-                grouped_history[status_key].booking_created_at = item.booking_created_at
+
 
         history = grouped_history.values()
         context= {
@@ -2485,34 +3093,22 @@ class CustomerOrderDetailView(LoginRequiredMixin, View):
 
 # set the satatus in user is active/inactive in the admin can set the user is inactive or active that code here 
 @method_decorator(never_cache, name='dispatch')
-class SetUserStatusView(LoginRequiredMixin, View):
-    """ set the status in active/deactive buttons code"""
+class SetUserStatusView(LoginRequiredMixin,View):
+    """ Set User Status """
 
-    def get(self, request, user_id, status):
-
+    def get(self,request,user_id,status):
         if request.user.role not in mainly_allowed_roles:
             return redirect("login")
+        user = get_object_or_404(User,id=user_id)
 
-        user = get_object_or_404(
-            User,
-            id=user_id
-        )
         if status == "active":
-
             user.is_active = True
-
         elif status == "inactive":
 
             user.is_active = False
 
         user.save()
-
-        if request.user.role == "superadmin":
-
-            return redirect("all_users")
-
-        return redirect("admin_all_users")
-
+        return redirect(request.META.get("HTTP_REFERER","/"))
 
 
 # admin can verify the vendor view
@@ -2674,6 +3270,7 @@ class BookServiceView(LoginRequiredMixin,View):
             phone=data.get("phone")
             category_id=data.get("category_id")
             service_id=data.get("service_id")
+            estimated_amount = data.get("estimated_amount")
             booking_type=data.get("booking_type")
             city=data.get("city")
 
@@ -2724,6 +3321,7 @@ class BookServiceView(LoginRequiredMixin,View):
                 "admin":matched_admin,
                 "category":category,
                 "service":service,
+                "estimated_amount":estimated_amount,
                 "vendor":vendor,
                 "name":name,
                 "phone":phone,
@@ -3128,39 +3726,140 @@ class UpdateStatusView(LoginRequiredMixin, View):
 
 
 
-# i think this alos not used 
-# track the order histrotyorder history
-@method_decorator(never_cache, name='dispatch')
-class OrderHistoryView(LoginRequiredMixin, View):
 
-    def get(self, request, id):
+# track the order histrotyorder history
+@method_decorator(never_cache,name='dispatch')
+class OrderHistoryView(LoginRequiredMixin,View):
+
+    def get(self,request,id):
 
         booking = get_object_or_404(
-            Booking.objects.select_related("user", "service", "vendor"),
-            id=id
+            Booking.objects.select_related(
+                "user",
+                "service",
+                "vendor"),id=id
         )
 
-        history = booking.history.all().order_by("-created_at")
+        all_history = booking.history.select_related(
+            "updated_by"
+        ).order_by(
+            "created_at"
+        )
+        history = []
+        latest_status = {}
 
-   
-        total_services = 1   
+        for h in all_history:
 
-   
-        total_amount = getattr(booking, "total_amount", 0)
-        paid_amount = getattr(booking, "paid_amount", 0)
+            latest_status[h.status] = h
 
-        due_amount = total_amount - paid_amount
+        history = list(
+            latest_status.values()
+        )
 
-        return render(request, "superadmin/order_history.html", {
+        history.sort(
+            key=lambda x: x.created_at,
+            reverse=True
+        )
+        assigned_time = None
+        accepted_time = None
+        for h in history:
+
+            h.time_taken = None
+            if h.status == "assigned":
+                assigned_time = h.created_at
+
+                h.custom_message = (
+
+                    f"Assigned by "
+
+                    f"{h.updated_by.first_name}"
+
+                )
+                if booking.vendor:
+
+                    h.custom_message += (
+                        f" to "
+                        f"{booking.vendor.first_name}"
+
+                    )
+            elif h.status == "accepted":
+
+                accepted_time = h.created_at
+                h.custom_message = (
+
+                    f"Updated by "
+
+                    f"{h.updated_by.first_name}"
+
+                )
+
+                if assigned_time:
+                    diff = (
+
+                        accepted_time
+                        - assigned_time
+
+                    )
+
+                    mins = int(
+                        diff.total_seconds() / 60
+
+                    )
+
+                    h.time_taken = (
+
+                        f"Vendor accepted "
+                        f"in {mins} mins"
+
+                    )
+
+            else:
+
+                h.custom_message = (
+
+                    f"Updated by "
+                    f"{h.updated_by.first_name}"
+
+                )
+
+        payment = Payment.objects.filter(
+            booking=booking
+        ).first()
+
+        total_services = 1
+        total_amount = (
+
+            payment.total_amount
+            if payment else 0
+
+        )
+
+        paid_amount = (
+
+            payment.paid_amount
+            if payment else 0
+
+        )
+
+        due_amount = (
+
+            payment.remaining_amount
+            if payment else 0
+
+        )
+
+        context = {
+
             "booking": booking,
             "history": history,
-
             "total_services": total_services,
             "total_amount": total_amount,
             "paid_amount": paid_amount,
             "due_amount": due_amount,
-        })
 
+        }
+
+        return render(request,"superadmin/order_history.html",context)
 
 
 # profile page page  in dropdown

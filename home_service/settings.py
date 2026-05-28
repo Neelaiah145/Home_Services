@@ -14,6 +14,14 @@ from pathlib import Path
 ROOT_URLCONF = 'home_service.urls'
 AUTH_USER_MODEL = 'accounts.User'
 
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'Asia/Kolkata'
+
+USE_I18N = True
+
+USE_TZ = True
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

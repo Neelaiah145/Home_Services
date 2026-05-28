@@ -13,7 +13,11 @@ body{
 /* =========================
    PAGINATION
 ========================= */
-
+.pg-wrap {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 32px 28px;
+}
 .tbl-footer{
     width:100%;
     display:flex;
@@ -413,39 +417,146 @@ body{
     cursor:pointer;
 }
 
+/* =========================================
+   MOBILE RESPONSIVE FIX
+========================================= */
+
 @media(max-width:768px){
 
-    .filter-bar{
+    .dashboard-page,
+    .pg-wrap{
+        padding:14px;
+    }
+
+    /* HEADER */
+
+    .dashboard-heading{
+        font-size:22px;
+        line-height:1.4;
+    }
+
+    .dashboard-subheading{
+        font-size:13px;
+    }
+
+    /* TABLE HEADER */
+
+    .table-header{
         flex-direction:column;
+        align-items:stretch;
+        gap:16px;
+        padding:16px;
+    }
+
+    .card-title{
+        font-size:18px;
+    }
+
+    /* FILTER BAR */
+
+    .filter-bar{
+        display:flex;
+        flex-direction:column;
+        width:100%;
+        gap:12px;
     }
 
     .filter-input,
-    .filter-select,
+    .filter-select{
+        width:100%;
+        min-width:100%;
+        height:46px;
+        font-size:14px;
+        border-radius:12px;
+        padding:0 14px;
+    }
+
+    /* SEARCH BUTTON */
+
     .filter-btn{
         width:100%;
+        height:48px;
+        border-radius:12px;
+        font-size:14px;
+        font-weight:700;
+        padding: 10px 10px !important;
+        display:flex;
+        align-items:center;
+        justify-content:center;
     }
+
+    /* TABLE */
+
+    .table-responsive{
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+    }
+
+    .lead-table{
+        min-width:950px;
+    }
+
+    /* MODAL */
 
     .modal-card{
         width:95%;
+        padding:20px;
+        border-radius:18px;
+    }
+
+    .modal-title{
+        font-size:20px;
+    }
+
+    /* PAGINATION */
+
+    .tbl-footer{
+        padding:16px;
+        justify-content:center;
+    }
+
+    .page-btns{
+        justify-content:center;
+    }
+
+    .pg-btn{
+        min-width:38px;
+        height:38px;
+        font-size:12px;
+    }
+
+    /* ALERT */
+
+    .expiry-alert{
+        flex-direction:row;
+        align-items:flex-start;
+        gap:10px;
+        padding:12px;
+    }
+
+    .expiry-alert-text{
+        font-size:11px;
+        line-height:1.5;
     }
 
 }
 
 </style>
 
-<div class="dashboard-page">
+    <div class="pg-wrap">
 
-    <div class="page-header">
+    <!-- PAGE HEADER -->
+        <h2 class="dashboard-heading">
+           Admin Renewal Management
+        </h2>
 
-        <div class="page-title">
-            Admin Renewal Management
-        </div>
-
-        <div class="page-sub">
+        <p class="dashboard-subheading">
             Track renewals and booking lifecycle
-        </div>
+        </p>
 
+      
     </div>
+    
 <!-- notofication bar -->
 
 <!-- EXPIRY NOTIFICATIONS -->
@@ -473,7 +584,7 @@ body{
                 service
 
                 <strong>
-                    {{ booking.service.s_title }}
+                     {{ booking.order_id }}
                 </strong>
 
                 is expiring soon
@@ -565,7 +676,7 @@ body{
 
                     <tr>
                         <th>Sl.No</th>
-                        <th>Order</th>
+                        <th>Service ID</th>
                         <th>Customer</th>
                         <th>Service</th>
                         <th>Status</th>

@@ -16,6 +16,7 @@ urlpatterns = [
     path('superadmin-dashboard/', SuperDashboardView.as_view(), name='superadmin_dashboard'),
     path('set-user-status/<int:user_id>/<str:status>/', SetUserStatusView.as_view(), name='set_user_status'),
     path('create_admin/', CreateAdminView.as_view(), name='create_admin'),
+    path("superadmin/edit-admin/<int:id>/",EditAdminView.as_view(),name="edit_admin"),
     path('superadmin/all-users/', AllUsersView.as_view(), name='all_users'),
     path('api/all-users/', AllUsersAPI.as_view(), name='api_all_users'),
     path('user/delete/<int:id>/', DeleteUserView.as_view(), name='delete_user'),
@@ -88,7 +89,11 @@ urlpatterns = [
     path('dashboard/export-excel/',export_dashboard_excel,name='export_dashboard_excel'),
     
     
-    
+    path(
+    "admin-permissions/",
+    AdminPermissionsView.as_view(),
+    name="admin_permissions"
+),
     
     
     

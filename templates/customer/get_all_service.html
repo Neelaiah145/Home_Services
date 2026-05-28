@@ -3,8 +3,8 @@
 {% block content %}
 
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'assets/css/dashboards_style/customer.css' %}">
-<!-- <style>
+
+ <style>
 
 /* ========================= GLOBAL ========================= */
 
@@ -19,31 +19,19 @@ body {
   /* Orange */
 }
 
-/* ============================================
-   SECTION (NO CHANGE TO BODY)
-   ============================================ */
 .cat-section {
   padding: 70px 40px;
   max-width: 1280px;
   margin: 0 auto;
 }
 
-/* ============================================
-   HEADER (UNCHANGED STRUCTURE)
-   ============================================ */
-
-/* ============================================
-   GRID
-   ============================================ */
 .cat-grid {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   gap: 15px;
 }
 
-/* ============================================
-   CARD
-   ============================================ */
+
 .cat-card {
   position: relative;
   height: 150px;
@@ -228,34 +216,7 @@ body {
 }
 
 
-@media (max-width: 900px) {
-  .cat-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
 
-@media (max-width: 567px) {
-  .cat-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hover-btn {
-    font-size: 16px;
-    background: var(--secondary-color);
-    color: #fff;
-    padding: 0px 30px;
-    border-radius: 20px;
-    text-decoration: none;
-    display: inline-block;
-  }
-
-  .card-hover {
-    position: absolute;
-    bottom: 0;
-    padding: 60px 110px;
-  }
-
-}
 
 
 .vsl-container {
@@ -267,11 +228,7 @@ body {
     padding: 10px 0 70px;
 }
 
-/* ========================= PAGE HEADER ========================= */
 
-
-
-/* ========================= ALPHABET NAV ========================= */
 
 .alphabet-nav-wrapper {
     display: flex;
@@ -353,15 +310,7 @@ body {
     color: #2563eb;
 }
 
-/* ========================= GRID ========================= */
 
-
-
-
-/* ========================= CARD ========================= */
-
-
-/* ========================= EMPTY ========================= */
 
 .empty-box {
     background: #fff;
@@ -378,7 +327,7 @@ body {
     margin: 0;
 }
 
-/* ========================= PAGINATION ========================= */
+
 
 .vsl-pagination {
     margin-top: 55px;
@@ -417,20 +366,129 @@ body {
     color: #fff;
 }
 
-/* ========================= RESPONSIVE ========================= */
 
-@media (max-width: 768px) {
-    .cp-page-title { font-size: 26px; }
-    .cat-grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
-    .card-icon { width: 80px; height: 80px; }
-    .card-icon img { width: 56px; height: 56px; }
+
+/* EXTRA SMALL MOBILE */
+/* ================= MOBILE RESPONSIVE ================= */
+
+@media (max-width: 768px){
+
+    .cat-section{
+        padding:20px 14px 50px;
+    }
+
+    .cat-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:14px;
+    }
+
+    .cat-card{
+        height:165px;
+        border-radius:16px;
+    }
+
+    .card-default{
+        padding:12px;
+    }
+
+    .card-icon{
+        width:58px;
+        height:58px;
+        border-radius:14px;
+    }
+
+    .card-icon img{
+        width:38px;
+        height:38px;
+        object-fit:contain;
+    }
+
+    .card-default-title{
+        font-size:13px;
+        line-height:1.4;
+        font-weight:600;
+    }
+
+    .card-hover{
+        width:100%;
+        left:0;
+        bottom:12px;
+        padding:0 12px;
+        display:flex;
+        justify-content:center;
+    }
+
+    .hover-btn{
+        width:100%;
+        height:38px;
+        border-radius:10px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:13px;
+        font-weight:600;
+        padding:0;
+    }
+
+    .dashboard-heading{
+        font-size:24px;
+    }
+
+    .dashboard-subheading{
+        font-size:13px;
+        line-height:1.5;
+    }
+
+    .alphabet-nav-wrapper{
+        padding:8px;
+        border-radius:14px;
+        margin-bottom:24px;
+    }
+
+    .alphabet-btn{
+        min-width:34px;
+        height:34px;
+        font-size:12px;
+    }
+
+    .vsl-pagination{
+        margin-top:35px;
+        gap:8px;
+    }
+
+    .vsl-page-link{
+        width:38px;
+        height:38px;
+        border-radius:10px;
+        font-size:12px;
+    }
 }
 
-@media (max-width: 480px) {
-    .cat-grid { grid-template-columns: repeat(3, 1fr); }
+/* EXTRA SMALL MOBILE */
+
+@media (max-width:480px){
+
+    .cat-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:12px;
+    }
+
+    .cat-card{
+        height:150px;
+    }
+
+    .card-default-title{
+        font-size:12px;
+    }
+
+    .hover-btn{
+        height:36px;
+        font-size:12px;
+    }
 }
 
-</style> -->
+
+</style> 
 
 <div class="vsl-main-wrapper">
     <div class="vsl-container">

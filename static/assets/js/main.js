@@ -1,3 +1,4 @@
+
 (function ($) {
   "use strict";
 
@@ -35,7 +36,17 @@
   ==================================*/
   /*
 
+
+
+
+
+
+  
   /*---------- 01. Preloader ----------*/
+
+
+
+
 
 
 
@@ -162,11 +173,39 @@ $(window).on('load', function () {
       });
 
       // Menu Show & Hide On Toggle Btn click
-      $(opt.menuToggleBtn).each(function () {
-        $(this).on("click", function () {
-          menuToggle();
-        });
-      });
+// Menu Show & Hide On Toggle Btn click
+$(opt.menuToggleBtn).each(function () {
+  $(this).on("click", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    menu.toggleClass(opt.bodyToggleClass);
+  });
+});
+
+
+// Close mobile menu when clicking menu links
+menu.find("a").on("click", function () {
+
+  // ignore submenu expand button click
+  if ($(this).find("." + opt.meanExpandClass).length) {
+    return;
+  }
+
+  // mobile only
+  if ($(window).width() < 992) {
+
+    menu.removeClass(opt.bodyToggleClass);
+
+    // optional close submenu also
+    menu.find("." + opt.subMenuClass)
+      .removeClass(opt.subMenuToggleClass)
+      .slideUp(opt.toggleSpeed);
+
+    menu.find("." + opt.subMenuParent)
+      .removeClass(opt.subMenuParentToggle);
+  }
+});
 
       // Hide Menu On out side click
       menu.on("click", function (e) {
@@ -1045,38 +1084,51 @@ document.querySelector('input[name="image"]').addEventListener('change', functio
 
 
 //  categories services 
-  const categorySelect = document.getElementById('category-select');
-  const serviceSelect = document.getElementById('service-select');
+// categories services
 
-  categorySelect.addEventListener('change', function () {
-    const categoryId = this.value;
 
-    // Reset services
-    serviceSelect.innerHTML = '<option value="">-- select service --</option>';
 
-    if (!categoryId) return;
 
-    fetch(`/api/category/${categoryId}/services/`)
-      .then(res => res.json())
-      .then(data => {
-        data.services.forEach(service => {
-          const option = document.createElement('option');
-          option.value = service.id;
-          option.textContent = service.s_title;
-          serviceSelect.appendChild(option);
-        });
-      })
-      .catch(err => console.error('Failed to load services:', err));
-  });
+window.addEventListener(
+    "load",
+    function(){
 
- document.getElementById('photoInput').addEventListener('change', function (event) {
-            const preview = document.getElementById('photoPreview');
-            const file = event.target.files[0];
+    const heroImages =
+    document.querySelectorAll(
+        ".jd-hero-bg"
+    );
 
-            if (file) {
-                preview.src = URL.createObjectURL(file);
-                preview.classList.add('visible');
-            } else {
-                preview.classList.remove('visible');
-            }
-        });
+    let current = 0;
+
+    heroImages[current]
+    .classList.add(
+        "active"
+    );
+
+    setInterval(()=>{
+
+        heroImages[current]
+        .classList.remove(
+            "active"
+        );
+
+        current++;
+
+        if(current >= heroImages.length){
+
+            current = 0;
+
+        }
+
+        heroImages[current]
+        .classList.add(
+            "active"
+        );
+
+    },5000);
+
+});
+
+
+
+

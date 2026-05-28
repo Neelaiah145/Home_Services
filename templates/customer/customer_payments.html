@@ -3,8 +3,8 @@
 {% block content %}
 
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'assets/css/dashboards_style/customer.css' %}">
-<!-- <style>
+
+ <style>
 
 :root{
     --bg:#f4f7fb;
@@ -441,20 +441,181 @@ tbody tr:hover{
 }
 /* MOBILE */
 
+
 @media(max-width:768px){
+
+    .orders-page{
+        padding:14px;
+    }
+
+    /* HEADER */
+
+    .dashboard-heading{
+        font-size:24px;
+        line-height:1.3;
+        font-weight:700;
+    }
+
+    .dashboard-subheading{
+        font-size:13px;
+        line-height:1.4;
+        color:#6b7280;
+        margin-top:4px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+    }
+
+    /* NOTIFICATION */
+
+    .due-notification{
+        padding:12px;
+        border-radius:14px;
+        gap:10px;
+        margin-top:14px;
+        margin-bottom:14px;
+    }
+
+    .notify-icon{
+        width:38px;
+        height:38px;
+        border-radius:10px;
+        font-size:16px;
+    }
+
+    .notify-title{
+        font-size:13px;
+    }
+
+    .notify-text{
+        font-size:12px;
+        line-height:1.5;
+    }
+
+    /* CARD */
+
+    .table-card{
+        border-radius:16px;
+    }
 
     .card-header-flex{
         flex-direction:column;
         align-items:stretch;
+        gap:12px;
+        padding:14px;
     }
+
+    .card-title{
+        font-size:15px;
+    }
+
+    /* TOOLBAR */
 
     .toolbar{
-        flex-direction:column;
+        display:grid;
+        grid-template-columns:1fr 110px;
+        gap:10px;
+        width:100%;
     }
 
-}
+    .search-container{
+        grid-column:1 / -1;
+    }
 
-</style> -->
+    .search-container input{
+        width:100%;
+        min-width:unset;
+        height:44px;
+        border-radius:12px;
+        font-size:13px;
+    }
+
+    .filter-select{
+        width:100%;
+        min-width:unset;
+        height:44px;
+        border-radius:12px;
+        font-size:12px;
+    }
+
+    .filter-btn{
+        width:100%;
+        height:44px;
+        border-radius:12px;
+        font-size:12px;
+        font-weight:600;
+        padding:0;
+        box-shadow:0 4px 10px rgba(37,99,235,.15);
+    }
+
+    /* TABLE */
+
+    .table-wrap{
+        overflow-x:auto;
+        border-radius:0 0 16px 16px;
+    }
+
+    table{
+        min-width:1450px;
+    }
+
+    thead th{
+        padding:12px;
+        font-size:10px;
+    }
+
+    tbody td{
+        padding:12px;
+        font-size:13px;
+    }
+
+    /* BUTTONS */
+
+    .request-btn,
+    .submit-btn,
+    .invoice-btn{
+        height:36px;
+        border-radius:10px;
+        font-size:11px;
+        padding:0 12px;
+    }
+
+    .request-textarea{
+        width:180px;
+        font-size:12px;
+    }
+
+    .due-date-box{
+        max-width:180px;
+        font-size:11px;
+        line-height:1.5;
+    }
+
+    .request-message{
+        max-width:180px;
+        font-size:11px;
+        line-height:1.5;
+    }
+
+    /* PAGINATION */
+
+    .tbl-footer{
+        justify-content:center;
+        padding:14px;
+    }
+
+    .page-btns{
+        justify-content:center;
+    }
+
+    .pg-btn{
+        min-width:36px;
+        height:36px;
+        border-radius:10px;
+        font-size:12px;
+    }
+}
+</style> 
 
 <div class="orders-page">
 

@@ -16,7 +16,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-
         :root {
             --primary: #005eff;
             --primary-hover: #004ecc;
@@ -67,23 +66,25 @@
             line-height: 1.8;
             color: var(--text-gray);
         }
-.login-text{
-    margin-top:18px;
-    text-align:center;
-    font-size:14px;
-    color:var(--text-gray);
-}
 
-.login-text a{
-    color:var(--primary);
-    text-decoration:none;
-    font-weight:700;
-    margin-left:4px;
-}
+        .login-text {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-gray);
+        }
 
-.login-text a:hover{
-    text-decoration:underline;
-}
+        .login-text a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            margin-left: 4px;
+        }
+
+        .login-text a:hover {
+            text-decoration: underline;
+        }
+
         .form-side {
             flex: 1.2;
             padding: 40px 60px;
@@ -235,9 +236,11 @@
             font-size: 15px;
             line-height: 1.7;
         }
-.hidden{
-    display:none;
-}
+
+        .hidden {
+            display: none;
+        }
+
         .terms-check-wrapper {
             margin-top: 18px;
             margin-bottom: 5px;
@@ -312,7 +315,6 @@
                 grid-template-columns: 1fr;
             }
         }
-
     </style>
 
 </head>
@@ -381,171 +383,151 @@
                         Phone Number
                     </label>
 
-                    <input
-                        id="phone"
-                        type="tel"
-                        maxlength="10"
-                        placeholder="10-digit mobile"
-                        oninput="
+                    <input id="phone" type="tel" maxlength="10" placeholder="10-digit mobile" oninput="
                             this.value =
                             this.value
                             .replace(/[^0-9]/g,'')
                             .slice(0,10)
-                        "
-                    >
+                        ">
 
                 </div>
 
-                <div id="vendorBox" class="hidden">
 
-                    <div class="vendor-grid">
+                <div class="vendor-grid">
 
-                        <div class="group">
+                    <div class="group">
 
-                            <label>
-                                Category
-                            </label>
+                        <label>
+                            City
+                        </label>
 
-                            <select id="category">
-
-                                <option value="">
-                                    Select Category
-                                </option>
-
-                                {% for c in categories %}
-
-                                <option value="{{ c.id }}">
-                                    {{ c.title }}
-                                </option>
-
-                                {% endfor %}
-
-                            </select>
-
-                        </div>
-
-                        <div class="group">
-
-                            <label>
-                                Service
-                            </label>
-
-                            <select id="service">
-
-                                <option value="">
-                                    Select Service
-                                </option>
-
-                                {% for s in services %}
-
-                                <option value="{{ s.id }}">
-                                    {{ s.s_title }}
-                                </option>
-
-                                {% endfor %}
-
-                            </select>
-
-                        </div>
+                        <input id="city" placeholder="Enter Your City">
 
                     </div>
 
                     <div class="group">
 
                         <label>
-                            Business Address
+                            Postcode
                         </label>
 
-                        <input id="address" placeholder="Full Address">
-
-                    </div>
-
-                    <div class="vendor-grid">
-
-                        <div class="group">
-
-                            <label>
-                                City
-                            </label>
-
-                            <input id="city" placeholder="City">
-
-                        </div>
-
-                        <div class="group">
-
-                            <label>
-                                Postcode
-                            </label>
-
-                            <input
-                                id="postcode"
-                                maxlength="6"
-                                placeholder="6-digit PIN"
-                                oninput="
-                                    this.value =
-                                    this.value
-                                    .replace(/[^0-9]/g,'')
-                                    .slice(0,6)
-                                "
-                            >
-
-                        </div>
+                        <input id="postcode" maxlength="6" placeholder="6-digit PIN" oninput="
+                    this.value =
+                    this.value
+                    .replace(/[^0-9]/g,'')
+                    .slice(0,6)
+                        ">
 
                     </div>
 
                 </div>
+                <div id="vendorBox" class="hidden">
+
+    <div class="vendor-grid">
+
+        <div class="group">
+
+            <label>
+                Category
+            </label>
+
+            <select id="category">
+
+                <option value="">
+                    Select Category
+                </option>
+
+                {% for c in categories %}
+
+                <option value="{{ c.id }}">
+                    {{ c.title }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="group">
+
+            <label>
+                Service
+            </label>
+
+            <select id="service">
+
+                <option value="">
+                    Select Service
+                </option>
+
+                {% for s in services %}
+
+                <option value="{{ s.id }}">
+                    {{ s.s_title }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+    </div>
+
+    <div class="group">
+
+        <label>
+            Business Address
+        </label>
+
+        <input
+            id="address"
+            placeholder="Full Address"
+        >
+
+    </div>
+
+</div>
+
+
 
                 <div class="terms-check-wrapper">
 
                     <label class="terms-check-box">
 
                         <input type="checkbox" id="termsCheck">
-<span>
+                        <span>
 
-    I agree to the
+                            I agree to the
 
-    <!-- CUSTOMER TERMS -->
+                            <!-- CUSTOMER TERMS -->
 
-    <a
-        id="customerTermsLink"
-        href="{% url 'customer_termsandconditions' %}"
-    >
-        Terms & Conditions
-    </a>
+                            <a id="customerTermsLink" href="{% url 'customer_termsandconditions' %}">
+                                Terms & Conditions
+                            </a>
 
-    <!-- VENDOR TERMS -->
+                            <!-- VENDOR TERMS -->
 
-    <a
-        id="vendorTermsLink"
-        href="{% url 'vendor_termsandconditions' %}"
-        class="hidden"
-    >
-        Terms & Conditions
-    </a>
+                            <a id="vendorTermsLink" href="{% url 'vendor_termsandconditions' %}" class="hidden">
+                                Terms & Conditions
+                            </a>
 
-    and
+                            and
 
-    <!-- CUSTOMER PRIVACY -->
+                            <!-- CUSTOMER PRIVACY -->
 
-    <a
-        id="customerPrivacyLink"
-        href="{% url 'customer_privacy' %}"
-    >
-        Privacy Policy
-    </a>
+                            <a id="customerPrivacyLink" href="{% url 'customer_privacy' %}">
+                                Privacy Policy
+                            </a>
 
-    <!-- VENDOR PRIVACY -->
+                            <!-- VENDOR PRIVACY -->
 
-    <a
-        id="vendorPrivacyLink"
-        href="{% url 'vendor_privacy' %}"
-        class="hidden"
-    >
-        Privacy Policy
-    </a>
+                            <a id="vendorPrivacyLink" href="{% url 'vendor_privacy' %}" class="hidden">
+                                Privacy Policy
+                            </a>
 
-</span>
+                        </span>
 
                     </label>
 
@@ -558,13 +540,13 @@
             </div>
             <div class="login-text">
 
-    Already have an account?
+                Already have an account?
 
-    <a href="{% url 'login' %}">
-        Login
-    </a>
+                <a href="{% url 'login' %}">
+                    Login
+                </a>
 
-</div>
+            </div>
 
             <div id="step2" class="hidden">
 
@@ -626,188 +608,157 @@
 
     </div>
 
-<script>
+    <script>
 
-function setRole(role) {
+        function setRole(role) {
 
-    document.getElementById("role").value = role;
+            document.getElementById("role").value = role;
 
-    const customer =
-        document.getElementById("tabCustomer");
+            const customer =
+                document.getElementById("tabCustomer");
 
-    const vendor =
-        document.getElementById("tabVendor");
+            const vendor =
+                document.getElementById("tabVendor");
 
-    const vendorBox =
-        document.getElementById("vendorBox");
+            const vendorBox =
+                document.getElementById("vendorBox");
 
-    /* TERMS LINKS */
+            /* TERMS LINKS */
 
-    const customerTermsLink =
-        document.getElementById("customerTermsLink");
+            const customerTermsLink =
+                document.getElementById("customerTermsLink");
 
-    const vendorTermsLink =
-        document.getElementById("vendorTermsLink");
+            const vendorTermsLink =
+                document.getElementById("vendorTermsLink");
 
-    /* PRIVACY LINKS */
+            /* PRIVACY LINKS */
 
-    const customerPrivacyLink =
-        document.getElementById("customerPrivacyLink");
+            const customerPrivacyLink =
+                document.getElementById("customerPrivacyLink");
 
-    const vendorPrivacyLink =
-        document.getElementById("vendorPrivacyLink");
+            const vendorPrivacyLink =
+                document.getElementById("vendorPrivacyLink");
 
-    if (role === "vendor") {
+            if (role === "vendor") {
 
-        vendor.classList.add("active");
+                vendor.classList.add("active");
 
-        customer.classList.remove("active");
+                customer.classList.remove("active");
 
-        vendorBox.classList.remove("hidden");
+                vendorBox.classList.remove("hidden");
 
-        /* SHOW VENDOR LINKS */
+                /* SHOW VENDOR LINKS */
 
-        vendorTermsLink.classList.remove("hidden");
+                vendorTermsLink.classList.remove("hidden");
 
-        vendorPrivacyLink.classList.remove("hidden");
+                vendorPrivacyLink.classList.remove("hidden");
 
-        /* HIDE CUSTOMER LINKS */
+                /* HIDE CUSTOMER LINKS */
 
-        customerTermsLink.classList.add("hidden");
+                customerTermsLink.classList.add("hidden");
 
-        customerPrivacyLink.classList.add("hidden");
+                customerPrivacyLink.classList.add("hidden");
 
-    } else {
+            } else {
 
-        customer.classList.add("active");
+                customer.classList.add("active");
 
-        vendor.classList.remove("active");
+                vendor.classList.remove("active");
 
-        vendorBox.classList.add("hidden");
+                vendorBox.classList.add("hidden");
 
-        /* SHOW CUSTOMER LINKS */
+                /* SHOW CUSTOMER LINKS */
 
-        customerTermsLink.classList.remove("hidden");
+                customerTermsLink.classList.remove("hidden");
 
-        customerPrivacyLink.classList.remove("hidden");
+                customerPrivacyLink.classList.remove("hidden");
 
-        /* HIDE VENDOR LINKS */
+                /* HIDE VENDOR LINKS */
 
-        vendorTermsLink.classList.add("hidden");
+                vendorTermsLink.classList.add("hidden");
 
-        vendorPrivacyLink.classList.add("hidden");
-    }
-}
-    function show(message, error = true) {
+                vendorPrivacyLink.classList.add("hidden");
+            }
+        }
+        function show(message, error = true) {
 
-        const box =
-            document.getElementById("msg");
+            const box =
+                document.getElementById("msg");
 
-        box.style.display = "block";
+            box.style.display = "block";
 
-        box.innerText = message;
+            box.innerText = message;
 
-        box.style.background =
-            error ? "#fee2e2" : "#dcfce7";
+            box.style.background =
+                error ? "#fee2e2" : "#dcfce7";
 
-        box.style.color =
-            error ? "#991b1b" : "#166534";
-    }
-
-    async function sendOtp() {
-
-        const role =
-            document.getElementById("role").value;
-
-        const name =
-            document.getElementById("name").value.trim();
-
-        const email =
-            document.getElementById("email").value.trim();
-
-        const phone =
-            document.getElementById("phone").value.trim();
-
-        const termsAccepted =
-            document.getElementById("termsCheck").checked;
-
-        const emailPattern =
-            /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        const phonePattern =
-            /^[6-9]\d{9}$/;
-
-        if (name === "") {
-
-            show("Please enter full name");
-            return;
+            box.style.color =
+                error ? "#991b1b" : "#166534";
         }
 
-        if (name.length < 3) {
+        async function sendOtp() {
 
-            show("Name must be minimum 3 characters");
-            return;
-        }
+            const role =
+                document.getElementById("role").value;
 
-        if (email === "") {
+            const name =
+                document.getElementById("name").value.trim();
 
-            show("Please enter email address");
-            return;
-        }
+            const email =
+                document.getElementById("email").value.trim();
 
-        if (!emailPattern.test(email)) {
-
-            show("Please enter valid email address");
-            return;
-        }
-
-        if (phone === "") {
-
-            show("Please enter mobile number");
-            return;
-        }
-
-        if (!phonePattern.test(phone)) {
-
-            show("Please enter valid Indian mobile number");
-            return;
-        }
-
-        if (role === "vendor") {
-
-            const category =
-                document.getElementById("category").value;
-
-            const service =
-                document.getElementById("service").value;
-
-            const address =
-                document.getElementById("address").value.trim();
-
+            const phone =
+                document.getElementById("phone").value.trim();
             const city =
                 document.getElementById("city").value.trim();
 
             const postcode =
                 document.getElementById("postcode").value.trim();
 
-            if (category === "") {
+            const termsAccepted =
+                document.getElementById("termsCheck").checked;
 
-                show("Please select category");
+            const emailPattern =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            const phonePattern =
+                /^[6-9]\d{9}$/;
+
+            if (name === "") {
+
+                show("Please enter full name");
                 return;
             }
 
-            if (service === "") {
+            if (name.length < 3) {
 
-                show("Please select service");
+                show("Name must be minimum 3 characters");
                 return;
             }
 
-            if (address === "") {
+            if (email === "") {
 
-                show("Please enter business address");
+                show("Please enter email address");
                 return;
             }
 
+            if (!emailPattern.test(email)) {
+
+                show("Please enter valid email address");
+                return;
+            }
+
+            if (phone === "") {
+
+                show("Please enter mobile number");
+                return;
+            }
+
+            if (!phonePattern.test(phone)) {
+
+                show("Please enter valid Indian mobile number");
+                return;
+            }
             if (city === "") {
 
                 show("Please enter city");
@@ -825,210 +776,252 @@ function setRole(role) {
                 show("Please enter valid postcode");
                 return;
             }
+
+            if (role === "vendor") {
+
+                const category =
+                    document.getElementById("category").value;
+
+                const service =
+                    document.getElementById("service").value;
+
+                const address =
+                    document.getElementById("address").value.trim();
+
+
+                if (category === "") {
+
+                    show("Please select category");
+                    return;
+                }
+
+                if (service === "") {
+
+                    show("Please select service");
+                    return;
+                }
+
+                if (address === "") {
+
+                    show("Please enter business address");
+                    return;
+                }
+
+                if (city === "") {
+
+                    show("Please enter city");
+                    return;
+                }
+
+                if (postcode === "") {
+
+                    show("Please enter postcode");
+                    return;
+                }
+
+                if (postcode.length !== 6) {
+
+                    show("Please enter valid postcode");
+                    return;
+                }
+            }
+
+            if (!termsAccepted) {
+
+                show("Please accept Terms & Conditions");
+                return;
+            }
+
+            const res = await fetch("/register/", {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+
+                body: JSON.stringify({
+
+                    action: "send_otp",
+
+                    name: name,
+
+                    email: email,
+
+                    phone: phone,
+
+                    role: role
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.exists) {
+
+                show("Mobile number already registered. Please login.");
+
+                setTimeout(() => {
+
+                    window.location = "/login/";
+
+                }, 1500);
+
+                return;
+            }
+
+            if (data.email_exists) {
+
+                show("Email already registered. Please login.");
+
+                setTimeout(() => {
+
+                    window.location = "/login/";
+
+                }, 1500);
+
+                return;
+            }
+
+            if (data.error) {
+
+                show(data.error);
+                return;
+            }
+
+            show("OTP Sent Successfully", false);
+
+            document.getElementById("step1")
+                .classList.add("hidden");
+
+            document.getElementById("step2")
+                .classList.remove("hidden");
         }
 
-        if (!termsAccepted) {
+        async function verifyOtp() {
 
-            show("Please accept Terms & Conditions");
-            return;
-        }
+            const otp =
 
-        const res = await fetch("/register/", {
+                document.getElementById("otp1").value +
+                document.getElementById("otp2").value +
+                document.getElementById("otp3").value +
+                document.getElementById("otp4").value;
 
-            method: "POST",
+            if (otp.length !== 4) {
 
-            headers: {
+                show("Please enter valid OTP");
+                return;
+            }
 
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
+            const role =
+                document.getElementById("role").value;
 
-            body: JSON.stringify({
+            const name =
+                document.getElementById("name").value.trim();
 
-                action: "send_otp",
+            const email =
+                document.getElementById("email").value.trim();
 
-                name: name,
+            const phone =
+                document.getElementById("phone").value.trim();
 
-                email: email,
-
-                phone: phone,
-
-                role: role
-            })
-        });
-
-        const data = await res.json();
-
-        if (data.exists) {
-
-            show("Mobile number already registered. Please login.");
-
-            setTimeout(() => {
-
-                window.location = "/login/";
-
-            }, 1500);
-
-            return;
-        }
-
-        if (data.email_exists) {
-
-            show("Email already registered. Please login.");
-
-            setTimeout(() => {
-
-                window.location = "/login/";
-
-            }, 1500);
-
-            return;
-        }
-
-        if (data.error) {
-
-            show(data.error);
-            return;
-        }
-
-        show("OTP Sent Successfully", false);
-
-        document.getElementById("step1")
-            .classList.add("hidden");
-
-        document.getElementById("step2")
-            .classList.remove("hidden");
-    }
-
-    async function verifyOtp() {
-
-        const otp =
-
-            document.getElementById("otp1").value +
-            document.getElementById("otp2").value +
-            document.getElementById("otp3").value +
-            document.getElementById("otp4").value;
-
-        if (otp.length !== 4) {
-
-            show("Please enter valid OTP");
-            return;
-        }
-
-        const role =
-            document.getElementById("role").value;
-
-        const name =
-            document.getElementById("name").value.trim();
-
-        const email =
-            document.getElementById("email").value.trim();
-
-        const phone =
-            document.getElementById("phone").value.trim();
-
-        let category = "";
-        let service = "";
-        let address = "";
-        let city = "";
-
-        /* NEW */
-
-        let postal_code = "";
-
-        if (role === "vendor") {
-
-            category =
-                document.getElementById("category").value;
-
-            service =
-                document.getElementById("service").value;
-
-            address =
-                document.getElementById("address").value.trim();
-
-            city =
+            let category = "";
+            let service = "";
+            let address = "";
+            let city =
                 document.getElementById("city").value.trim();
 
-            /* NEW */
-
-            postal_code =
+            let postal_code =
                 document.getElementById("postcode").value.trim();
+
+            if (role === "vendor") {
+
+                category =
+                    document.getElementById("category").value;
+
+                service =
+                    document.getElementById("service").value;
+
+                address =
+                    document.getElementById("address").value.trim();
+
+
+            }
+
+            const res = await fetch("/register/", {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+
+                body: JSON.stringify({
+
+                    action: "verify_otp",
+
+                    otp: otp,
+
+                    role: role,
+
+                    name: name,
+
+                    email: email,
+
+                    phone: phone,
+
+                    category: category,
+
+                    service: service,
+
+                    address: address,
+
+                    city: city,
+
+                    /* NEW */
+
+                    postal_code: postal_code
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.error) {
+
+                show(data.error);
+                return;
+            }
+
+            show("Registration Successful", false);
+
+            setTimeout(() => {
+
+                window.location = "/login/";
+
+            }, 1500);
         }
 
-        const res = await fetch("/register/", {
+        function moveNext(current, nextFieldId) {
 
-            method: "POST",
+            current.value =
+                current.value.replace(/[^0-9]/g, '');
 
-            headers: {
+            if (current.value.length >= 1) {
 
-                "Content-Type": "application/json",
-                "X-CSRFToken": "{{ csrf_token }}"
-            },
+                const next =
+                    document.getElementById(nextFieldId);
 
-            body: JSON.stringify({
+                if (next) {
 
-                action: "verify_otp",
-
-                otp: otp,
-
-                role: role,
-
-                name: name,
-
-                email: email,
-
-                phone: phone,
-
-                category: category,
-
-                service: service,
-
-                address: address,
-
-                city: city,
-
-                /* NEW */
-
-                postal_code: postal_code
-            })
-        });
-
-        const data = await res.json();
-
-        if (data.error) {
-
-            show(data.error);
-            return;
-        }
-
-        show("Registration Successful", false);
-
-        setTimeout(() => {
-
-            window.location = "/login/";
-
-        }, 1500);
-    }
-
-    function moveNext(current, nextFieldId) {
-
-        current.value =
-            current.value.replace(/[^0-9]/g, '');
-
-        if (current.value.length >= 1) {
-
-            const next =
-                document.getElementById(nextFieldId);
-
-            if (next) {
-
-                next.focus();
+                    next.focus();
+                }
             }
         }
-    }
 
-</script>
+    </script>
 
 </body>
 
