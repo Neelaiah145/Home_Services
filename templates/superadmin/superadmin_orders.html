@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load tz %}
 {% block content %}
 
 <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
@@ -247,7 +248,7 @@ tbody td{
   cursor:pointer;
   transition:all 0.2s ease;
 }
-
+.service{color:#2563eb}
 /* HOVER */
 .date-input:hover{
   border-color:var(--primary-600);
@@ -376,7 +377,7 @@ tbody td{
   <th>Service ID</th>
   <th>Customer</th>
   <th>Service</th>
-  <th>Date</th>
+  <th>Lead Timing</th>
   <th>Vendor</th> 
   <th>Status</th>
   <th>Action</th>
@@ -388,13 +389,46 @@ tbody td{
 {% for b in bookings %}
 <tr>
 <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
-<td>{{ b.order_id }}</td>
+<td class="service">{{ b.order_id }}</td>
 
 <td>{{ b.user.first_name }}</td>
 
 <td>{{ b.service.s_title }}</td>
 
-<td>{{ b.created_at|date:"d M Y" }}</td>
+<td>
+
+    <div class="lead-date">
+
+        {{ b.booking_created_at|localtime|date:"d M Y" }}
+
+    </div>
+
+    {% if b.assigned_time %}
+
+        <div class="lead-assign-time">
+
+            Assigned:
+            {{ b.assigned_time|date:"h:i A" }}
+
+        </div>
+
+        <div class="lead-hours">
+
+            {{ b.assign_hours }} hrs taken
+
+        </div>
+
+    {% else %}
+
+        <div class="lead-pending">
+
+            Waiting For Vendor
+
+        </div>
+
+    {% endif %}
+
+</td>
 <td>
   {% if b.vendor %}
     <strong>{{ b.vendor.first_name }}</strong>

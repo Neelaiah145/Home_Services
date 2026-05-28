@@ -953,6 +953,24 @@ button{
 
       </div>
 
+      <!-- ESTIMATED AMOUNT -->
+
+<div class="form-group">
+
+  <label>
+
+    Estimated Amount
+
+  </label>
+
+  <input
+    type="number"
+    id="estimated_amount"
+    placeholder="Enter your estimated budget"
+  >
+
+</div>
+
       <div class="form-group full-width">
 
         <label>Describe Your Problem</label>
@@ -1161,6 +1179,10 @@ async function bookService(){
 
       category_id:category,
       service_id:service,
+      estimated_amount:
+        document.getElementById(
+        "estimated_amount"
+        ).value,
 
       booking_type:
         document.getElementById("booking_type").value,

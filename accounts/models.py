@@ -19,7 +19,6 @@ class UserManager(BaseUserManager):
 
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -46,63 +45,23 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15, null=True, blank=True)
-    role = models.CharField(
-        max_length=20,
-        choices=Role.choices,
-        default=Role.CUSTOMER
-    )
+    role = models.CharField(max_length=20,choices=Role.choices,default=Role.CUSTOMER)
     services = models.ManyToManyField(
         "core.CategoryService", blank=True, related_name="vendors")
 
-    created_by = models.ForeignKey(
-        "self",
-        on_delete=models.SET_NULL,
-        null=True,
+    created_by = models.ForeignKey("self",on_delete=models.SET_NULL,null=True,
         blank=True,
         related_name="created_users"
     )
-
     user_created_at = models.DateTimeField(auto_now_add=True)
     user_updated_at = models.DateTimeField(auto_now=True)
-    state = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
-
-    district = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
-
-    city = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
-
-    area = models.CharField(
-        max_length=150,
-        blank=True,
-        null=True
-    )
-
-    pincode = models.CharField(
-        max_length=10,
-        blank=True,
-        null=True
-    )
-
-    address = models.TextField(
-        blank=True,
-        null=True
-    )
-    profile_image = models.ImageField(
-        upload_to="profile_images/",
-        null=True,
-        blank=True
-    )
+    state = models.CharField(max_length=100,blank=True,null=True)
+    district = models.CharField(max_length=100,blank=True,null=True)
+    city = models.CharField(max_length=100,blank=True,null=True)
+    area = models.CharField(max_length=150,blank=True,null=True)
+    pincode = models.CharField(max_length=10,blank=True,null=True)
+    address = models.TextField(blank=True,null=True)
+    profile_image = models.ImageField(upload_to="profile_images/",null=True,blank=True)
     BEHAVIOUR = (
     ("good", "Good"),
     ("average", "Average"),
@@ -110,9 +69,7 @@ class User(AbstractUser):
     ("normal", "Normal"),)
 
     behaviour = models.CharField(max_length=20,choices=BEHAVIOUR,default="normal")
-
     behaviour_note = models.TextField(blank=True,null=True)
-
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "phone"]
 
@@ -142,72 +99,29 @@ class Booking(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     admin = models.ForeignKey(User,on_delete=models.SET_NULL,
-    null=True,blank=True,related_name="admin_bookings",limit_choices_to={"role": "admin"}
-    )
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.CASCADE
-    )
-
-    service = models.ForeignKey(
-        CategoryService,
-        on_delete=models.CASCADE
-    )
-
-    order_id = models.CharField(
-        max_length=20,
-        unique=True,
-        editable=False,
-        default=generate_order_id
-    )
-
-    vendor = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="vendor_bookings"
-    )
-
+    null=True,blank=True,related_name="admin_bookings",limit_choices_to={"role": "admin"})
+    category = models.ForeignKey(Category,on_delete=models.CASCADE)
+    service = models.ForeignKey(CategoryService,on_delete=models.CASCADE)
+    order_id = models.CharField(max_length=20,unique=True,editable=False,default=generate_order_id)
+    vendor = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="vendor_bookings")
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=15)
-
     address = models.TextField()
     problem = models.TextField()
-
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS,
-        default='pending'
-    )
-    city = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True
-    )
+    status = models.CharField(max_length=20,choices=STATUS,default='pending')
+    city = models.CharField(max_length=100,blank=True,null=True)
     # single day 
     scheduled_date = models.DateField(null=True,blank=True)
     scheduled_time = models.CharField(max_length=50,null=True,blank=True)
-    
     # multiple day service 
     start_date = models.DateField(null=True,blank=True)
-
     end_date = models.DateField(null=True,blank=True)
     renewal_requested = models.BooleanField(default=False)
-
-
-    is_renewed = models.BooleanField(
-        default=False
-    )
-
-    previous_total_days = models.IntegerField(
-     null=True,
-        blank=True
-    )
-
-    renewal_count = models.IntegerField(
-        default=0
-    )
+    is_renewed = models.BooleanField(default=False)
+    previous_total_days = models.IntegerField(null=True,blank=True)
+    renewal_count = models.IntegerField(default=0)
+    estimated_amount = models.IntegerField(default=0)
+  
     booking_created_at = models.DateTimeField(auto_now_add=True)
     booking_updated_at = models.DateTimeField(auto_now=True)
     def __str__(self):
@@ -254,19 +168,9 @@ class Booking(models.Model):
 # booking history(track the order)
 class BookingHistory(models.Model):
 
-    booking = models.ForeignKey(
-        Booking,
-        on_delete=models.CASCADE,
-        related_name="history"
-    )
-
+    booking = models.ForeignKey(Booking,on_delete=models.CASCADE,related_name="history")
     status = models.CharField(max_length=20)
-
-    updated_by = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True
-    )
+    updated_by = models.ForeignKey(User,on_delete=models.SET_NULL,null=True)
     service_days = models.IntegerField(default=30)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -276,26 +180,10 @@ class BookingHistory(models.Model):
 
 # payments
 class Payment(models.Model):
-
-    booking = models.ForeignKey(
-        Booking,
-        on_delete=models.CASCADE,
-        related_name="payments"
-    )
-
-    vendor = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
-    )
-
-    service = models.ForeignKey(
-        CategoryService,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
+    
+    booking = models.ForeignKey(Booking,on_delete=models.CASCADE,related_name="payments")
+    vendor = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True)
+    service = models.ForeignKey(CategoryService,on_delete=models.CASCADE,null=True,blank=True)
 
     status = models.CharField(
         max_length=20,
@@ -347,6 +235,7 @@ class Payment(models.Model):
 
 # vendor profile    
 class VendorProfile(models.Model):
+    
     user = models.OneToOneField(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name="vendor_profile")
     experience = models.PositiveIntegerField(help_text="Years of experience")
     locality = models.CharField(max_length=200, db_index=True)
@@ -387,30 +276,12 @@ class CustomerRemark(models.Model):
         ("resolved", "Resolved"),
     ]
 
-    booking = models.ForeignKey(
-        "Booking",
-        on_delete=models.CASCADE,
-        related_name="remarks"
-    )
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="customer_remarks"
-    )
-
-    vendor = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="vendor_remarks"
-    )
-
+    booking = models.ForeignKey("Booking",on_delete=models.CASCADE,related_name="remarks")
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="customer_remarks")
+    vendor = models.ForeignKey(User,on_delete=models.CASCADE,related_name="vendor_remarks")
     message = models.TextField()
-
     priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default="medium")
-
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="open")
-
     resolved_by = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
@@ -431,39 +302,13 @@ class CustomerRemark(models.Model):
 # notifications in all users  
 class Notification(models.Model):
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="notifications"
-    )
-
-    booking = models.ForeignKey(
-        Booking,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-
-    payment = models.ForeignKey(
-        Payment,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-
-    title = models.CharField(
-        max_length=255
-    )
-
+    user = models.ForeignKey(User,on_delete=models.CASCADE,related_name="notifications")
+    booking = models.ForeignKey(Booking,on_delete=models.CASCADE,null=True,blank=True)
+    payment = models.ForeignKey(Payment,on_delete=models.CASCADE,null=True,blank=True)
+    title = models.CharField(max_length=255)
     message = models.TextField()
-
-    is_read = models.BooleanField(
-        default=False
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
 
@@ -479,25 +324,10 @@ class Notification(models.Model):
 
 class TermsAcceptance(models.Model):
 
-    customer = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="terms_acceptances"
-    )
-
-    booking = models.ForeignKey(
-        "Booking",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True
-    )
-
-    signature = models.ImageField(
-        upload_to="signatures/"
-    )
-
+    customer = models.ForeignKey(User,on_delete=models.CASCADE,related_name="terms_acceptances")
+    booking = models.ForeignKey("Booking",on_delete=models.CASCADE,null=True,blank=True)
+    signature = models.ImageField(upload_to="signatures/")
     accepted = models.BooleanField(default=False)
-
     accepted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -524,6 +354,9 @@ class TermsAcceptance(models.Model):
             
             ("manage_service",
              "Can Manage Service"),
+            
+            ("manage_jobs",
+             "Can Manage Jobs"),
             
             ("manage_job_application",
              "Can Manage Job Application"),

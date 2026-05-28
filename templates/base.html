@@ -371,21 +371,24 @@ class="sidebar-logo">
 
         <li class="sidebar-menu-group-title">Dashboard</li>
        
-        <li class="sidebar__item {% if request.resolver_match.url_name == 'news.list' %}active{% endif %}">
-          <a href="{% url 'news.list' %}">
-            <iconify-icon icon="mdi:newspaper-variant-multiple-outline" class="menu-icon"></iconify-icon>
-            <span>News</span>
-          </a>
-        </li>
+        {% if perms.core.view_news %}
+                <li class="sidebar__item {% if request.resolver_match.url_name == 'news.list' %}active{% endif %}">
+                    <a href="{% url 'news.list' %}">
+                      <iconify-icon icon="mdi:newspaper-variant-multiple-outline" class="menu-icon"></iconify-icon>
+                      <span>News</span>
+                    </a>
+                  </li>
+        {% endif %}
 
        
-
+      {% if perms.core.view_herobanner %}          
         <li class="sidebar__item {% if request.resolver_match.url_name == 'list.banner' %}active{% endif %}">
           <a href="{% url 'list.banner' %}">
             <iconify-icon icon="mdi:image-area" class="menu-icon"></iconify-icon>
             <span>Hero Section</span>
           </a>
         </li>
+      {% endif %}
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'list.category' %}active{% endif %}">
           <a href="{% url 'list.category' %}">

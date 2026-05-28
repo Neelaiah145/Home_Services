@@ -389,6 +389,7 @@ class DeleteFeedback(LoginRequiredMixin,View):
 
 
 @method_decorator(never_cache, name='dispatch')
+@method_decorator(permission_required('core.view_news'),name='dispatch')
 class NewsListView(LoginRequiredMixin,View):
 
     def get(self, request):
@@ -407,6 +408,7 @@ class NewsListView(LoginRequiredMixin,View):
 
 
 @method_decorator(never_cache, name='dispatch')
+@method_decorator(permission_required('core.add_news'),name='dispatch')
 class CreateNews(LoginRequiredMixin,View):
     def get(self, request):
         return render(request, 'pages/news/create_news.html')
@@ -426,6 +428,7 @@ class CreateNews(LoginRequiredMixin,View):
 
 
 @method_decorator(never_cache, name='dispatch')
+@method_decorator(permission_required('core.change_news'),name='dispatch')
 class UpdateNews(LoginRequiredMixin,View):
 
     def get(self, request, pk):
@@ -445,6 +448,7 @@ class UpdateNews(LoginRequiredMixin,View):
 
 
 @method_decorator(never_cache, name='dispatch')
+@method_decorator(permission_required('core.delete_news'),name='dispatch')
 class DeleteNews(LoginRequiredMixin,View):
     def get(self, request, pk):
         news = get_object_or_404(News, pk=pk)
@@ -453,7 +457,7 @@ class DeleteNews(LoginRequiredMixin,View):
         return redirect('news.list')
 
 
-
+@method_decorator(permission_required('core.view_herobanner'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class ListBanner(LoginRequiredMixin,View):
     def get(self, request):
@@ -466,7 +470,7 @@ class ListBanner(LoginRequiredMixin,View):
             }
         )
 
-
+@method_decorator(permission_required('core.add_herobanner'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class CreateBanner(LoginRequiredMixin,View):
     def get(self, request):
@@ -486,7 +490,7 @@ class CreateBanner(LoginRequiredMixin,View):
 
         return redirect("list.banner")
 
-
+@method_decorator(permission_required('core.change_herobanner'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class UpdateBanner(LoginRequiredMixin,View):
 
@@ -509,7 +513,7 @@ class UpdateBanner(LoginRequiredMixin,View):
 
         return redirect('list.banner')
 
-
+@method_decorator(permission_required('core.delete_herobanner'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class DeleteBanner(LoginRequiredMixin,View):
     def get(self, request, pk):
