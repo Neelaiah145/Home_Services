@@ -1,0 +1,265 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    /* Global Dashboard Typography & Structure */
+    .dashboard-header-title {
+      
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 1.5rem;
+        margin-bottom: 4px;
+        font-size: 25px !important;
+    }
+    .dashboard-header-subtitle {
+        color: #64748b;
+        font-size: 0.875rem;
+        margin-bottom: 24px;
+    }
+
+    /* Main Container Card Style */
+    .dashboard-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        padding: 0;
+        margin-bottom: 24px;
+        overflow: hidden;
+        border: none;
+    }
+
+    /* Inner Card Header Controls */
+    .card-top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px 24px 16px 24px;
+    }
+    .card-title-text {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        margin: 0;
+        font-size: 20px !important;
+    }
+    .blue-indicator-bar {
+        background-color: #0d6efd;
+        width: 4px;
+        height: 18px;
+        display: inline-block;
+        margin-right: 8px;
+        border-radius: 4px;
+    }
+
+    /* Interactive Table Structure */
+    .custom-data-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+        vertical-align: middle;
+    }
+    .custom-data-table thead tr {
+        background-color: #f8fafc;
+        border-bottom: 2px solid #e2e8f0;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        color: #64748b;
+        font-weight: 700;
+    }
+    .custom-data-table th, 
+    .custom-data-table td {
+        padding: 16px;
+    }
+    .custom-data-table tbody tr {
+        border-bottom: 1px solid #f1f5f9;
+        transition: background-color 0.2s ease;
+    }
+    .custom-data-table tbody tr:hover {
+        background-color: #f8fafc;
+    }
+
+    /* Typography inside table data fields */
+    .text-bold-dark {
+        font-weight: 700;
+        color: #1e293b;
+    }
+    .text-muted-gray {
+        color: #64748b;
+    }
+    .text-medium-dark {
+        font-weight: 500;
+        color: #334155;
+    }
+
+    /* Geolocation Pin Pill Badge (Exactly like Hyderabad layout) */
+    .location-badge {
+        background-color: #f1f5f9;
+        color: #0d6efd;
+        font-weight: 500;
+        font-size: 0.75rem;
+        padding: 6px 12px;
+        border-radius: 50px;
+        display: inline-flex;
+        align-items: center;
+    }
+    .location-badge i {
+        color: #dc3545;
+        margin-right: 4px;
+    }
+
+    /* URL Truncation Link Wrap */
+    .truncated-url-link {
+        color: #0d6efd;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-block;
+        max-width: 160px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .truncated-url-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Minimal Pagination Grid Layout */
+    .pagination-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding: 24px;
+        background-color: #ffffff;
+    }
+    .pagination-list {
+        display: flex;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        gap: 6px;
+    }
+    .pagination-link-btn {
+        display: block;
+        padding: 6px 14px;
+        background-color: #f1f5f9;
+        color: #334155;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    .pagination-link-btn.active-page {
+        background-color: #0d6efd;
+        color: #ffffff;
+    }
+</style>
+
+<div style="padding: 0 16px;">
+    <h3 class="dashboard-header-title">Visitor Tracking</h3>
+    <p class="dashboard-header-subtitle">Website Visitor Reports</p>
+</div>
+
+<div style="padding: 0 16px;">
+    <div class="dashboard-card">
+        
+        <div class="card-top-bar">
+            <h5 class="card-title-text">
+                <span class="blue-indicator-bar"></span>
+                All Visitors
+            </h5>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table class="custom-data-table">
+                <thead>
+                    <tr>
+                        <th style="padding-left: 24px;">Sl.No</th>
+                        <th>Country</th>
+                        <th>State</th>
+                        <th>City</th>
+                        <th>Device</th>
+                        <th>Browser</th>
+                        <th>OS</th>
+                        <th>Page URL</th>
+                        <th style="padding-right: 24px;">Visit Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for visitor in visitors %}
+                    <tr>
+                        <td style="padding-left: 24px;" class="text-muted-gray">
+                            {{ page_obj.start_index|add:forloop.counter0 }}
+                        </td>
+                        <td class="text-bold-dark">
+                            {{ visitor.country }}
+                        </td>
+                        <td class="text-muted-gray">
+                            {{ visitor.state }}
+                        </td>
+                        <td>
+                            <span class="location-badge">
+                                <i class="bi bi-geo-alt-fill"></i>
+                                {{ visitor.city|default:"Unknown" }}
+                            </span>
+                        </td>
+                        <td class="text-medium-dark">
+                            {{ visitor.device }}
+                        </td>
+                        <td class="text-muted-gray">
+                            {{ visitor.browser }}
+                        </td>
+                        <td class="text-muted-gray">
+                            {{ visitor.operating_system }}
+                        </td>
+                        <td>
+                            <a href="{{ visitor.page_url }}" class="truncated-url-link" title="{{ visitor.page_url }}">
+                                {{ visitor.page_url }}
+                            </a>
+                        </td>
+                        <td style="padding-right: 24px; font-size: 0.85rem;" class="text-muted-gray">
+                            {{ visitor.visited_at|date:"d M Y h:i A" }}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 48px 0; color: #64748b; background-color: #f8fafc;">
+                            No active visitor entry matches found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if page_obj %}
+        <div class="pagination-footer">
+            <nav>
+                <ul class="pagination-list">
+                    {% if page_obj.has_previous %}
+                    <li>
+                        <a class="pagination-link-btn" href="?page={{ page_obj.previous_page_number }}">‹</a>
+                    </li>
+                    {% endif %}
+                    
+                    <li>
+                        <span class="pagination-link-btn active-page">{{ page_obj.number }}</span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                    <li>
+                        <a class="pagination-link-btn" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                    </li>
+                    <li>
+                        <a class="pagination-link-btn" href="?page={{ page_obj.next_page_number }}">›</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
