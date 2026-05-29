@@ -6,505 +6,382 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-
-.dashboard-section{
-    background:#f5f7fb;
-    min-height:100vh;
-    padding:40px 0;
+/* Base Dashboard Scope Properties */
+.dashboard-section {
+    background: #f8fafc;
+    min-height: 100vh;
+    padding: 40px 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.dashboard-title h2{
-    font-size:32px !important;
-    font-weight:600 !important;
-    color:#111827;
-    margin-bottom:5px;
+/* Header Context Styling */
+.dashboard-title h2 {
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
 }
 
-.dashboard-title p{
-    color:#6b7280;
-    margin:0;
+.dashboard-title p {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0;
 }
 
-.dashboard-card{
-    background:#fff;
-    border-radius:22px;
-    padding:25px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.05);
-    transition:0.3s;
-    height:100%;
-    position:relative;
-    overflow:hidden;
+/* Premium Enterprise Metrics Cards */
+.dashboard-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    position: relative;
+    border: 1px solid #e2e8f0;
 }
 
-.dashboard-card:hover{
-    transform:translateY(-5px);
+.dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -10px rgba(15, 23, 42, 0.08);
 }
 
-.dashboard-card h6{
-    color:#6b7280;
-    font-size:12px !important;
-    margin-bottom:12px !important;
+.dashboard-card h6 {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px !important;
 }
 
-.dashboard-card h2{
-    font-size:30px !important;
-    font-weight:800;
-    margin:0;
+.dashboard-card h2 {
+    font-size: 32px !important;
+    font-weight: 700;
+    color: #0f172a; /* Unified clean color across all card numbers */
+    margin: 0;
 }
 
-.dashboard-card.total{
-    border-left:5px solid #2563eb;
+/* Perfect matching side-border accents and subtle matching text colors for headings */
+.dashboard-card.total {
+    border-left: 5px solid #2563eb;
+}
+.dashboard-card.total h6 { color: #2563eb; }
+
+.dashboard-card.pending {
+    border-left: 5px solid #f59e0b;
+}
+.dashboard-card.pending h6 { color: #d97706; }
+
+.dashboard-card.completed {
+    border-left: 5px solid #10b981;
+}
+.dashboard-card.completed h6 { color: #059669; }
+
+.dashboard-card.cancelled {
+    border-left: 5px solid #ef4444;
+}
+.dashboard-card.cancelled h6 { color: #dc2626; }
+
+/* Completion Metrics Component */
+.progress-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
 }
 
-.dashboard-card.pending{
-    border-left:5px solid #f59e0b;
+.progress {
+    height: 8px;
+    border-radius: 100px;
+    overflow: hidden;
+    background: #f1f5f9;
 }
 
-.dashboard-card.completed{
-    border-left:5px solid #10b981;
+.progress-bar {
+    border-radius: 100px;
+    transition: width 0.8s ease;
 }
 
-.dashboard-card.cancelled{
-    border-left:5px solid #ef4444;
+/* Structured Compact Data Charts Section */
+.chart-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
-.progress-card{
-    background:#fff;
-    border-radius:22px;
-    padding:30px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.05);
+.chart-card h5 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 20px;
 }
 
-.progress{
-    height:14px;
-    border-radius:20px;
-    overflow:hidden;
-    background:#e5e7eb;
+.chart-container-wrapper {
+    position: relative;
+    width: 100%;
+    max-height: 240px; 
+    margin: auto;
 }
 
-.progress-bar{
-    border-radius:20px;
+/* Transaction History Table Layouts */
+.recent-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
 }
 
-.chart-card{
-    background:#fff;
-    border-radius:22px;
-    padding:30px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.05);
-    height:100%;
+.recent-card h5 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 20px;
 }
 
-.chart-card h5{
-    font-size:20px;
-    font-weight:700;
-    margin-bottom:25px;
+.table thead th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 14px 16px;
+    font-size: 13px;
 }
 
-.recent-card{
-    background:#fff;
-    border-radius:22px;
-    padding:30px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.05);
+.table tbody td {
+    padding: 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+    color: #334155;
 }
 
-.recent-card h5{
-    font-size:22px;
-    font-weight:700;
-    margin-bottom:25px;
+/* Unified Premium UI State Badges */
+.badge {
+    padding: 6px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
 }
 
-.table thead th{
-    background:#f9fafb;
-    color:#374151;
-    border:none;
-    padding:16px;
-    font-size:14px;
+.badge-success { background: #ecfdf5; color: #065f46; }
+.badge-warning { background: #fffbeb; color: #92400e; }
+.badge-danger { background: #fef2f2; color: #991b1b; }
+
+/* Inline Action Anchor Controls */
+.dashboard-see-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #2563eb !important;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
 }
 
-.table tbody td{
-    padding:18px 16px;
-    vertical-align:middle;
-    border-color:#f3f4f6;
+.dashboard-see-more:hover {
+    color: #1d4ed8 !important;
+    gap: 6px;
 }
 
-.badge{
-    padding:8px 14px;
-    border-radius:30px;
-    font-size:12px;
-    font-weight:600;
+@media(max-width: 768px) {
+    .dashboard-section { padding: 24px 0; }
+    .dashboard-title h2 { font-size: 24px; }
+    .dashboard-card { padding: 20px; }
+    .chart-card, .recent-card { padding: 20px; }
 }
-
-.badge-success{
-    background:#d1fae5;
-    color:#065f46;
-}
-
-.badge-warning{
-    background:#fef3c7;
-    color:#92400e;
-}
-
-.badge-danger{
-    background:#fee2e2;
-    color:#991b1b;
-}
-.dashboard-see-more{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    font-size:13px !important;
-    font-weight:600 !important;
-    color:#2563eb !important;
-    text-decoration:none !important;
-    transition:0.3s;
-}
-
-.dashboard-see-more:hover{
-    color:#1d4ed8 !important;
-    transform:translateX(2px);
-}
-
-@media(max-width:768px){
-
-    .dashboard-title h2{
-        font-size:26px;
-    }
-
-    .dashboard-card h2{
-        font-size:30px;
-    }
-
-}
-
 </style>
 
-
 <div class="dashboard-section">
-
     <div class="container">
 
-        <!-- Header -->
-        <div class="dashboard-title mb-5">
-
-            <h2>
-           Dashboard
-            </h2>
-
-            <p>
-                Welcome back {{ request.user.first_name }}
-            </p>
-
+        <div class="dashboard-title mb-4">
+            <h2>Dashboard</h2>
+            <p>Welcome back, {{ request.user.first_name }}</p>
         </div>
 
-
-        <!-- Top Cards -->
         <div class="row g-4">
-
             <div class="col-lg-3 col-md-6">
-
                 <div class="dashboard-card total">
-
                     <h6>Total Bookings</h6>
-
-                    <h2>
-                        {{ total_bookings }}
-                    </h2>
-
+                    <h2>{{ total_bookings }}</h2>
                 </div>
-
             </div>
 
-
             <div class="col-lg-3 col-md-6">
-
                 <div class="dashboard-card pending">
-
                     <h6>Pending Services</h6>
-
-                    <h2 class="text-warning">
-                        {{ pending_bookings }}
-                    </h2>
-
+                    <h2>{{ pending_bookings }}</h2>
                 </div>
-
             </div>
 
-
             <div class="col-lg-3 col-md-6">
-
                 <div class="dashboard-card completed">
-
                     <h6>Completed Services</h6>
-
-                    <h2 class="text-success">
-                        {{ completed_bookings }}
-                    </h2>
-
+                    <h2>{{ completed_bookings }}</h2>
                 </div>
-
             </div>
-
 
             <div class="col-lg-3 col-md-6">
-
                 <div class="dashboard-card cancelled">
-
                     <h6>Cancelled Services</h6>
-
-                    <h2 class="text-danger">
-                        {{ cancelled_bookings }}
-                    </h2>
-
+                    <h2>{{ cancelled_bookings }}</h2>
                 </div>
-
             </div>
-
         </div>
 
-
-        <!-- Progress -->
-        <div class="progress-card mt-5">
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-
-                <h5 class="mb-0 fw-bold">
-                    Service Completion Rate
-                </h5>
-
-                <h5 class="mb-0 fw-bold text-success">
-                    {{ completion_rate }}%
-                </h5>
-
+        <div class="progress-card mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-semibold text-dark" style="font-size: 14px;">Service Completion Rate</span>
+                <span class="fw-bold text-success" style="font-size: 14px;">{{ completion_rate }}%</span>
             </div>
-
             <div class="progress">
-
-                <div class="progress-bar bg-success"
-                     style="width:{{ completion_rate }}%;">
-                </div>
-
+                <div class="progress-bar bg-success" style="width: {{ completion_rate }}%;"></div>
             </div>
-
         </div>
 
-
-        <!-- Charts -->
-        <div class="row g-4 mt-4">
-
+        <div class="row g-4 mt-2">
             <div class="col-lg-6">
-
                 <div class="chart-card">
-
-                    <h5>
-                        Service Wise Bookings
-                    </h5>
-
-                    <canvas id="serviceChart"></canvas>
-
+                    <h5>Service Wise Bookings</h5>
+                    <div class="chart-container-wrapper">
+                        <canvas id="serviceChart"></canvas>
+                    </div>
                 </div>
-
             </div>
 
-
             <div class="col-lg-6">
-
                 <div class="chart-card">
-
-                    <h5>
-                        Weekly Booking Activity
-                    </h5>
-
-                    <canvas id="weeklyChart"></canvas>
-
+                    <h5>Weekly Booking Activity</h5>
+                    <div class="chart-container-wrapper">
+                        <canvas id="weeklyChart"></canvas>
+                    </div>
                 </div>
-
             </div>
-
         </div>
 
+        <div class="recent-card mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Recent Bookings</h5>
+            </div>
 
-        <!-- Recent Bookings -->
-<!-- Recent Bookings -->
-<div class="recent-card mt-4">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in recent_bookings|slice:":3" %}
+                        <tr>
+                            <td class="fw-medium text-dark">{{ booking.service.s_title }}</td>
+                            <td>
+                                {% if booking.status == 'completed' %}
+                                <span class="badge badge-success">Completed</span>
+                                {% elif booking.status == 'pending' %}
+                                <span class="badge badge-warning">Pending</span>
+                                {% else %}
+                                <span class="badge badge-danger">Cancelled</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-secondary">{{ booking.booking_created_at|date:"d M Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center py-4 text-muted">No recent bookings found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-
-        <h5 class="mb-0">
-            Recent Bookings
-        </h5>
-
-    </div>
-
-    <!-- Table -->
-    <div class="table-responsive">
-
-        <table class="table align-middle mb-0">
-
-            <thead>
-
-                <tr>
-
-                    <th>Service</th>
-
-                    <th>Status</th>
-
-                    <th>Date</th>
-
-                </tr>
-
-            </thead>
-
-            <tbody>
-
-                <!-- Show Only Latest 3 -->
-                {% for booking in recent_bookings|slice:":3" %}
-
-                <tr>
-
-                    <td>
-                        {{ booking.service.s_title }}
-                    </td>
-
-                    <td>
-
-                        {% if booking.status == 'completed' %}
-
-                        <span class="badge badge-success">
-                            Completed
-                        </span>
-
-                        {% elif booking.status == 'pending' %}
-
-                        <span class="badge badge-warning">
-                            Pending
-                        </span>
-
-                        {% else %}
-
-                        <span class="badge badge-danger">
-                            Cancelled
-                        </span>
-
-                        {% endif %}
-
-                    </td>
-
-                    <td>
-                        {{ booking.booking_created_at|date:"d M Y" }}
-                    </td>
-
-                </tr>
-
-                {% empty %}
-
-                <tr>
-
-                    <td colspan="3" class="text-center py-4">
-
-                        No recent bookings found
-
-                    </td>
-
-                </tr>
-
-                {% endfor %}
-
-            </tbody>
-
-        </table>
+            <div class="text-end mt-3">
+                <a href="#" class="dashboard-see-more">See More &rarr;</a>
+            </div>
+        </div>
 
     </div>
-
-    <!-- Bottom Button -->
-    <div class="text-end mt-3">
-
-        <a href="#"
-           class="dashboard-see-more">
-
-            See More →
-
-        </a>
-
-    </div>
-
 </div>
-
-    </div>
-
-</div>
-
-
 
 <script>
+// Chart UI Custom Global Configurations Setup Defaults
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.font.family = "'Inter', sans-serif";
 
-const serviceCtx = document.getElementById(
-    'serviceChart'
-);
-
+// Doughnut Chart Implementation Logic Profile
+const serviceCtx = document.getElementById('serviceChart');
 new Chart(serviceCtx, {
-
     type: 'doughnut',
-
     data: {
-
         labels: {{ service_labels|safe }},
-
         datasets: [{
-
             data: {{ service_counts|safe }},
-
-            backgroundColor: [
-                '#2563eb',
-                '#10b981',
-                '#f59e0b',
-                '#ef4444',
-                '#8b5cf6'
-            ],
-
-            borderWidth:0
-
-        }]
-    }
-});
-
-
-
-const weeklyCtx = document.getElementById(
-    'weeklyChart'
-);
-
-new Chart(weeklyCtx, {
-
-    type: 'bar',
-
-    data: {
-
-        labels: {{ weekly_labels|safe }},
-
-        datasets: [{
-
-            label:'Bookings',
-
-            data: {{ weekly_counts|safe }},
-
-            backgroundColor:'#2563eb',
-
-            borderRadius:10
-
+            backgroundColor: ['#2563eb', '#10b981', '#f59e0b', '#ef4444', '#6366f1'],
+            borderWidth: 4,
+            borderColor: '#ffffff',
+            hoverOffset: 4
         }]
     },
-
-    options:{
-        responsive:true,
-        plugins:{
-            legend:{
-                display:false
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 2,
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: {
+                    boxWidth: 12,
+                    padding: 16,
+                    font: { size: 12, weight: '500' },
+                    color: '#334155'
+                }
             }
         }
     }
 });
 
+// Bar Grid Chart Implementation Logic Profile
+const weeklyCtx = document.getElementById('weeklyChart');
+new Chart(weeklyCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ weekly_labels|safe }},
+        datasets: [{
+            label: 'Bookings',
+            data: {{ weekly_counts|safe }},
+            backgroundColor: '#2563eb',
+            borderRadius: 6,
+            maxBarThickness: 32
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 2,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: {
+                grid: { display: false },
+                ticks: { font: { size: 11 } }
+            },
+            y: {
+                grid: { color: '#f1f5f9' },
+                ticks: { precision: 0, font: { size: 11 } }
+            }
+        }
+    }
+});
 </script>
 
 {% endblock %}

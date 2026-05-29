@@ -86,8 +86,20 @@ def generate_order_id():
 # bookings
 
 
-class Booking(models.Model):
+# class AbstractModel(models.Model):
+#     created_at = DT
+#     updated_at = DT
+#     created_by = User
+#     updated_by = User
+#     is_deleted  = bool
+#     class Meta:
+#         abstract = Tr
 
+# class Booking(AbstractModel):
+
+
+
+class Booking(models.Model):
     STATUS = (
         ('pending', 'Pending'),
         ('assigned', 'Assigned'),
@@ -372,3 +384,26 @@ class TermsAcceptance(models.Model):
             
             
         ]
+
+
+
+
+from django.db import models
+
+
+class Visitor(models.Model):
+
+    ip_address = models.GenericIPAddressField(unique=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=100, blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    browser = models.CharField(max_length=100, blank=True, null=True)
+    device = models.CharField(max_length=100, blank=True, null=True)
+    operating_system = models.CharField(max_length=100, blank=True, null=True)
+    page_url = models.TextField(blank=True)
+
+    visited_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+
+        return f"{self.ip_address} - {self.city}"

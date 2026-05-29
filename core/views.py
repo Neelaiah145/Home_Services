@@ -264,7 +264,7 @@ class ContactForm(View):
         return redirect('contact')
 
 
-
+@method_decorator(permission_required('core.view_contact'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class ContactListView(LoginRequiredMixin,View):
     def get(self, request):
@@ -274,7 +274,7 @@ class ContactListView(LoginRequiredMixin,View):
             'contacts': contacts
         })
 
-
+@method_decorator(permission_required('core.change_contact'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class ContactUpdateView(LoginRequiredMixin,View):
     def get(self, request, pk):
@@ -299,7 +299,7 @@ class ContactUpdateView(LoginRequiredMixin,View):
         return redirect('list.contact')
 
 
-
+@method_decorator(permission_required('core.delete_contact'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class DeleteContact(LoginRequiredMixin,View):
     def get(self, request, pk):
@@ -307,6 +307,7 @@ class DeleteContact(LoginRequiredMixin,View):
         conatct.delete()
         messages.success(request, "Contact  deleted")
         return redirect('list.contact')
+
 
 @method_decorator(never_cache, name='dispatch')
 class FeedbackForm(LoginRequiredMixin,View):
@@ -367,7 +368,7 @@ class FeedbackForm(LoginRequiredMixin,View):
         return redirect('feedbackform')
 
 
-
+@method_decorator(permission_required('core.view_servicefeedback'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class ListFeedback(LoginRequiredMixin,View):
     def get(self, request):
@@ -377,6 +378,7 @@ class ListFeedback(LoginRequiredMixin,View):
         })
 
 
+@method_decorator(permission_required('core.delete_servicefeedback'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class DeleteFeedback(LoginRequiredMixin,View):
     def get(self, request, id):
@@ -523,7 +525,7 @@ class DeleteBanner(LoginRequiredMixin,View):
         return redirect('list.banner')
 
 
-
+@method_decorator(permission_required('core.view_category'),name='dispatch')
 class ListCategory(View):
     def get(self, request):
         categories = Category.objects.all().order_by('-category_created_at')
@@ -537,7 +539,7 @@ class ListCategory(View):
             'page_obj': page_obj
         })
 
-
+@method_decorator(permission_required('core.add_category'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class CreateCategory(LoginRequiredMixin,View):
     def get(self, request):
@@ -567,7 +569,7 @@ class CreateCategory(LoginRequiredMixin,View):
         return redirect('list.category')
 
 
-
+@method_decorator(permission_required('core.change_category'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class UpdateCategory(LoginRequiredMixin,View):
 
@@ -604,7 +606,7 @@ class UpdateCategory(LoginRequiredMixin,View):
         return redirect('list.category')
 
 
-
+@method_decorator(permission_required('core.delete_category'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class DeleteCaregory(LoginRequiredMixin,View):
     def get(self, request, pk):
@@ -614,7 +616,7 @@ class DeleteCaregory(LoginRequiredMixin,View):
         return redirect('list.category')
 
 
-
+@method_decorator(permission_required('core.view_categoryservice'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class ListCategoryService(LoginRequiredMixin,View):
     def get(self, request):
@@ -646,6 +648,7 @@ class ListCategoryService(LoginRequiredMixin,View):
 
 
 
+@method_decorator(permission_required('core.add_categoryservice'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class CreateCategoryService(LoginRequiredMixin,View):
 
@@ -679,6 +682,7 @@ class CreateCategoryService(LoginRequiredMixin,View):
 
 
 
+@method_decorator(permission_required('core.change_categoryservice'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class UpdateCategoryService(LoginRequiredMixin,View):
     def get(self, request, id):
@@ -700,6 +704,7 @@ class UpdateCategoryService(LoginRequiredMixin,View):
 
 
 
+@method_decorator(permission_required('core.delete_categoryservice'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class DeleteCategoryService(LoginRequiredMixin,View):
     def get(self, request, id):
@@ -710,6 +715,7 @@ class DeleteCategoryService(LoginRequiredMixin,View):
 
 
 
+@method_decorator(permission_required('core.view_servicescards'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class ListServices(LoginRequiredMixin,View):
     def get(self, request):
@@ -718,7 +724,7 @@ class ListServices(LoginRequiredMixin,View):
         return render(request, 'pages/services/list.html', {'services': page_obj,'page_obj': page_obj,})
 
 
-
+@method_decorator(permission_required('core.add_servicescards'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class CreateService(LoginRequiredMixin,View):
     def get(self, request):
@@ -742,7 +748,7 @@ class CreateService(LoginRequiredMixin,View):
         return redirect('services.list')
 
 
-
+@method_decorator(permission_required('core.change_servicescards'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class UpdateServices(LoginRequiredMixin,View):
     def get(self, request, id):
@@ -762,7 +768,7 @@ class UpdateServices(LoginRequiredMixin,View):
         return redirect('services.list')
 
 
-
+@method_decorator(permission_required('core.delete_servicescards'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class DeleteServices(LoginRequiredMixin,View):
     def get(self, request, id):
@@ -772,15 +778,27 @@ class DeleteServices(LoginRequiredMixin,View):
         return redirect('services.list')
 
 
-
+@method_decorator(permission_required('core.view_job'), name='dispatch')
 @method_decorator(never_cache, name='dispatch')
-class ListJobs(LoginRequiredMixin,View):
+class ListJobs(LoginRequiredMixin, View):
+
     def get(self, request):
+
         jobs = Job.objects.all().order_by('-job_created_at')
-        return render(request, 'pages/jobs/list.html', {'jobs': jobs})
+
+        page_obj = paginate_queryset(request, jobs, 10)
+
+        return render(
+            request,
+            'pages/jobs/list.html',
+            {
+                'jobs': page_obj,
+                'page_obj': page_obj,
+            }
+        )
 
 
-
+@method_decorator(permission_required('core.add_job'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class CreateJob(LoginRequiredMixin,View):
 
@@ -813,6 +831,7 @@ class CreateJob(LoginRequiredMixin,View):
         return redirect('list.jobs')
 
 
+@method_decorator(permission_required('core.change_job'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class UpdateJob(LoginRequiredMixin,View):
     def get(self, request, id):
@@ -836,7 +855,7 @@ class UpdateJob(LoginRequiredMixin,View):
 
         return redirect('list.jobs')
 
-
+@method_decorator(permission_required('core.delete_job'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class DeleteJob(LoginRequiredMixin,View):
     def get(self, request, id):
@@ -924,6 +943,8 @@ class JobApplications(View):
         messages.success(request, "Application submitted successfully!")
         return redirect('job.apply', job_id=job.id)
 
+
+@method_decorator(permission_required('core.view_jobapplication'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class AdminJobApplicationsView(LoginRequiredMixin, View):
 
@@ -966,12 +987,15 @@ class AdminJobApplicationsView(LoginRequiredMixin, View):
         return render(request,"admin/job_applications.html",context)
 
 
+@method_decorator(permission_required('core.view_footer'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class ListFooter(LoginRequiredMixin,View):
     def get(self, request):
         footers = Footer.objects.all().order_by('-id')
         return render(request, 'pages/footer/list.html', {'footers': footers})
 
+
+@method_decorator(permission_required('core.add_footer'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class CreateFooter(LoginRequiredMixin,View):
 
@@ -1033,7 +1057,9 @@ class CreateFooter(LoginRequiredMixin,View):
 
         messages.success(request, "Footer created successfully ")
         return redirect('list.footer')
-
+    
+    
+@method_decorator(permission_required('core.change_footer'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class UpdateFooter(LoginRequiredMixin,View):
 
@@ -1104,6 +1130,7 @@ class UpdateFooter(LoginRequiredMixin,View):
         messages.success(request, "Footer updated successfully ")
         return redirect('list.footer')
 
+@method_decorator(permission_required('core.delete_footer'),name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 class DeleteFooter(LoginRequiredMixin,View):
     def get(self, request, id):

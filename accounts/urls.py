@@ -89,13 +89,9 @@ urlpatterns = [
     path('dashboard/export-excel/',export_dashboard_excel,name='export_dashboard_excel'),
     
     
-    path(
-    "admin-permissions/",
-    AdminPermissionsView.as_view(),
-    name="admin_permissions"
-),
+    path("admin-permissions/",AdminPermissionsView.as_view(),name="admin_permissions"),
     
-    
+    path('visitors/',VisitorList.as_view(),name='visitors'),
     
     
 

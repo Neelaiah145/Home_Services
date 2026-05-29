@@ -12,9 +12,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import get_user_model
 from accounts.mixins import RoleRequiredMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Q, Count
 from django.contrib.auth.hashers import make_password
-import json
 from django.core.paginator import Paginator
 from accounts.utils import verify_otp
 from accounts.utils import send_otp, can_resend
@@ -36,6 +34,10 @@ from .utils import (send_otp,verify_otp)
 from django.contrib.auth.models import Permission
 from accounts.utils import permission_required
 from collections import defaultdict
+from django.db.models.functions import TruncMonth
+
+
+
 
 User = get_user_model()
 mainly_allowed_roles=["admin","superadmin"]
@@ -51,9 +53,7 @@ class LoginView(View):
     """View for OTP based user login and role based dashboard redirection with vendor approval validation."""
 
     def get(self, request):
-
         next_url = request.GET.get("next", "")
-
         return render(request,"customer/customer_login.html",
             {
                 "next": next_url
@@ -94,7 +94,6 @@ class LoginView(View):
             if user.role == "vendor" and not user.is_active:
 
                 return JsonResponse({
-
                     "error": "Your account is not approved yet. Please wait for admin approval."
 
                 })
@@ -107,28 +106,21 @@ class LoginView(View):
             # )
 
             if next_url:
-
                 redirect_url = next_url
-
             else:
-
                 if user.role == "superadmin":
-                    redirect_url = "/superadmin-dashboard/"
-
+                    redirect_url = reverse("superadmin_dashboard")
                 elif user.role == "admin":
-                    redirect_url = "/admin-dashboard/"
-
+                    redirect_url = reverse("admin_dashboard")
                 elif user.role == "vendor":
-                    redirect_url = "/vendor-dashboard/"
-
+                    redirect_url = reverse("vendor_dashboard")
                 elif user.role == "customer":
-                    redirect_url = "/customer-dashboard/"
+                    redirect_url = reverse("customer_dashboard")
 
                 else:
-                    redirect_url = "/"
+                    redirect_url = reverse("home")
 
             return JsonResponse({
-
                 "success": True,
                 "redirect": redirect_url
 
@@ -136,7 +128,7 @@ class LoginView(View):
 
 
         user = User.objects.filter(
-            phone__endswith=phone
+            phone=phone
         ).first()
 
         if not user:
@@ -165,15 +157,6 @@ class LoginView(View):
             "message": "OTP sent"
 
         })
-
-
-
-
-
-
-
-
-
 
 # register classes
 
@@ -260,7 +243,21 @@ class RegisterView(View):
                 "success": True
 
             })
+        # RESEND OTP
 
+        if action == "resend_otp":
+
+            if not phone or len(phone) != 10:
+
+                return JsonResponse({
+                    "error": "Enter valid phone number"
+                })
+
+            send_otp(phone)
+
+            return JsonResponse({
+                "success": True
+            })
         # VERIFY OTP
 
         if action == "verify_otp":
@@ -484,16 +481,44 @@ class SuperDashboardView(LoginRequiredMixin, RoleRequiredMixin, View):
 
         # monthly bookings count
 
-        monthly_data = []
-        month_labels = []
         current_year = timezone.now().year
-        for month in range(1, 13):
-            total = bookings.filter(
-                booking_created_at__year=current_year,
-                booking_created_at__month=month).count()
-            month_labels.append(datetime(current_year,month,1).strftime("%b"))
-            monthly_data.append(total)
 
+        monthly_counts = bookings.filter(
+
+            booking_created_at__year=current_year
+
+        ).annotate(
+            month=TruncMonth(
+                "booking_created_at")).values("month").annotate(
+            total=Count("id")).order_by("month")
+
+        month_map = {
+            item["month"].month: item["total"]
+            for item in monthly_counts
+        }
+
+        month_labels = [
+
+            datetime(
+                current_year,
+                month,
+                1
+            ).strftime("%b")
+
+            for month in range(1, 13)
+
+        ]
+
+        monthly_data = [
+
+            month_map.get(
+                month,
+                0
+            )
+
+            for month in range(1, 13)
+
+        ]
         # category filter
 
         categories = Category.objects.all()
@@ -567,52 +592,21 @@ class CreateAdminView(LoginRequiredMixin, View):
 
                 }, status=403)
 
-            first_name = request.POST.get(
-                "first_name"
-            )
-
-            last_name = request.POST.get(
-                "last_name"
-            )
-
-            email = request.POST.get(
-                "email"
-            )
-
-            city = request.POST.get(
-                "city"
-            )
-
-            pincode = request.POST.get(
-                "pincode"
-            )
-
-            phone = request.POST.get(
-                "phone"
-            )
-
+            first_name = request.POST.get("first_name")
+            last_name = request.POST.get("last_name")
+            email = request.POST.get("email")
+            city = request.POST.get("city")
+            pincode = request.POST.get("pincode")
+            phone = request.POST.get("phone")
             phone = normalize_phone(phone)
 
-            if not all([
-
-                first_name,
-                email,
-                city,
-                pincode,
-                phone
-
-            ]):
+            if not all([first_name,email,city,pincode,phone]):
 
                 return JsonResponse({
-
                     "error":"All fields required"
-
                 }, status=400)
 
-            verified_phone = request.session.get(
-                "verified_phone"
-            )
-
+            verified_phone = request.session.get("verified_phone")
             if verified_phone != phone:
 
                 return JsonResponse({
@@ -622,7 +616,6 @@ class CreateAdminView(LoginRequiredMixin, View):
                 }, status=400)
 
             user = User.objects.create(
-
                 first_name=first_name,
                 last_name=last_name,
                 email=email,
@@ -632,24 +625,19 @@ class CreateAdminView(LoginRequiredMixin, View):
                 role="admin"
 
             )
-
-            user.set_password("Admin@123")
-
+            user.set_unusable_password()
             user.save()
-
             request.session.pop(
                 "verified_phone",
                 None
             )
 
             return JsonResponse({
-
                 "status":"success"
 
             })
 
         except Exception as e:
-
             return JsonResponse({"error":str(e)}, status=500)
 
 # update/edit the admin profile
@@ -1300,9 +1288,7 @@ class AdminDashboardView(LoginRequiredMixin,RoleRequiredMixin,View):
         bookings = Booking.objects.filter(
             city__iexact=current_admin.city
                 )
-        bookings = Booking.objects.filter(
-            admin=current_admin
-        )
+
         total_customers = customers.count()
 
         total_vendors = vendors.count()
@@ -1344,16 +1330,37 @@ class AdminDashboardView(LoginRequiredMixin,RoleRequiredMixin,View):
 
         current_year = timezone.now().year
 
-        monthly_data = [
+        monthly_counts = bookings.filter(
 
-            bookings.filter(
-                booking_created_at__year=current_year,
-                booking_created_at__month=month
-            ).count()
+            booking_created_at__year=current_year
 
-            for month in range(1, 13)
+        ).annotate(
 
-        ]
+            month=TruncMonth(
+                "booking_created_at"
+            )
+
+        ).values(
+
+            "month"
+
+        ).annotate(
+
+            total=Count("id")
+
+        ).order_by(
+
+            "month"
+
+        )
+
+        month_map = {
+
+            item["month"].month: item["total"]
+
+            for item in monthly_counts
+
+        }
 
         month_labels = [
 
@@ -1362,6 +1369,17 @@ class AdminDashboardView(LoginRequiredMixin,RoleRequiredMixin,View):
                 month,
                 1
             ).strftime("%b")
+
+            for month in range(1, 13)
+
+        ]
+
+        monthly_data = [
+
+            month_map.get(
+                month,
+                0
+            )
 
             for month in range(1, 13)
 
@@ -2125,15 +2143,63 @@ class VendorDashboardView(LoginRequiredMixin,View):
         total_customers=bookings.values(
             "user"
         ).distinct().count()
-        jan_leads,feb_leads,mar_leads,apr_leads,may_leads,jun_leads,jul_leads,aug_leads,sep_leads,oct_leads,nov_leads,dec_leads=[
+        current_year = timezone.now().year
 
-            bookings.filter(
-                booking_created_at__month=month
-            ).count()
+        monthly_counts = bookings.filter(
 
-            for month in range(1,13)
+            booking_created_at__year=current_year
 
-        ]
+        ).annotate(
+
+            month=TruncMonth(
+                "booking_created_at"
+            )
+
+        ).values(
+
+            "month"
+
+        ).annotate(
+
+            total=Count("id")
+
+        ).order_by(
+
+            "month"
+
+        )
+
+        month_map = {
+
+            item["month"].month: item["total"]
+
+            for item in monthly_counts
+
+        }
+
+        jan_leads = month_map.get(1, 0)
+
+        feb_leads = month_map.get(2, 0)
+
+        mar_leads = month_map.get(3, 0)
+
+        apr_leads = month_map.get(4, 0)
+
+        may_leads = month_map.get(5, 0)
+
+        jun_leads = month_map.get(6, 0)
+
+        jul_leads = month_map.get(7, 0)
+
+        aug_leads = month_map.get(8, 0)
+
+        sep_leads = month_map.get(9, 0)
+
+        oct_leads = month_map.get(10, 0)
+
+        nov_leads = month_map.get(11, 0)
+
+        dec_leads = month_map.get(12, 0)
 
         recent_leads=bookings.order_by(
             "-booking_created_at"
@@ -3686,7 +3752,7 @@ class AssignVendorView(LoginRequiredMixin, View):
 
 
 
-# think this also unnecessary
+
 # status can be updates 
 @method_decorator(never_cache, name='dispatch')
 class UpdateStatusView(LoginRequiredMixin, View):
@@ -3829,24 +3895,18 @@ class OrderHistoryView(LoginRequiredMixin,View):
 
         total_services = 1
         total_amount = (
-
             payment.total_amount
             if payment else 0
-
         )
 
         paid_amount = (
-
             payment.paid_amount
             if payment else 0
-
         )
 
         due_amount = (
-
             payment.remaining_amount
             if payment else 0
-
         )
 
         context = {
@@ -4361,8 +4421,6 @@ def get_services(request):
 
     category_id = request.GET.get("category_id")
 
-    print(category_id)
-
     if not category_id:
         return JsonResponse({
             "services": []
@@ -4655,3 +4713,28 @@ class LoginTermView(View):
     
     def get(self, request):
         return render(request,self.template_name)
+    
+    
+
+
+
+from .models import Visitor
+
+class VisitorList(LoginRequiredMixin, View):
+
+    def get(self, request):
+
+        visitors = Visitor.objects.all().order_by(
+            '-visited_at'
+        )
+
+        page_obj = paginate_queryset(request,visitors,10)
+
+        return render(
+            request,
+            'superadmin/visitors.html',
+            {
+                'visitors': page_obj,
+                'page_obj': page_obj,
+            }
+        )

@@ -198,6 +198,14 @@ class="sidebar-logo">
         </li>
 
 
+          <li class="sidebar__item {% if request.resolver_match.url_name == 'admin_permissions' %}active{% endif %}">
+          <a href="{% url 'visitors' %}">
+            <iconify-icon icon="mdi:web" class="menu-icon"></iconify-icon>
+            <span> Visitor Insights </span>
+          </a>
+        </li>
+
+
         <li class="sidebar-menu-group-title">Dashboard</li>
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'news.list' %}active{% endif %}">
@@ -340,22 +348,22 @@ class="sidebar-logo">
 
           <li class="sidebar__item {% if request.resolver_match.url_name == 'admin_renewal_dashboard' %}active{% endif %}">
           <a href="{% url 'admin_renewal_dashboard' %}">
-            <iconify-icon icon="mdi:cart-outline"  class="menu-icon"></iconify-icon>
+          <iconify-icon icon="mdi:autorenew"  class="menu-icon"></iconify-icon>
             <span> Renewal Leads</span>
           </a>
         </li>
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'admin_payments' %}active{% endif %}">
           <a href="{% url 'admin_payments' %}">
-            <iconify-icon icon="mdi:credit-card-outline" class="menu-icon"></iconify-icon>
+            <iconify-icon icon="mdi:cash-multiple" class="menu-icon"></iconify-icon>
             <span>Payments</span>
           </a>
         </li>
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'complaint_list' %}active{% endif %}">
           <a href="{% url 'complaint_list' %}">
-            <iconify-icon icon="mdi:note-text-outline" class="menu-icon"></iconify-icon>
-            <span>Remarks</span>
+           <iconify-icon icon="mdi:comment-text-outline" class="menu-icon"></iconify-icon>
+            <span>Customer Remarks</span>
           </a>
         </li>
      
@@ -389,64 +397,79 @@ class="sidebar-logo">
           </a>
         </li>
       {% endif %}
-
+      
+  {% if perms.core.view_category %} 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'list.category' %}active{% endif %}">
           <a href="{% url 'list.category' %}">
             <iconify-icon icon="mdi:shape-outline" class="menu-icon"></iconify-icon>
             <span>Categories</span>
           </a>
         </li>
+  {% endif %}
 
+        {% if perms.core.view_categoryservice %} 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'list.category.services' %}active{% endif %}">
           <a href="{% url 'list.category.services' %}">
             <iconify-icon icon="mdi:tools" class="menu-icon"></iconify-icon>
             <span>Categories Services</span>
           </a>
         </li>
+        {% endif %}
 
+        {% if perms.core.view_servicescards %} 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'services.list' %}active{% endif %}">
           <a href="{% url 'services.list' %}">
             <iconify-icon icon="mdi:tools" class="menu-icon"></iconify-icon>
             <span>Services</span>
           </a>
         </li>
+        {% endif %}
 
+        {% if perms.core.view_job %} 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'list.jobs' %}active{% endif %}">
           <a href="{% url 'list.jobs' %}">
             <iconify-icon icon="mdi:briefcase-outline" class="menu-icon"></iconify-icon>
             <span>Jobs</span>
           </a>
         </li>
+        {% endif %}
 
+        
+        {% if perms.core.view_jobapplication %} 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'admin_job_applications' %}active{% endif %}">
           <a href="{% url 'admin_job_applications' %}">
             <iconify-icon icon="mdi:briefcase-outline" class="menu-icon"></iconify-icon>
             <span>Job Applications</span>
           </a>
         </li>
+        {% endif %}
 
-
+        {% if perms.core.view_servicefeedback %} 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'list.feedback' %}active{% endif %}">
           <a href="{% url 'list.feedback' %}">
             <iconify-icon icon="mdi:message-text-outline" class="menu-icon"></iconify-icon>
             <span>Feedbacks</span>
           </a>
         </li>
+        {% endif %}
 
+        {% if perms.core.view_contact %}
         <li class="sidebar__item {% if request.resolver_match.url_name == 'list.contact' %}active{% endif %}">
           <a href="{% url 'list.contact' %}">
             <iconify-icon icon="mdi:email-outline" class="menu-icon"></iconify-icon>
             <span>Inquery Contacts</span>
           </a>
         </li>
+        {% endif %}
 
+        {% if perms.core.view_footer %}
         <li class="sidebar__item {% if request.resolver_match.url_name == 'list.footer' %}active{% endif %}">
           <a href="{% url 'list.footer' %}">
             <iconify-icon icon="mdi:arrow-down-bold-box-outline" class="menu-icon"></iconify-icon>
             <span>Footer</span>
           </a>
         </li>
-
+        {% endif %}
 
 
         <!-- ================= VENDOR ================= -->
@@ -461,7 +484,7 @@ class="sidebar-logo">
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'vendor_profile' %}active{% endif %}">
           <a href="{% url 'vendor_profile' request.user.id %}">
-            <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
+            <iconify-icon icon="mdi:account-cog-outline" class="menu-icon"></iconify-icon>
             <span>Update Profile</span>
           </a>
         </li>
@@ -470,7 +493,7 @@ class="sidebar-logo">
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'vendor_orders' %}active{% endif %}">
           <a href="{% url 'vendor_orders' %}">
-            <iconify-icon icon="mdi:briefcase-outline" class="menu-icon"></iconify-icon>
+           <iconify-icon icon="mdi:clipboard-account-outline" class="menu-icon"></iconify-icon>
             <span>My Leads</span>
           </a>
         </li>
@@ -492,8 +515,7 @@ class="sidebar-logo">
 
           <a href="{% url 'vendor_payment_show' %}">
 
-            <iconify-icon icon="mdi:briefcase-outline"  class="menu-icon"></iconify-icon>
-
+        <iconify-icon icon="mdi:receipt-text-outline" class="menu-icon"></iconify-icon>
             <span>Payments Upload</span>
 
           </a>
@@ -599,10 +621,10 @@ class="sidebar-logo">
 
     <a href="{% url 'customer_terms' %}">
 
-        <iconify-icon
-            icon="solar:chat-line-outline"
-            class="menu-icon">
-        </iconify-icon>
+<iconify-icon
+    icon="mdi:file-sign"
+    class="menu-icon">
+</iconify-icon>
 
         <span>
             Terms & Conditions
@@ -620,42 +642,6 @@ class="sidebar-logo">
 
       </ul>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   </aside>
@@ -692,107 +678,112 @@ class="sidebar-logo">
             </div>
             <!-- Message dropdown end -->
 
-            <div class="dropdown">
-              <button
-                class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center"
-                type="button" data-bs-toggle="dropdown">
-                <iconify-icon icon="iconoir:bell" class="text-primary-light text-xl"></iconify-icon>
-              </button>
-              <div class="dropdown-menu to-top dropdown-menu-lg p-0">
-                <div
-                  class="m-16 py-12 px-16 radius-8 bg-primary-50 mb-16 d-flex align-items-center justify-content-between gap-2">
-                  <div>
-                    <h6 class="text-lg text-primary-light fw-semibold mb-0">Notifications</h6>
-                  </div>
-                  <span
-                    class="text-primary-600 fw-semibold text-lg w-40-px h-40-px rounded-circle bg-base d-flex justify-content-center align-items-center">05</span>
-                </div>
+<div class="dropdown">
+  <button
+    class="has-indicator w-40-px h-40-px bg-neutral-200 rounded-circle d-flex justify-content-center align-items-center position-relative border-0"
+    type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <iconify-icon icon="iconoir:bell" class="text-primary-light text-xl"></iconify-icon>
+    
+    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="margin-top: 8px; margin-left: -8px;"></span>
+  </button>
 
-                <div class="max-h-400-px overflow-y-auto scroll-sm pe-4">
-                  <a href="javascript:void(0)"
-                    class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
-                    <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                      <span
-                        class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                        <iconify-icon icon="bitcoin-icons:verify-outline" class="icon text-xxl"></iconify-icon>
-                      </span>
-                      <div>
-                        <h6 class="text-md fw-semibold mb-4">Congratulations</h6>
-                        <p class="mb-0 text-sm text-secondary-light text-w-200-px">Your profile has been Verified. Your
-                          profile has been Verified</p>
-                      </div>
-                    </div>
-                    <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                  </a>
+  <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg p-0 border shadow-sm rounded-3 overflow-hidden" style="width: 360px; margin-top: 8px;">
+    
+    <div class="m-16 py-12 px-16 radius-8 bg-primary-50 d-flex align-items-center justify-content-between gap-2 mb-3">
+      <div>
+        <h6 class="text-lg text-primary-light fw-semibold mb-0">Notifications</h6>
+      </div>
+      <span class="text-primary-600 fw-semibold text-sm w-32-px h-32-px rounded-circle bg-white border border-primary-200 d-flex justify-content-center align-items-center">
+        {% if request.user.role == 'superadmin' %}{{ platform_alerts.count|default:"0" }}
+        {% elif request.user.role == 'admin' %}{{ system_alerts.count|default:"0" }}
+        {% elif request.user.role == 'vendor' %}{{ vendor_alerts.count|default:"0" }}
+        {% else %}{{ customer_alerts.count|default:"0" }}{% endif %}
+      </span>
+    </div>
 
-                  <a href="javascript:void(0)"
-                    class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between bg-neutral-50">
-                    <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                      <span
-                        class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                        <img src="assets/images/notification/profile-1.png" alt="Image">
-                      </span>
-                      <div>
-                        <h6 class="text-md fw-semibold mb-4">Ronald Richards</h6>
-                        <p class="mb-0 text-sm text-secondary-light text-w-200-px">You can stitch between artboards</p>
-                      </div>
-                    </div>
-                    <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                  </a>
-
-                  <a href="javascript:void(0)"
-                    class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
-                    <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                      <span
-                        class="w-44-px h-44-px bg-info-subtle text-info-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                        AM
-                      </span>
-                      <div>
-                        <h6 class="text-md fw-semibold mb-4">Arlene McCoy</h6>
-                        <p class="mb-0 text-sm text-secondary-light text-w-200-px">Invite you to prototyping</p>
-                      </div>
-                    </div>
-                    <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                  </a>
-
-                  <a href="javascript:void(0)"
-                    class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between bg-neutral-50">
-                    <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                      <span
-                        class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                        <img src="assets/images/notification/profile-2.png" alt="Image">
-                      </span>
-                      <div>
-                        <h6 class="text-md fw-semibold mb-4">Robiul Hasan</h6>
-                        <p class="mb-0 text-sm text-secondary-light text-w-200-px">Invite you to prototyping</p>
-                      </div>
-                    </div>
-                    <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                  </a>
-
-                  <a href="javascript:void(0)"
-                    class="px-24 py-12 d-flex align-items-start gap-3 mb-2 justify-content-between">
-                    <div class="text-black hover-bg-transparent hover-text-primary d-flex align-items-center gap-3">
-                      <span
-                        class="w-44-px h-44-px bg-info-subtle text-info-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
-                        DR
-                      </span>
-                      <div>
-                        <h6 class="text-md fw-semibold mb-4">Darlene Robertson</h6>
-                        <p class="mb-0 text-sm text-secondary-light text-w-200-px">Invite you to prototyping</p>
-                      </div>
-                    </div>
-                    <span class="text-sm text-secondary-light flex-shrink-0">23 Mins ago</span>
-                  </a>
-                </div>
-
-                <div class="text-center py-12 px-16">
-                  <a href="javascript:void(0)" class="text-primary-600 fw-semibold text-md">See All Notification</a>
-                </div>
-
-              </div>
+    <div class="max-h-400-px overflow-y-auto scroll-sm pe-4 live-notification-queue">
+      
+      {% if request.user.role == 'superadmin' %}
+        {% for alert in platform_alerts|slice:":4" %}
+        <a href="javascript:void(0)" class="px-24 py-12 d-flex align-items-start gap-3 justify-content-between notification-item-fade border-bottom">
+          <div class="text-black hover-bg-transparent d-flex align-items-center gap-3">
+            <span class="w-44-px h-44-px bg-danger-subtle text-danger-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
+              <iconify-icon icon="solar:shield-warning-outline" class="icon text-xxl"></iconify-icon>
+            </span>
+            <div>
+              <h6 class="text-md fw-semibold mb-1">System Alert</h6>
+              <p class="mb-0 text-sm text-secondary-light text-w-200-px">{{ alert.message }}</p>
             </div>
-            
+          </div>
+          <span class="text-sm text-secondary-light flex-shrink-0">{{ alert.created_at|timesince }} ago</span>
+        </a>
+        {% empty %}
+        <div class="text-center py-4 text-muted text-sm">No platform alert logs available.</div>
+        {% endfor %}
+
+      {% elif request.user.role == 'admin' %}
+        {% for alert in system_alerts|slice:":4" %}
+        <a href="javascript:void(0)" class="px-24 py-12 d-flex align-items-start gap-3 justify-content-between notification-item-fade border-bottom">
+          <div class="text-black hover-bg-transparent d-flex align-items-center gap-3">
+            <span class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
+              <iconify-icon icon="bitcoin-icons:verify-outline" class="icon text-xxl"></iconify-icon>
+            </span>
+            <div>
+              <h6 class="text-md fw-semibold mb-1">New Booking Approved</h6>
+              <p class="mb-0 text-sm text-secondary-light text-w-200-px">Booking #{{ alert.booking_id }} registered successfully.</p>
+            </div>
+          </div>
+          <span class="text-sm text-secondary-light flex-shrink-0">{{ alert.created_at|timesince }} ago</span>
+        </a>
+        {% empty %}
+        <div class="text-center py-4 text-muted text-sm">No system booking notifications.</div>
+        {% endfor %}
+
+      {% elif request.user.role == 'vendor' %}
+        {% for alert in vendor_alerts|slice:":4" %}
+        <a href="javascript:void(0)" class="px-24 py-12 d-flex align-items-start gap-3 justify-content-between notification-item-fade border-bottom {% if forloop.counter|divisibleby:2 %}bg-neutral-50{% endif %}">
+          <div class="text-black hover-bg-transparent d-flex align-items-center gap-3">
+            <span class="w-44-px h-44-px bg-info-subtle text-info-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
+              <iconify-icon icon="solar:case-minimalistic-outline" class="icon text-xxl"></iconify-icon>
+            </span>
+            <div>
+              <h6 class="text-md fw-semibold mb-1">New Assignment Proposal</h6>
+              <p class="mb-0 text-sm text-secondary-light text-w-200-px">{{ alert.message }}</p>
+            </div>
+          </div>
+          <span class="text-sm text-secondary-light flex-shrink-0">{{ alert.created_at|timesince }} ago</span>
+        </a>
+        {% empty %}
+        <div class="text-center py-4 text-muted text-sm">No incoming service assignments assigned.</div>
+        {% endfor %}
+
+      {% else %}
+        {% for alert in customer_alerts|slice:":4" %}
+        <a href="javascript:void(0)" class="px-24 py-12 d-flex align-items-start gap-3 justify-content-between notification-item-fade border-bottom">
+          <div class="text-black hover-bg-transparent d-flex align-items-center gap-3">
+            <span class="w-44-px h-44-px bg-success-subtle text-success-main rounded-circle d-flex justify-content-center align-items-center flex-shrink-0">
+              <iconify-icon icon="solar:check-circle-outline" class="icon text-xxl"></iconify-icon>
+            </span>
+            <div>
+              <h6 class="text-md fw-semibold mb-1">Order Fulfilled</h6>
+              <p class="mb-0 text-sm text-secondary-light text-w-200-px">Your assigned specialist is on their way to your home destination.</p>
+            </div>
+          </div>
+          <span class="text-sm text-secondary-light flex-shrink-0">{{ alert.created_at|timesince }} ago</span>
+        </a>
+        {% empty %}
+        <div class="text-center py-4 text-muted text-sm">Your alert stream is currently clear.</div>
+        {% endfor %}
+      {% endif %}
+
+    </div>
+
+    <div class="text-center py-12 px-16 border-top bg-light">
+      <a href="javascript:void(0)" class="text-primary-600 fw-semibold text-sm text-decoration-none hover-underline">See All Notifications</a>
+    </div>
+
+  </div>
+</div>
             
             
             <!-- Notification dropdown end -->

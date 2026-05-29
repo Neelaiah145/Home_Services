@@ -4,15 +4,9 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>
-        Create Account | SriDixitha Home Services
-    </title>
-
+    <title>Create Account | SriDixitha Home Services</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
@@ -205,16 +199,11 @@
             background: var(--primary-hover);
         }
 
-        .hidden {
-            display: none;
-        }
-
         .image-side {
             flex: 1;
             background:
                 linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5)),
                 url("/static/assets/images/bg/register_image.jpg") no-repeat center center;
-
             background-size: cover;
             display: flex;
             align-items: flex-end;
@@ -301,8 +290,32 @@
             box-shadow: 0 0 0 4px rgba(0, 94, 255, 0.1);
         }
 
-        @media(max-width:900px) {
+        /* Clean styles for the custom Resend OTP timer utility */
+        .otp-resend-container {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 13px;
+            color: var(--text-gray);
+        }
 
+        .otp-resend-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            display: none; /* Hidden until the 30s countdown finishes */
+            cursor: pointer;
+        }
+
+        .otp-resend-link:hover {
+            text-decoration: underline;
+        }
+
+        .otp-countdown-number {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        @media(max-width:900px) {
             .image-side {
                 display: none;
             }
@@ -316,542 +329,249 @@
             }
         }
     </style>
-
 </head>
 
 <body>
-
     <div class="main-wrapper">
-
         <div class="form-side">
-
             <div class="logo-container">
-
                 <img src="{% static 'assets/images/logo/sridixitha_logo.gif' %}" alt="Register-logo">
-
             </div>
 
-            <h2>
-                Create Account
-            </h2>
-
-            <p class="subtitle">
-                Book trusted experts or join as a vendor to grow your business.
-            </p>
+            <h2>Create Account</h2>
+            <p class="subtitle">Book trusted experts or join as a vendor to grow your business.</p>
 
             <div id="msg" class="msg"></div>
 
             <div class="role-tabs">
-
-                <div class="tab active" id="tabCustomer" onclick="setRole('customer')">
-                    Join as Customer
-                </div>
-
-                <div class="tab" id="tabVendor" onclick="setRole('vendor')">
-                    Join as Vendor
-                </div>
-
+                <div class="tab active" id="tabCustomer" onclick="setRole('customer')">Join as Customer</div>
+                <div class="tab" id="tabVendor" onclick="setRole('vendor')">Join as Vendor</div>
             </div>
 
             <div id="step1">
-
                 <input type="hidden" id="role" value="customer">
 
                 <div class="group">
-
-                    <label>
-                        Full Name
-                    </label>
-
+                    <label>Full Name</label>
                     <input id="name" placeholder="John Doe">
-
                 </div>
 
                 <div class="group">
-
-                    <label>
-                        Email Address
-                    </label>
-
+                    <label>Email Address</label>
                     <input id="email" type="email" placeholder="john@example.com">
-
                 </div>
 
                 <div class="group">
-
-                    <label>
-                        Phone Number
-                    </label>
-
-                    <input id="phone" type="tel" maxlength="10" placeholder="10-digit mobile" oninput="
-                            this.value =
-                            this.value
-                            .replace(/[^0-9]/g,'')
-                            .slice(0,10)
-                        ">
-
+                    <label>Phone Number</label>
+                    <input id="phone" type="tel" maxlength="10" placeholder="10-digit mobile" oninput="this.value = this.value.replace(/[^0-9]/g,'').slice(0,10)">
                 </div>
-
 
                 <div class="vendor-grid">
-
                     <div class="group">
-
-                        <label>
-                            City
-                        </label>
-
+                        <label>City</label>
                         <input id="city" placeholder="Enter Your City">
-
                     </div>
 
                     <div class="group">
+                        <label>Postcode</label>
+                        <input id="postcode" maxlength="6" placeholder="6-digit PIN" oninput="this.value = this.value.replace(/[^0-9]/g,'').slice(0,6)">
+                    </div>
+                </div>
 
-                        <label>
-                            Postcode
-                        </label>
+                <div id="vendorBox" class="hidden">
+                    <div class="vendor-grid">
+                        <div class="group">
+                            <label>Category</label>
+                            <select id="category">
+                                <option value="">Select Category</option>
+                                {% for c in categories %}
+                                <option value="{{ c.id }}">{{ c.title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-                        <input id="postcode" maxlength="6" placeholder="6-digit PIN" oninput="
-                    this.value =
-                    this.value
-                    .replace(/[^0-9]/g,'')
-                    .slice(0,6)
-                        ">
-
+                        <div class="group">
+                            <label>Service</label>
+                            <select id="service">
+                                <option value="">Select Service</option>
+                                {% for s in services %}
+                                <option value="{{ s.id }}">{{ s.s_title }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
 
+                    <div class="group">
+                        <label>Business Address</label>
+                        <input id="address" placeholder="Full Address">
+                    </div>
                 </div>
-                <div id="vendorBox" class="hidden">
-
-    <div class="vendor-grid">
-
-        <div class="group">
-
-            <label>
-                Category
-            </label>
-
-            <select id="category">
-
-                <option value="">
-                    Select Category
-                </option>
-
-                {% for c in categories %}
-
-                <option value="{{ c.id }}">
-                    {{ c.title }}
-                </option>
-
-                {% endfor %}
-
-            </select>
-
-        </div>
-
-        <div class="group">
-
-            <label>
-                Service
-            </label>
-
-            <select id="service">
-
-                <option value="">
-                    Select Service
-                </option>
-
-                {% for s in services %}
-
-                <option value="{{ s.id }}">
-                    {{ s.s_title }}
-                </option>
-
-                {% endfor %}
-
-            </select>
-
-        </div>
-
-    </div>
-
-    <div class="group">
-
-        <label>
-            Business Address
-        </label>
-
-        <input
-            id="address"
-            placeholder="Full Address"
-        >
-
-    </div>
-
-</div>
-
-
 
                 <div class="terms-check-wrapper">
-
                     <label class="terms-check-box">
-
                         <input type="checkbox" id="termsCheck">
                         <span>
-
                             I agree to the
-
-                            <!-- CUSTOMER TERMS -->
-
-                            <a id="customerTermsLink" href="{% url 'customer_termsandconditions' %}">
-                                Terms & Conditions
-                            </a>
-
-                            <!-- VENDOR TERMS -->
-
-                            <a id="vendorTermsLink" href="{% url 'vendor_termsandconditions' %}" class="hidden">
-                                Terms & Conditions
-                            </a>
-
+                            <a id="customerTermsLink" href="{% url 'customer_termsandconditions' %}">Terms & Conditions</a>
+                            <a id="vendorTermsLink" href="{% url 'vendor_termsandconditions' %}" class="hidden">Terms & Conditions</a>
                             and
-
-                            <!-- CUSTOMER PRIVACY -->
-
-                            <a id="customerPrivacyLink" href="{% url 'customer_privacy' %}">
-                                Privacy Policy
-                            </a>
-
-                            <!-- VENDOR PRIVACY -->
-
-                            <a id="vendorPrivacyLink" href="{% url 'vendor_privacy' %}" class="hidden">
-                                Privacy Policy
-                            </a>
-
+                            <a id="customerPrivacyLink" href="{% url 'customer_privacy' %}">Privacy Policy</a>
+                            <a id="vendorPrivacyLink" href="{% url 'vendor_privacy' %}" class="hidden">Privacy Policy</a>
                         </span>
-
                     </label>
-
                 </div>
 
-                <button class="btn" onclick="sendOtp()">
-                    Send OTP
-                </button>
-
+                <button class="btn" onclick="sendOtp()">Send OTP</button>
             </div>
+
             <div class="login-text">
-
-                Already have an account?
-
-                <a href="{% url 'login' %}">
-                    Login
-                </a>
-
+                Already have an account? <a href="{% url 'login' %}">Login</a>
             </div>
 
             <div id="step2" class="hidden">
-
                 <div class="group">
-
-                    <label>
-                        Enter OTP
-                    </label>
-
+                    <label>Enter OTP</label>
                     <div class="otp-wrapper">
-
                         <input type="text" maxlength="1" class="otp-input" oninput="moveNext(this, 'otp2')" id="otp1">
-
                         <input type="text" maxlength="1" class="otp-input" oninput="moveNext(this, 'otp3')" id="otp2">
-
                         <input type="text" maxlength="1" class="otp-input" oninput="moveNext(this, 'otp4')" id="otp3">
-
                         <input type="text" maxlength="1" class="otp-input" id="otp4">
-
                     </div>
-
                 </div>
 
-                <button class="btn" onclick="verifyOtp()">
-                    Register Now
-                </button>
+                <p class="otp-resend-container">
+                    Didn't get it? 
+                    <span id="timer-text-wrapper">Resend available in <span id="countdown-clock" class="otp-countdown-number">30</span>s</span>
+                    <a id="resend-btn-link" class="otp-resend-link" onclick="resendOtpAction()">Resend OTP</a>
+                </p>
+
+                <button class="btn" onclick="verifyOtp()">Register Now</button>
 
                 <div class="otp-info-text">
-
-                    <p>
-
-                        Secure OTP verification helps protect your
-                        account and ensures safe access to trusted
-                        home services and verified vendors.
-
-                    </p>
-
+                    <p>Secure OTP verification helps protect your account and ensures safe access to trusted home services and verified vendors.</p>
                 </div>
-
             </div>
-
         </div>
 
         <div class="image-side">
-
             <div class="image-card">
-
-                <h3>
-                    Your Home, Handled by Experts.
-                </h3>
-
-                <p>
-                    Book trusted professionals for cleaning, repairs, and maintenance.
-                </p>
-
+                <h3>Your Home, Handled by Experts.</h3>
+                <p>Book trusted professionals for cleaning, repairs, and maintenance.</p>
             </div>
-
         </div>
-
     </div>
 
     <script>
+        let countdownTimer;
+        let secondsLeft = 30;
 
         function setRole(role) {
-
             document.getElementById("role").value = role;
+            const customer = document.getElementById("tabCustomer");
+            const vendor = document.getElementById("tabVendor");
+            const vendorBox = document.getElementById("vendorBox");
 
-            const customer =
-                document.getElementById("tabCustomer");
-
-            const vendor =
-                document.getElementById("tabVendor");
-
-            const vendorBox =
-                document.getElementById("vendorBox");
-
-            /* TERMS LINKS */
-
-            const customerTermsLink =
-                document.getElementById("customerTermsLink");
-
-            const vendorTermsLink =
-                document.getElementById("vendorTermsLink");
-
-            /* PRIVACY LINKS */
-
-            const customerPrivacyLink =
-                document.getElementById("customerPrivacyLink");
-
-            const vendorPrivacyLink =
-                document.getElementById("vendorPrivacyLink");
+            const customerTermsLink = document.getElementById("customerTermsLink");
+            const vendorTermsLink = document.getElementById("vendorTermsLink");
+            const customerPrivacyLink = document.getElementById("customerPrivacyLink");
+            const vendorPrivacyLink = document.getElementById("vendorPrivacyLink");
 
             if (role === "vendor") {
-
                 vendor.classList.add("active");
-
                 customer.classList.remove("active");
-
                 vendorBox.classList.remove("hidden");
-
-                /* SHOW VENDOR LINKS */
-
                 vendorTermsLink.classList.remove("hidden");
-
                 vendorPrivacyLink.classList.remove("hidden");
-
-                /* HIDE CUSTOMER LINKS */
-
                 customerTermsLink.classList.add("hidden");
-
                 customerPrivacyLink.classList.add("hidden");
-
             } else {
-
                 customer.classList.add("active");
-
                 vendor.classList.remove("active");
-
                 vendorBox.classList.add("hidden");
-
-                /* SHOW CUSTOMER LINKS */
-
                 customerTermsLink.classList.remove("hidden");
-
                 customerPrivacyLink.classList.remove("hidden");
-
-                /* HIDE VENDOR LINKS */
-
                 vendorTermsLink.classList.add("hidden");
-
                 vendorPrivacyLink.classList.add("hidden");
             }
         }
+
         function show(message, error = true) {
-
-            const box =
-                document.getElementById("msg");
-
+            const box = document.getElementById("msg");
             box.style.display = "block";
-
             box.innerText = message;
+            box.style.background = error ? "#fee2e2" : "#dcfce7";
+            box.style.color = error ? "#991b1b" : "#166534";
+        }
 
-            box.style.background =
-                error ? "#fee2e2" : "#dcfce7";
+        // Active clock loop script configuration
+        function startTimerLoop() {
+            clearInterval(countdownTimer);
+            const timerWrapper = document.getElementById("timer-text-wrapper");
+            const resendAction = document.getElementById("resend-btn-link");
+            const dynamicDisplay = document.getElementById("countdown-clock");
 
-            box.style.color =
-                error ? "#991b1b" : "#166534";
+            resendAction.style.display = "none";
+            timerWrapper.style.display = "inline";
+            secondsLeft = 30;
+            dynamicDisplay.textContent = secondsLeft;
+
+            countdownTimer = setInterval(function() {
+                secondsLeft--;
+                dynamicDisplay.textContent = secondsLeft;
+
+                if (secondsLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    timerWrapper.style.display = "none";
+                    resendAction.style.display = "inline";
+                }
+            }, 1000);
         }
 
         async function sendOtp() {
+            const role = document.getElementById("role").value;
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const city = document.getElementById("city").value.trim();
+            const postcode = document.getElementById("postcode").value.trim();
+            const termsAccepted = document.getElementById("termsCheck").checked;
 
-            const role =
-                document.getElementById("role").value;
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const phonePattern = /^[6-9]\d{9}$/;
 
-            const name =
-                document.getElementById("name").value.trim();
-
-            const email =
-                document.getElementById("email").value.trim();
-
-            const phone =
-                document.getElementById("phone").value.trim();
-            const city =
-                document.getElementById("city").value.trim();
-
-            const postcode =
-                document.getElementById("postcode").value.trim();
-
-            const termsAccepted =
-                document.getElementById("termsCheck").checked;
-
-            const emailPattern =
-                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-            const phonePattern =
-                /^[6-9]\d{9}$/;
-
-            if (name === "") {
-
-                show("Please enter full name");
-                return;
-            }
-
-            if (name.length < 3) {
-
-                show("Name must be minimum 3 characters");
-                return;
-            }
-
-            if (email === "") {
-
-                show("Please enter email address");
-                return;
-            }
-
-            if (!emailPattern.test(email)) {
-
-                show("Please enter valid email address");
-                return;
-            }
-
-            if (phone === "") {
-
-                show("Please enter mobile number");
-                return;
-            }
-
-            if (!phonePattern.test(phone)) {
-
-                show("Please enter valid Indian mobile number");
-                return;
-            }
-            if (city === "") {
-
-                show("Please enter city");
-                return;
-            }
-
-            if (postcode === "") {
-
-                show("Please enter postcode");
-                return;
-            }
-
-            if (postcode.length !== 6) {
-
-                show("Please enter valid postcode");
-                return;
-            }
+            if (name === "") { show("Please enter full name"); return; }
+            if (name.length < 3) { show("Name must be minimum 3 characters"); return; }
+            if (email === "") { show("Please enter email address"); return; }
+            if (!emailPattern.test(email)) { show("Please enter valid email address"); return; }
+            if (phone === "") { show("Please enter mobile number"); return; }
+            if (!phonePattern.test(phone)) { show("Please enter valid Indian mobile number"); return; }
+            if (city === "") { show("Please enter city"); return; }
+            if (postcode === "") { show("Please enter postcode"); return; }
+            if (postcode.length !== 6) { show("Please enter valid postcode"); return; }
 
             if (role === "vendor") {
+                const category = document.getElementById("category").value;
+                const service = document.getElementById("service").value;
+                const address = document.getElementById("address").value.trim();
 
-                const category =
-                    document.getElementById("category").value;
-
-                const service =
-                    document.getElementById("service").value;
-
-                const address =
-                    document.getElementById("address").value.trim();
-
-
-                if (category === "") {
-
-                    show("Please select category");
-                    return;
-                }
-
-                if (service === "") {
-
-                    show("Please select service");
-                    return;
-                }
-
-                if (address === "") {
-
-                    show("Please enter business address");
-                    return;
-                }
-
-                if (city === "") {
-
-                    show("Please enter city");
-                    return;
-                }
-
-                if (postcode === "") {
-
-                    show("Please enter postcode");
-                    return;
-                }
-
-                if (postcode.length !== 6) {
-
-                    show("Please enter valid postcode");
-                    return;
-                }
+                if (category === "") { show("Please select category"); return; }
+                if (service === "") { show("Please select service"); return; }
+                if (address === "") { show("Please enter business address"); return; }
             }
 
-            if (!termsAccepted) {
-
-                show("Please accept Terms & Conditions");
-                return;
-            }
+            if (!termsAccepted) { show("Please accept Terms & Conditions"); return; }
 
             const res = await fetch("/register/", {
-
                 method: "POST",
-
                 headers: {
-
                     "Content-Type": "application/json",
                     "X-CSRFToken": "{{ csrf_token }}"
                 },
-
                 body: JSON.stringify({
-
                     action: "send_otp",
-
                     name: name,
-
                     email: email,
-
                     phone: phone,
-
                     role: role
                 })
             });
@@ -859,130 +579,100 @@
             const data = await res.json();
 
             if (data.exists) {
-
                 show("Mobile number already registered. Please login.");
-
-                setTimeout(() => {
-
-                    window.location = "/login/";
-
-                }, 1500);
-
+                setTimeout(() => { window.location = "/login/"; }, 1500);
                 return;
             }
 
             if (data.email_exists) {
-
                 show("Email already registered. Please login.");
-
-                setTimeout(() => {
-
-                    window.location = "/login/";
-
-                }, 1500);
-
+                setTimeout(() => { window.location = "/login/"; }, 1500);
                 return;
             }
 
             if (data.error) {
-
                 show(data.error);
                 return;
             }
 
             show("OTP Sent Successfully", false);
+            document.getElementById("step1").classList.add("hidden");
+            document.getElementById("step2").classList.remove("hidden");
+            startTimerLoop(); // Starts the visual clock countdown
+        }
 
-            document.getElementById("step1")
-                .classList.add("hidden");
+        // Dedicated runtime routine handler for Resending OTP
+        async function resendOtpAction() {
+            const phone = document.getElementById("phone").value.trim();
+            show("Resending verification code...", false);
 
-            document.getElementById("step2")
-                .classList.remove("hidden");
+            const res = await fetch("/register/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                body: JSON.stringify({
+                    action: "resend_otp",
+                    phone: phone
+                })
+            });
+
+            const data = await res.json();
+            if (data.error) {
+                show(data.error, true);
+            } else {
+                show("New verification code sent!", false);
+                startTimerLoop(); // Resets and loops the 30-second window
+            }
         }
 
         async function verifyOtp() {
-
             const otp =
-
                 document.getElementById("otp1").value +
                 document.getElementById("otp2").value +
                 document.getElementById("otp3").value +
                 document.getElementById("otp4").value;
 
             if (otp.length !== 4) {
-
                 show("Please enter valid OTP");
                 return;
             }
 
-            const role =
-                document.getElementById("role").value;
-
-            const name =
-                document.getElementById("name").value.trim();
-
-            const email =
-                document.getElementById("email").value.trim();
-
-            const phone =
-                document.getElementById("phone").value.trim();
+            const role = document.getElementById("role").value;
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
 
             let category = "";
             let service = "";
             let address = "";
-            let city =
-                document.getElementById("city").value.trim();
-
-            let postal_code =
-                document.getElementById("postcode").value.trim();
+            let city = document.getElementById("city").value.trim();
+            let postal_code = document.getElementById("postcode").value.trim();
 
             if (role === "vendor") {
-
-                category =
-                    document.getElementById("category").value;
-
-                service =
-                    document.getElementById("service").value;
-
-                address =
-                    document.getElementById("address").value.trim();
-
-
+                category = document.getElementById("category").value;
+                service = document.getElementById("service").value;
+                address = document.getElementById("address").value.trim();
             }
 
             const res = await fetch("/register/", {
-
                 method: "POST",
-
                 headers: {
-
                     "Content-Type": "application/json",
                     "X-CSRFToken": "{{ csrf_token }}"
                 },
-
                 body: JSON.stringify({
-
                     action: "verify_otp",
-
                     otp: otp,
-
                     role: role,
-
                     name: name,
-
                     email: email,
-
                     phone: phone,
-
                     category: category,
-
                     service: service,
-
                     address: address,
-
                     city: city,
-
-                    /* NEW */
-
                     postal_code: postal_code
                 })
             });
@@ -990,39 +680,22 @@
             const data = await res.json();
 
             if (data.error) {
-
                 show(data.error);
                 return;
             }
 
             show("Registration Successful", false);
-
-            setTimeout(() => {
-
-                window.location = "/login/";
-
-            }, 1500);
+            setTimeout(() => { window.location = "/login/"; }, 1500);
         }
 
         function moveNext(current, nextFieldId) {
-
-            current.value =
-                current.value.replace(/[^0-9]/g, '');
-
+            current.value = current.value.replace(/[^0-9]/g, '');
             if (current.value.length >= 1) {
-
-                const next =
-                    document.getElementById(nextFieldId);
-
-                if (next) {
-
-                    next.focus();
-                }
+                const next = document.getElementById(nextFieldId);
+                if (next) { next.focus(); }
             }
         }
-
     </script>
-
 </body>
 
 </html>
