@@ -2,6 +2,7 @@ from django.urls import path
 from core.views import *
 
 urlpatterns = [
+     
     path("", IndexView.as_view(), name="indexpage"),
     path("categories/listing/",CategoryListing.as_view(),name='categoy.listings'),
     
