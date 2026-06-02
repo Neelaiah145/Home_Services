@@ -65,7 +65,12 @@ MIDDLEWARE = [
 
 ]
 
-
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "otp_cache_table",
+    }
+}
 
 
 TEMPLATES = [

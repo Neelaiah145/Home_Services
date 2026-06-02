@@ -1,17 +1,21 @@
 # accounts/utils.py
 
-import random
+
 
 from django.core.cache import cache
+import random
+from datetime import timedelta
+
+from django.utils import timezone
+
+from .models import OTP
 
 
 OTP_EXPIRE = 120
-
 RESEND_TIME = 30
 
 
 def generate_otp():
-
     return str(
         random.randint(1000, 9999)
     )
@@ -19,43 +23,58 @@ def generate_otp():
 
 def send_otp(phone):
 
+    print("SEND OTP CALLED")
+
     otp = generate_otp()
 
-    cache.set(
-        f"otp_{phone}",
-        otp,
-        timeout=OTP_EXPIRE
+    OTP.objects.filter(phone=phone).delete()
+    print("store")
+    obj = OTP.objects.create(
+        phone=phone,
+        otp=otp
     )
 
-    cache.set(
-        f"otp_lock_{phone}",
-        True,
-        timeout=RESEND_TIME
-    )
 
-    # PRINT OTP IN CONSOLE
-
-    print(f"PHONE: {phone} | OTP: {otp}")
+    print("PHONE:", phone)
+    print("OTP:", otp)
 
     return True
 
 
 def verify_otp(phone, otp):
 
-    saved = cache.get(
-        f"otp_{phone}"
-    )
+    obj = OTP.objects.filter(
+        phone=phone,
+        otp=otp
+    ).first()
 
-    return saved == otp
+    if not obj:
+        return False
+
+    # Expire after 120 seconds
+    if timezone.now() - obj.created_at > timedelta(seconds=OTP_EXPIRE):
+        obj.delete()
+        return False
+
+    # Delete after successful verification
+    obj.delete()
+
+    return True
 
 
 def can_resend(phone):
 
-    return not cache.get(
-        f"otp_lock_{phone}"
-    )
+    obj = OTP.objects.filter(
+        phone=phone
+    ).order_by("-created_at").first()
 
+    if not obj:
+        return True
 
+    if timezone.now() - obj.created_at > timedelta(seconds=RESEND_TIME):
+        return True
+
+    return False
 
 
 

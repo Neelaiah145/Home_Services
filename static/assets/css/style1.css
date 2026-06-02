@@ -2467,7 +2467,7 @@ textarea.is-invalid {
   font-family: var(--body-font);
   font-size: 16px;
   font-weight: 700;
-  padding: 11px 10px;
+  padding: 6px 6px;
   border-radius: 10px;
   letter-spacing: 1px;
   z-index: 1;
@@ -5602,7 +5602,7 @@ a.text-theme:hover,
 
 .main-menu>ul>li>a,
 .menu-style2>ul>li>a {
-  padding: 35px 15px 35px 15px;
+  padding: 35px 5px 35px 5px;
   border-top: 3px solid transparent;
   transition: all 0.5s ease;
   background: transparent;
@@ -17824,7 +17824,7 @@ span.select2-selection.select2-selection--single:focus {
 
 /* BUTTON */
 .hover-btn {
-  font-size: 12px;
+  font-size: 10px !important;
   background: var(--secondary-color);
   color: #fff;
   padding: 2px 2px;
