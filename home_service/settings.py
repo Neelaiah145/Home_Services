@@ -35,7 +35,7 @@ LOGIN_URL  = '/login/'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["sridixitha.com", "www.sridixitha.com"]
 
 USERNAME_FIELD = "email"
 # Application definition
@@ -65,12 +65,7 @@ MIDDLEWARE = [
 
 ]
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        "LOCATION": "otp_cache_table",
-    }
-}
+
 
 
 TEMPLATES = [
@@ -102,7 +97,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-key')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'home_services'),
+        'NAME': os.getenv('DB_NAME', 'django'),
         'USER': os.getenv('DB_USER', 'root'),
         'PASSWORD': os.getenv('DB_PASSWORD', ''),
         'HOST': os.getenv('DB_HOST', 'localhost'),
@@ -147,9 +142,11 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "staticfiles",
 
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -158,3 +155,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://sridixitha.com",
+    "https://www.sridixitha.com",
+]
