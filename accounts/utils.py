@@ -20,11 +20,11 @@ def send_otp(phone, purpose):
 
     templates = {
         "login": {
-            "template_id": settings.LOGIN_TEMPLATE_ID,
+            "template_id": settings.SMS_LOGIN_TEMPLATE_ID,
             "message": f"Dear User, your secure login OTP for Sridixitha Enterprises is { otp }. This code is required to complete your sign-in process. If you did not request this login, please ignore this message immediately.."
         },
         "register": {
-            "template_id": settings.REGISTER_TEMPLATE_ID,
+            "template_id": settings.SMS_REGISTER_TEMPLATE_ID,
             "message": f"Thank you for registering your account with Sridixitha Enterprises. Your verification code is { otp }. Please enter the OTP to complete your registration."
         }
     }
