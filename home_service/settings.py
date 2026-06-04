@@ -37,7 +37,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["sridixitha.com", "www.sridixitha.com"]
 
-ALLOWED_HOSTS = []
 USERNAME_FIELD = "email"
 # Application definition
 
