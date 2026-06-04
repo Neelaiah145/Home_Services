@@ -35,8 +35,9 @@ LOGIN_URL  = '/login/'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["sridixitha.com", "www.sridixitha.com"]
+# ALLOWED_HOSTS = ["sridixitha.com", "www.sridixitha.com"]
 
+ALLOWED_HOSTS = []
 USERNAME_FIELD = "email"
 # Application definition
 
@@ -160,3 +161,11 @@ CSRF_TRUSTED_ORIGINS = [
     "https://sridixitha.com",
     "https://www.sridixitha.com",
 ]
+
+from decouple import config
+
+SMS_USERNAME = config("SMS_USERNAME")
+SMS_APIKEY = config("SMS_APIKEY")
+SMS_SENDER_ID = config("SMS_SENDER_ID")
+LOGIN_TEMPLATE_ID = config("LOGIN_TEMPLATE_ID")
+REGISTER_TEMPLATE_ID = config("REGISTER_TEMPLATE_ID")

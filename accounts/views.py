@@ -149,7 +149,7 @@ class LoginView(View):
 
             })
 
-        send_otp(phone)
+        send_otp(phone,"login")
 
         return JsonResponse({
 
@@ -236,7 +236,7 @@ class RegisterView(View):
 
                 })
 
-            send_otp(phone)
+            send_otp(phone,"register")
 
             return JsonResponse({
 
@@ -253,7 +253,7 @@ class RegisterView(View):
                     "error": "Enter valid phone number"
                 })
 
-            send_otp(phone)
+            send_otp(phone,"register")
 
             return JsonResponse({
                 "success": True
@@ -4455,61 +4455,61 @@ from .utils import (
 )
 
 
-def send_otp_view(request):
+# def send_otp_view(request):
 
-    if request.method == "POST":
+#     if request.method == "POST":
 
-        phone = request.POST.get("phone")
+#         phone = request.POST.get("phone")
 
-        phone = normalize_phone(phone)
+#         phone = normalize_phone(phone)
 
-        if not phone:
+#         if not phone:
 
-            return JsonResponse({
-                "error": "Phone required"
-            })
+#             return JsonResponse({
+#                 "error": "Phone required"
+#             })
 
-        if not can_resend(phone):
+#         if not can_resend(phone):
 
-            return JsonResponse({
-                "error": "Please wait before resend"
-            })
+#             return JsonResponse({
+#                 "error": "Please wait before resend"
+#             })
 
-        send_otp(phone)
+#         send_otp(phone)
 
-        return JsonResponse({
-            "status": "sent"
-        })
+#         return JsonResponse({
+#             "status": "sent"
+#         })
 
-    return JsonResponse({
-        "error": "Invalid request"
-    })
+#     return JsonResponse({
+#         "error": "Invalid request"
+#     })
 
-def verify_otp_view(request):
+# def verify_otp_view(request):
 
-    if request.method == "POST":
+#     if request.method == "POST":
 
-        phone = request.POST.get("phone")
+#         phone = request.POST.get("phone")
 
-        phone = normalize_phone(phone)
+#         phone = normalize_phone(phone)
 
-        otp = request.POST.get("otp")
+#         otp = request.POST.get("otp")
 
-        if verify_otp(phone, otp):
+#         if verify_otp(phone, otp):
 
-            request.session["verified_phone"] = phone
+#             request.session["verified_phone"] = phone
 
-            return JsonResponse({
-                "status": "verified"
-            })
+#             return JsonResponse({
+#                 "status": "verified"
+#             })
 
-        return JsonResponse({
-            "error": "Invalid OTP"
-        })
+#         return JsonResponse({
+#             "error": "Invalid OTP"
+#         })
 
-    return JsonResponse({
-        "error": "Invalid request"
-    })
+#     return JsonResponse({
+#         "error": "Invalid request"
+#     })
     
     
     

@@ -1,13 +1,8 @@
-# accounts/utils.py
-
-
-
-from django.core.cache import cache
 import random
+import requests
 from datetime import timedelta
-
+from django.conf import settings
 from django.utils import timezone
-
 from .models import OTP
 
 
@@ -16,29 +11,46 @@ RESEND_TIME = 30
 
 
 def generate_otp():
-    return str(
-        random.randint(1000, 9999)
-    )
+    return str(random.randint(1000, 9999))
 
 
-def send_otp(phone):
-
-    print("SEND OTP CALLED")
+def send_otp(phone, purpose):
 
     otp = generate_otp()
 
-    OTP.objects.filter(phone=phone).delete()
-    print("store")
-    obj = OTP.objects.create(
-        phone=phone,
-        otp=otp
+    templates = {
+        "login": {
+            "template_id": settings.LOGIN_TEMPLATE_ID,
+            "message": f"Dear User, your secure login OTP for Sridixitha Enterprises is { otp }. This code is required to complete your sign-in process. If you did not request this login, please ignore this message immediately.."
+        },
+        "register": {
+            "template_id": settings.REGISTER_TEMPLATE_ID,
+            "message": f"Thank you for registering your account with Sridixitha Enterprises. Your verification code is { otp }. Please enter the OTP to complete your registration."
+        }
+    }
+
+    config = templates[purpose]
+
+    payload = {
+        "username": settings.SMS_USERNAME,
+        "apikey": settings.SMS_APIKEY,
+        "senderid": settings.SMS_SENDER_ID,
+        "mobile": phone,
+        "message": config["message"],
+        "templateid": config["template_id"],
+    }
+
+    response = requests.get(
+        "https://smslogin.co/v3/api.php",
+        params=payload,
+        timeout=10
     )
 
-
-    print("PHONE:", phone)
-    print("OTP:", otp)
+    print("PAYLOAD:", payload)
+    print("SMS RESPONSE:", response.text)
 
     return True
+
 
 
 def verify_otp(phone, otp):
@@ -51,14 +63,11 @@ def verify_otp(phone, otp):
     if not obj:
         return False
 
-    # Expire after 120 seconds
     if timezone.now() - obj.created_at > timedelta(seconds=OTP_EXPIRE):
         obj.delete()
         return False
 
-    # Delete after successful verification
     obj.delete()
-
     return True
 
 
@@ -75,6 +84,7 @@ def can_resend(phone):
         return True
 
     return False
+
 
 
 
