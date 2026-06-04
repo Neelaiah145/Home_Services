@@ -46,9 +46,6 @@ def send_otp(phone, purpose):
         timeout=10
     )
 
-    print("PAYLOAD:", payload)
-    print("SMS RESPONSE:", response.text)
-
     return True
 
 
