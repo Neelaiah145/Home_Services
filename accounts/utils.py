@@ -1,8 +1,10 @@
 import random
-import requests
 from datetime import timedelta
+
+import requests
 from django.conf import settings
 from django.utils import timezone
+
 from .models import OTP
 
 
@@ -18,14 +20,27 @@ def send_otp(phone, purpose):
 
     otp = generate_otp()
 
+    # Delete old OTPs
+    OTP.objects.filter(phone=phone).delete()
+
+    # Save new OTP
+    OTP.objects.create(
+        phone=phone,
+        otp=otp
+    )
+
     templates = {
         "login": {
             "template_id": settings.SMS_LOGIN_TEMPLATE_ID,
-            "message": f"Dear User, your secure login OTP for Sridixitha Enterprises is { otp }. This code is required to complete your sign-in process. If you did not request this login, please ignore this message immediately.."
+            "message": (
+                f"Dear User, your secure login OTP for Sridixitha Enterprises is { otp }. This code is required to complete your sign-in process. If you did not request this login, please ignore this message immediately."
+            )
         },
         "register": {
             "template_id": settings.SMS_REGISTER_TEMPLATE_ID,
-            "message": f"Thank you for registering your account with Sridixitha Enterprises. Your verification code is { otp }. Please enter the OTP to complete your registration."
+            "message": (
+                f"Thank you for registering your account with Sridixitha Enterprises. Your verification code is { otp }. Please enter the OTP to complete your registration."
+            )
         }
     }
 
@@ -46,41 +61,47 @@ def send_otp(phone, purpose):
         timeout=10
     )
 
+    print("Generated OTP:", otp)
+    print("Status Code:", response.status_code)
+    print("Response:", response.text)
+
     return True
+
 
 
 
 def verify_otp(phone, otp):
 
-    obj = OTP.objects.filter(
+    otp_obj = OTP.objects.filter(
         phone=phone,
-        otp=otp
+        otp=str(otp)
     ).first()
 
-    if not obj:
+    if not otp_obj:
         return False
 
-    if timezone.now() - obj.created_at > timedelta(seconds=OTP_EXPIRE):
-        obj.delete()
+    if timezone.now() - otp_obj.created_at > timedelta(seconds=OTP_EXPIRE):
+        otp_obj.delete()
         return False
 
-    obj.delete()
+    otp_obj.delete()
+
     return True
+
 
 
 def can_resend(phone):
 
-    obj = OTP.objects.filter(
+    otp_obj = OTP.objects.filter(
         phone=phone
     ).order_by("-created_at").first()
 
-    if not obj:
+    if not otp_obj:
         return True
 
-    if timezone.now() - obj.created_at > timedelta(seconds=RESEND_TIME):
-        return True
+    elapsed_time = timezone.now() - otp_obj.created_at
 
-    return False
+    return elapsed_time > timedelta(seconds=RESEND_TIME)
 
 
 
