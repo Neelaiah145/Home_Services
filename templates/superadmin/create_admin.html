@@ -5,64 +5,28 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css">
 
 <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-.page-wrap {
-    padding: 25px;
-}
-
-.page-header {
-    margin-bottom: 25px;
-}
+.page-wrap { padding: 25px; }
+.page-header { margin-bottom: 25px; }
 
 .card {
     background: #fff;
     border-radius: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, .05);
+    box-shadow: 0 4px 20px rgba(0,0,0,.05);
     margin-bottom: 25px;
     overflow: hidden;
 }
+.card-header { padding: 20px 25px; border-bottom: 1px solid #f1f5f9; }
+.card-title { font-size: 18px; font-weight: 700; color: #111827; }
+.card-body { padding: 25px; }
 
-.card-header {
-    padding: 20px 25px;
-    border-bottom: 1px solid #f1f5f9;
-}
-
-.card-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #111827;
-}
-
-.card-body {
-    padding: 25px;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group label {
-    margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #374151;
-}
+.form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.form-group { display: flex; flex-direction: column; }
+.form-group label { margin-bottom: 8px; font-size: 14px; font-weight: 600; color: #374151; }
 
 .form-input {
-    width: 100%;
-    height: 52px;
+    width: 100%; height: 52px;
     border: 1px solid #d1d5db;
     border-radius: 14px;
     padding: 0 16px;
@@ -70,284 +34,85 @@
     transition: .3s;
     outline: none;
 }
-
 .form-input:focus {
     border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, .1);
+    box-shadow: 0 0 0 4px rgba(37,99,235,.1);
 }
 
-.form-actions {
-    margin-top: 25px;
-}
+.form-actions { margin-top: 25px; }
 
 .btn-primary {
-    border: none;
-    background: #2563eb;
-    color: #fff;
-    padding: 14px 22px;
-    border-radius: 14px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: .3s;
+    border: none; background: #2563eb; color: #fff;
+    padding: 14px 22px; border-radius: 14px;
+    font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: .3s;
 }
+.btn-primary:hover { background: #1d4ed8; }
+.btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
 
-.btn-primary:hover {
-    background: #1d4ed8;
-}
+.form-msg { margin-top: 18px; font-size: 14px; font-weight: 700; }
 
-.full {
-    width: 100%;
-    margin-top: 18px;
-}
+.table-wrap { overflow: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead { background: #f8fafc; }
+th { padding: 16px; text-align: left; font-size: 13px; color: #6b7280; }
+td { padding: 18px 16px; border-top: 1px solid #f1f5f9; font-size: 14px; color: #111827; }
 
-.form-section {
-    margin-top: 30px;
-    padding-top: 25px;
-    border-top: 1px solid #f1f5f9;
-}
-
-.otp-label {
-    display: block;
-    margin-bottom: 15px;
-    font-weight: 700;
-    color: #111827;
-}
-
-.otp-container {
-    display: flex;
-    gap: 12px;
-}
-
-.otp-input {
-    width: 60px;
-    height: 60px;
-    border-radius: 16px;
-    border: 1px solid #d1d5db;
-    text-align: center;
-    font-size: 22px;
-    font-weight: 700;
-    outline: none;
-    transition: .3s;
-}
-
-.otp-input:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, .1);
-}
-
-.otp-footer {
-    margin-top: 18px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-#timer {
-    font-size: 14px;
-    font-weight: 700;
-    color: #ef4444;
-}
-
-#resendBtn {
-    border: none;
-    background: none;
-    color: #2563eb;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-#resendBtn:disabled {
-    color: #9ca3af;
-    cursor: not-allowed;
-}
-
-.form-msg {
-    margin-top: 18px;
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.table-wrap {
-    overflow: auto;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-thead {
-    background: #f8fafc;
-}
-
-th {
-    padding: 16px;
-    text-align: left;
-    font-size: 13px;
-    color: #6b7280;
-}
-
-td {
-    padding: 18px 16px;
-    border-top: 1px solid #f1f5f9;
-    font-size: 14px;
-    color: #111827;
-}
-
-.customer-cell {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
+.customer-cell { display: flex; align-items: center; gap: 12px; }
 .c-avatar {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: #2563eb;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
+    width: 42px; height: 42px; border-radius: 50%;
+    background: #2563eb; color: #fff;
+    display: flex; align-items: center;
+    justify-content: center; font-weight: 700;
 }
+.c-name { font-weight: 600; }
 
-.c-name {
-    font-weight: 600;
-}
-
-.empty-state {
-    padding: 50px 20px;
-    text-align: center;
-}
-
-.empty-ico {
-    font-size: 40px;
-}
-
-.empty-text {
-    margin-top: 10px;
-    font-size: 18px;
-    font-weight: 700;
-}
-
-.empty-sub {
-    margin-top: 6px;
-    color: #6b7280;
-}
+.empty-state { padding: 50px 20px; text-align: center; }
+.empty-ico { font-size: 40px; }
+.empty-text { margin-top: 10px; font-size: 18px; font-weight: 700; }
+.empty-sub { margin-top: 6px; color: #6b7280; }
 
 .tbl-footer {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 20px;
-    border-top: 1px solid #eef2f7;
-    background: #fff;
+    width: 100%; display: flex;
+    justify-content: flex-end; align-items: center;
+    padding: 20px; border-top: 1px solid #eef2f7; background: #fff;
 }
-
-.page-btns {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
+.page-btns { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
 .pg-btn {
-    min-width: 40px;
-    height: 40px;
-    padding: 0 14px;
-    border-radius: 12px;
-    border: 1px solid #e5e7eb;
-    background: #fff;
-    color: #111827;
-    font-size: 13px;
-    font-weight: 700;
+    min-width: 40px; height: 40px; padding: 0 14px;
+    border-radius: 12px; border: 1px solid #e5e7eb;
+    background: #fff; color: #111827;
+    font-size: 13px; font-weight: 700;
     text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     transition: .2s ease;
 }
-
-.pg-btn:hover {
-    background: #f3f4f6;
-}
-
-.pg-btn.active {
-    background: #2563eb;
-    color: #fff;
-    border-color: #2563eb;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, .25);
-}
+.pg-btn:hover { background: #f3f4f6; }
+.pg-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; box-shadow: 0 4px 12px rgba(37,99,235,.25); }
 
 .edit-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 78px;
-    height: 38px;
-    padding: 0 16px;
-    border-radius: 10px;
-    background: #eff6ff;
-    color: #2563eb;
-    border: 1px solid #bfdbfe;
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 78px; height: 38px; padding: 0 16px;
+    border-radius: 10px; background: #eff6ff;
+    color: #2563eb; border: 1px solid #bfdbfe;
+    text-decoration: none; font-size: 13px; font-weight: 500;
     transition: .2s ease;
 }
-
-.edit-btn:hover {
-    background: #2563eb;
-    color: #ffffff;
-    border-color: #2563eb;
-}
+.edit-btn:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
 
 @media(max-width:768px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .otp-container {
-        justify-content: center;
-    }
-
-    .otp-input {
-        width: 50px;
-        height: 50px;
-    }
-
-    .page-wrap {
-        padding: 15px;
-    }
-
-    .tbl-footer {
-        justify-content: center;
-        padding: 16px;
-    }
-
-    .page-btns {
-        justify-content: center;
-        width: 100%;
-    }
-
-    .pg-btn {
-        min-width: 36px;
-        height: 36px;
-        font-size: 12px;
-        border-radius: 10px;
-    }
+    .form-grid { grid-template-columns: 1fr; }
+    .page-wrap { padding: 15px; }
+    .tbl-footer { justify-content: center; padding: 16px; }
+    .page-btns { justify-content: center; width: 100%; }
+    .pg-btn { min-width: 36px; height: 36px; font-size: 12px; border-radius: 10px; }
 }
 </style>
 
 <div class="page-wrap">
     <div>
         <h2 class="dashboard-heading">Create Admin</h2>
-        <p class="dashboard-subheading">Create new Admin accounts securely using mobile OTP verification.</p>
+        <p class="dashboard-subheading">Create new Admin accounts with instant form validation.</p>
     </div>
 
     <div class="card">
@@ -361,63 +126,43 @@ td {
                     <label>First Name</label>
                     <input id="first_name" class="form-input" placeholder="Enter first name">
                 </div>
-
                 <div class="form-group">
                     <label>Last Name</label>
                     <input id="last_name" class="form-input" placeholder="Enter last name">
                 </div>
-
                 <div class="form-group">
                     <label>Email</label>
                     <input id="email" type="email" class="form-input" placeholder="Enter email">
                 </div>
-
                 <div class="form-group">
                     <label>City</label>
                     <input id="city" class="form-input" placeholder="Enter city">
                 </div>
-
                 <div class="form-group">
                     <label>Pincode</label>
-                    <input id="pincode" class="form-input" placeholder="Enter 6-digit pincode" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    <input id="pincode" class="form-input" placeholder="Enter 6-digit pincode"
+                           maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
-
                 <div class="form-group">
                     <label>Phone Number</label>
-                    <input id="phone" type="tel" class="form-input" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    <input id="phone" type="tel" class="form-input"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>
             </div>
 
             <div class="form-actions">
-                <button onclick="sendOTP()" class="btn-primary">Send OTP</button>
-            </div>
-
-            <div id="otpBox" class="form-section" style="display:none;">
-                <label class="otp-label">Enter OTP</label>
-                <div class="otp-container">
-                    <input maxlength="1" class="otp-input" oninput="moveNext(this,0)" id="otp1">
-                    <input maxlength="1" class="otp-input" oninput="moveNext(this,1)" id="otp2">
-                    <input maxlength="1" class="otp-input" oninput="moveNext(this,2)" id="otp3">
-                    <input maxlength="1" class="otp-input" oninput="moveNext(this,3)" id="otp4">
-                </div>
-
-                <div class="otp-footer">
-                    <span id="timer">02:00</span>
-                    <button onclick="resendOTP()" id="resendBtn" disabled>Resend OTP</button>
-                </div>
-
-                <button onclick="verifyOTP()" class="btn-primary full">Verify & Create Admin</button>
+                <button id="submitBtn" onclick="createAdmin()" class="btn-primary">Create Admin</button>
             </div>
 
             <p id="msg" class="form-msg"></p>
         </div>
     </div>
 
+    <!-- All Admins Table -->
     <div class="card">
         <div class="card-header">
             <div class="card-title">All Admins</div>
         </div>
-
         <div class="table-wrap">
             <table>
                 <thead>
@@ -466,7 +211,6 @@ td {
                     {% if page_obj.has_previous %}
                     <a class="pg-btn" href="?page={{ page_obj.previous_page_number }}">‹</a>
                     {% endif %}
-
                     {% for num in page_obj.paginator.page_range %}
                         {% if page_obj.number == num %}
                         <a href="?page={{ num }}" class="pg-btn active">{{ num }}</a>
@@ -474,7 +218,6 @@ td {
                         <a href="?page={{ num }}" class="pg-btn">{{ num }}</a>
                         {% endif %}
                     {% endfor %}
-
                     {% if page_obj.has_next %}
                     <a class="pg-btn" href="?page={{ page_obj.next_page_number }}">›</a>
                     {% endif %}
@@ -485,7 +228,6 @@ td {
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
-
 <script>
 const phoneInput = document.querySelector("#phone");
 const iti = window.intlTelInput(phoneInput, {
@@ -499,146 +241,47 @@ function getCSRF() {
 }
 
 function showMsg(text, type = "success") {
-    let msg = document.getElementById("msg");
+    const msg = document.getElementById("msg");
     msg.innerText = text;
     msg.style.color = type === "error" ? "#ef4444" : "#16a34a";
 }
 
-function moveNext(el, index) {
-    el.value = el.value.replace(/[^0-9]/g, '');
-    let inputs = document.querySelectorAll(".otp-input");
-    if (el.value.length === 1 && index < inputs.length - 1) {
-        inputs[index + 1].focus();
-    }
-}
-
-function getOTP() {
-    let inputs = document.querySelectorAll(".otp-input");
-    return Array.from(inputs).map(i => i.value).join("");
-}
-
-let otpTimer;
-let timeLeft = 120;
-
-function startTimer() {
-    clearInterval(otpTimer);
-    timeLeft = 120;
-    document.getElementById("resendBtn").disabled = true;
-
-    otpTimer = setInterval(() => {
-        let min = Math.floor(timeLeft / 60);
-        let sec = timeLeft % 60;
-
-        document.getElementById("timer").innerText = `${min}:${sec < 10 ? '0' + sec : sec}`;
-        timeLeft--;
-
-        if (timeLeft < 0) {
-            clearInterval(otpTimer);
-            document.getElementById("timer").innerText = "Expired";
-            document.getElementById("resendBtn").disabled = false;
-        }
-    }, 1000);
-}
-
-// Full client-side form parameters validation step
 function validateForm() {
     const firstName = document.getElementById("first_name").value.trim();
-    const lastName = document.getElementById("last_name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const city = document.getElementById("city").value.trim();
-    const pincode = document.getElementById("pincode").value.trim();
-    
-    // Email regex validation rule
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // Indian Pincode validation rule (6 digits, cannot start with 0)
+    const lastName  = document.getElementById("last_name").value.trim();
+    const email     = document.getElementById("email").value.trim();
+    const city      = document.getElementById("city").value.trim();
+    const pincode   = document.getElementById("pincode").value.trim();
+
+    const emailRegex   = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const pincodeRegex = /^[1-9][0-9]{5}$/;
 
-    if (!firstName) { showMsg("Please enter first name", "error"); return false; }
-    if (!lastName) { showMsg("Please enter last name", "error"); return false; }
-    
-    if (!email) { showMsg("Please enter email address", "error"); return false; }
-    if (!emailRegex.test(email)) { showMsg("Please enter a valid email address", "error"); return false; }
-    
-    if (!city) { showMsg("Please enter city", "error"); return false; }
-    
-    if (!pincode) { showMsg("Please enter pincode", "error"); return false; }
-    if (!pincodeRegex.test(pincode)) { showMsg("Please enter a valid 6-digit pincode", "error"); return false; }
-
-    // intl-tel-input module API check validation
-    if (!iti.isValidNumber()) {
-        showMsg("Please enter a valid phone number", "error");
-        return false;
-    }
+    if (!firstName)                      { showMsg("Please enter first name", "error");           return false; }
+    if (!lastName)                       { showMsg("Please enter last name", "error");            return false; }
+    if (!email)                          { showMsg("Please enter email address", "error");        return false; }
+    if (!emailRegex.test(email))         { showMsg("Please enter a valid email address", "error"); return false; }
+    if (!city)                           { showMsg("Please enter city", "error");                 return false; }
+    if (!pincode)                        { showMsg("Please enter pincode", "error");              return false; }
+    if (!pincodeRegex.test(pincode))     { showMsg("Please enter a valid 6-digit pincode", "error"); return false; }
+    if (!iti.isValidNumber())            { showMsg("Please enter a valid phone number", "error"); return false; }
 
     return true;
 }
 
-function sendOTP() {
-    // Run validation profile before hitting network endpoints
-    if (!validateForm()) { return; }
-
-    let phone = iti.getNumber();
-
-    fetch("/send-otp/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-CSRFToken": getCSRF()
-        },
-        body: new URLSearchParams({ phone: phone })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "sent") {
-            document.getElementById("otpBox").style.display = "block";
-            startTimer();
-            showMsg("OTP sent successfully");
-        } else {
-            showMsg(data.error, "error");
-        }
-    })
-    .catch(err => showMsg("Something went wrong while sending OTP.", "error"));
-}
-
-function verifyOTP() {
-    let otp = getOTP();
-    if (otp.length !== 4) {
-        showMsg("Please enter a valid 4-digit OTP", "error");
-        return;
-    }
-
-    let phone = iti.getNumber();
-
-    fetch("/verify-otp/", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "X-CSRFToken": getCSRF()
-        },
-        body: new URLSearchParams({ phone: phone, otp: otp })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === "verified") {
-            createAdmin();
-        } else {
-            showMsg("Invalid OTP", "error");
-        }
-    })
-    .catch(err => showMsg("Something went wrong during OTP verification.", "error"));
-}
-
 function createAdmin() {
-    // Optional second defense check
-    if (!validateForm()) { return; }
+    if (!validateForm()) return;
 
-    let data = new URLSearchParams({
+    const btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.innerText = "Creating...";
+
+    const data = new URLSearchParams({
         first_name: document.getElementById("first_name").value.trim(),
-        last_name: document.getElementById("last_name").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        city: document.getElementById("city").value.trim(),
-        pincode: document.getElementById("pincode").value.trim(),
-        phone: iti.getNumber()
+        last_name:  document.getElementById("last_name").value.trim(),
+        email:      document.getElementById("email").value.trim(),
+        city:       document.getElementById("city").value.trim(),
+        pincode:    document.getElementById("pincode").value.trim(),
+        phone:      iti.getNumber()
     });
 
     fetch("/create_admin/", {
@@ -656,13 +299,15 @@ function createAdmin() {
             setTimeout(() => { location.reload(); }, 1200);
         } else {
             showMsg(data.error, "error");
+            btn.disabled = false;
+            btn.innerText = "Create Admin";
         }
     })
-    .catch(err => showMsg("Something went wrong while creating the admin account.", "error"));
-}
-
-function resendOTP() {
-    sendOTP();
+    .catch(() => {
+        showMsg("Something went wrong. Please try again.", "error");
+        btn.disabled = false;
+        btn.innerText = "Create Admin";
+    });
 }
 </script>
 

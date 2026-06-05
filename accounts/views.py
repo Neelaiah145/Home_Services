@@ -563,57 +563,44 @@ class SuperDashboardView(LoginRequiredMixin, RoleRequiredMixin, View):
 @method_decorator(never_cache, name='dispatch')
 class CreateAdminView(LoginRequiredMixin, View):
 
-    """ create admin accounts """
-
     def get(self, request):
-
-        admins = User.objects.filter(
-            role="admin"
-        ).order_by("-id")
-
-        page_obj = paginate_queryset(request,admins,5)
-
+        admins = User.objects.filter(role="admin").order_by("-id")
+        page_obj = paginate_queryset(request, admins, 5)
         context = {
             "admins": page_obj,
             "page_obj": page_obj,
             "page_title": "Create_Admins"
         }
+        return render(request, "superadmin/create_admin.html", context)
 
-        return render(request,"superadmin/create_admin.html",context)
     def post(self, request):
-
         try:
-
             if request.user.role != "superadmin":
+                return JsonResponse({"error": "Unauthorized"}, status=403)
 
-                return JsonResponse({
+            first_name = request.POST.get("first_name", "").strip()
+            last_name  = request.POST.get("last_name", "").strip()
+            email      = request.POST.get("email", "").strip()
+            city       = request.POST.get("city", "").strip()
+            pincode    = request.POST.get("pincode", "").strip()
+            phone      = request.POST.get("phone", "").strip()
+            phone      = normalize_phone(phone)
 
-                    "error": "Unauthorized"
+            if not all([first_name, last_name, email, city, pincode, phone]):
+                return JsonResponse({"error": "All fields are required"}, status=400)
 
-                }, status=403)
+            import re
+            if not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
+                return JsonResponse({"error": "Invalid email address"}, status=400)
 
-            first_name = request.POST.get("first_name")
-            last_name = request.POST.get("last_name")
-            email = request.POST.get("email")
-            city = request.POST.get("city")
-            pincode = request.POST.get("pincode")
-            phone = request.POST.get("phone")
-            phone = normalize_phone(phone)
+            if not re.match(r'^[1-9][0-9]{5}$', pincode):
+                return JsonResponse({"error": "Invalid 6-digit pincode"}, status=400)
 
-            if not all([first_name,email,city,pincode,phone]):
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({"error": "Email already exists"}, status=400)
 
-                return JsonResponse({
-                    "error":"All fields required"
-                }, status=400)
-
-            verified_phone = request.session.get("verified_phone")
-            if verified_phone != phone:
-
-                return JsonResponse({
-
-                    "error":"Verify OTP first"
-
-                }, status=400)
+            if User.objects.filter(phone=phone).exists():
+                return JsonResponse({"error": "Phone number already exists"}, status=400)
 
             user = User.objects.create(
                 first_name=first_name,
@@ -623,22 +610,16 @@ class CreateAdminView(LoginRequiredMixin, View):
                 pincode=pincode,
                 phone=phone,
                 role="admin"
-
             )
             user.set_unusable_password()
             user.save()
-            request.session.pop(
-                "verified_phone",
-                None
-            )
 
-            return JsonResponse({
-                "status":"success"
-
-            })
+            return JsonResponse({"status": "success"})
 
         except Exception as e:
-            return JsonResponse({"error":str(e)}, status=500)
+            return JsonResponse({"error": str(e)}, status=500)
+
+
 
 # update/edit the admin profile
 @method_decorator(never_cache, name='dispatch')
