@@ -35,7 +35,6 @@ LOGIN_URL  = '/login/'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["sridixitha.com", "www.sridixitha.com"]
 
 USERNAME_FIELD = "email"
 # Application definition
