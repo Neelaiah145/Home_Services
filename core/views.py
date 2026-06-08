@@ -13,6 +13,8 @@ from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from accounts.utils import paginate_queryset
 from accounts.utils import permission_required
+from django.db.models.functions import Lower
+
 # Create your views here.
 
 from accounts.views import mainly_allowed_roles
@@ -26,7 +28,7 @@ class CategoryServicesAPIView(View):
     def get(self, request):
         banners = HeroBanner.objects.all()
         categories = Category.objects.all()
-        total_services = CategoryService.objects.all()
+        total_services = CategoryService.objects.all().order_by('servicename')
      
         category_id = request.GET.get('category')
 
@@ -61,7 +63,7 @@ class IndexView(View):
         news = News.objects.all().order_by('id')
         banners = HeroBanner.objects.all().order_by('id')
         categories = Category.objects.all().order_by('title')
-        services_cards = ServicesCards.objects.all().order_by('servicename')
+        services_cards = ServicesCards.objects.order_by(Lower('servicename'))
         jobs = Job.objects.all().order_by('title')
         feedbacks = ServiceFeedback.objects.all().order_by('-id')
         count_service = CategoryService.objects.count()
@@ -373,8 +375,11 @@ class FeedbackForm(LoginRequiredMixin,View):
 class ListFeedback(LoginRequiredMixin,View):
     def get(self, request):
         feedbacks = ServiceFeedback.objects.all().order_by('-feedback_created_at')
+        page_obj = paginator.get_page(page_number)
         return render(request, 'pages/feedback/list.html', {
-            'feedbacks': feedbacks
+            'feedbacks': feedbacks,
+            'page_obj':page_obj,
+            
         })
 
 
