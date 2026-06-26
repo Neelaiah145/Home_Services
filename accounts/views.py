@@ -1050,9 +1050,10 @@ class SuperAdminOrdersView(LoginRequiredMixin,View):
 # superadmin renewal the leads
 
 # superadmin can track the payments
-@method_decorator(never_cache, name='dispatch')
-class SuperAdminPaymentsView(LoginRequiredMixin,View):
-    """"  track the all payemnts and update the total amount """
+@method_decorator(never_cache, name="dispatch")
+class SuperAdminPaymentsView(LoginRequiredMixin, View):
+    """Track all payments."""
+
     def dispatch(self, request, *args, **kwargs):
 
         if request.user.role not in mainly_allowed_roles:
@@ -1062,24 +1063,43 @@ class SuperAdminPaymentsView(LoginRequiredMixin,View):
 
     def get(self, request):
 
-        payments = Payment.objects.select_related(
-            "booking",
-            "booking__user",
-            "vendor",
-            "service"
-        ).order_by("-id")
+        payments = (
+            Payment.objects.select_related(
+                "booking",
+                "booking__user",
+                "vendor",
+                "service"
+            )
+            .order_by("-payment_created_at")
+        )
 
         payment_status = request.GET.get("payment_status")
-        page_obj = paginate_queryset(request,payments,10)
+        search = request.GET.get("search")
 
         if payment_status:
             payments = payments.filter(status=payment_status)
-        context= {
-                "payments": payments,
-                "payments": page_obj,
-                "page_obj": page_obj
-            }
-        return render(request,"superadmin/superadmin_payments.html",context)
+
+        if search:
+            payments = payments.filter(
+                Q(booking__order_id__icontains=search) |
+                Q(booking__name__icontains=search) |
+                Q(booking__phone__icontains=search)
+            )
+
+        page_obj = paginate_queryset(request, payments, 10)
+
+        context = {
+            "payments": page_obj,
+            "page_obj": page_obj,
+            "payment_status": payment_status,
+            "search": search,
+        }
+
+        return render(
+            request,
+            "superadmin/superadmin_payments.html",
+            context,
+        )
 
 # permisison per admin in index page 
 class AdminPermissionsView(LoginRequiredMixin,View):
@@ -1848,10 +1868,10 @@ class AdminOrdersView(LoginRequiredMixin,View):
 
                 if status not in allowed_status:
                     return JsonResponse({
-                        "error":"Invalid status"
-                    },status=400)
+                        "error": "Invalid status"
+                    }, status=400)
 
-                booking.status=status
+                booking.status = status
                 booking.save()
 
                 BookingHistory.objects.create(
@@ -1860,10 +1880,24 @@ class AdminOrdersView(LoginRequiredMixin,View):
                     updated_by=request.user
                 )
 
-            return JsonResponse({
-                "success":True
-            })
+                # Create payment automatically when booking is completed
+                if status == "completed":
 
+                    Payment.objects.get_or_create(
+                        booking=booking,
+                        defaults={
+                            "vendor": booking.vendor,
+                            "service": booking.service,
+                            "total_amount": Decimal("0"),
+                            "paid_amount": Decimal("0"),
+                            "remaining_amount": Decimal("0"),
+                            "status": "pending",
+                        }
+                    )
+
+            return JsonResponse({
+                "success": True
+            })
         except Exception as e:
 
             return JsonResponse({
@@ -4701,21 +4735,422 @@ class LoginTermView(View):
 
 from .models import Visitor
 
-class VisitorList(LoginRequiredMixin, View):
+ 
+@method_decorator(never_cache, name="dispatch")
+class VisitorListView(LoginRequiredMixin, View):
+    """
+    Superadmin only — list all non-logged-in visitors.
+    Supports search + bulk delete.
+    """
+ 
+    login_url = "/login/"
+ 
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.role != "superadmin":
+            return redirect("dashboard")
+        return super().dispatch(request, *args, **kwargs)
+ 
+    def get(self, request):
+ 
+        visitors = Visitor.objects.all().order_by("-visited_at")
+ 
+        # ── Search ────────────────────────────────────────────────
+        search = request.GET.get("search", "").strip()
+        if search:
+            visitors = visitors.filter(
+                Q(ip_address__icontains=search) |
+                Q(country__icontains=search)    |
+                Q(state__icontains=search)      |
+                Q(city__icontains=search)        |
+                Q(browser__icontains=search)    |
+                Q(device__icontains=search)     |
+                Q(operating_system__icontains=search) |
+                Q(page_url__icontains=search)
+            )
+ 
+        total_count   = Visitor.objects.count()
+        mobile_count  = Visitor.objects.filter(device="Mobile").count()
+        desktop_count = Visitor.objects.filter(device="Desktop").count()
+        tablet_count  = Visitor.objects.filter(device="Tablet").count()
+ 
+        page_obj = paginate_queryset(request, visitors, 15)
+ 
+        context = {
+            "visitors":     page_obj,
+            "page_obj":     page_obj,
+            "search":       search,
+            "total_count":  total_count,
+            "mobile_count": mobile_count,
+            "desktop_count":desktop_count,
+            "tablet_count": tablet_count,
+        }
+ 
+        return render(request, "superadmin/visitors.html", context)
+ 
+    def post(self, request):
+        """Bulk delete selected visitors OR delete all."""
+ 
+        if request.user.role != "superadmin":
+            return JsonResponse({"success": False, "message": "Permission Denied"}, status=403)
+ 
+        import json
+        try:
+            data       = json.loads(request.body)
+            action     = data.get("action")        # "delete_selected" | "delete_all"
+            visitor_ids = data.get("ids", [])
+ 
+            if action == "delete_all":
+                count = Visitor.objects.all().delete()[0]
+                return JsonResponse({
+                    "success": True,
+                    "message": f"All {count} visitor records deleted.",
+                })
+ 
+            elif action == "delete_selected":
+                if not visitor_ids:
+                    return JsonResponse({"success": False, "message": "No visitors selected."})
+ 
+                count = Visitor.objects.filter(id__in=visitor_ids).delete()[0]
+                return JsonResponse({
+                    "success": True,
+                    "message": f"{count} visitor(s) deleted.",
+                })
+ 
+            return JsonResponse({"success": False, "message": "Invalid action."}, status=400)
+ 
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)}, status=500)
+        
+
+# ─────────────────────────────────────────────────────────────────
+# ASSIGN LEADS VIEW
+# ─────────────────────────────────────────────────────────────────
+
+
+@method_decorator(never_cache, name="dispatch")
+class SuperAdminAssignLeadView(LoginRequiredMixin, View):
+
+    login_url = "/login/"
 
     def get(self, request):
 
-        visitors = Visitor.objects.all().order_by(
-            '-visited_at'
+        if request.user.role != "superadmin":
+            return HttpResponse("Permission Denied")
+
+        bookings = (
+            Booking.objects.select_related(
+                "user", "vendor", "category", "service",
+            )
+            .prefetch_related("payments")
+            .order_by("-booking_created_at")
         )
 
-        page_obj = paginate_queryset(request,visitors,10)
+  
+        status   = request.GET.get("status")
+        city     = request.GET.get("city")
+        category = request.GET.get("category")
+        service  = request.GET.get("service")
+        search   = request.GET.get("search")
 
-        return render(
-            request,
-            'superadmin/visitors.html',
+      
+        if status:
+            bookings = bookings.filter(status=status)
+
+        if city:
+            bookings = bookings.filter(city=city)
+
+        if category:
+            bookings = bookings.filter(category_id=category)
+
+        if service:
+            bookings = bookings.filter(service_id=service)
+
+        if search:
+            bookings = bookings.filter(
+                Q(order_id__icontains=search)         |
+                Q(user__first_name__icontains=search) |
+                Q(phone__icontains=search)
+            )
+
+       
+        total_count     = bookings.count()
+        pending_count   = bookings.filter(status="pending").count()
+        assigned_count  = bookings.filter(status="assigned").count()
+        completed_count = bookings.filter(status="completed").count()
+        cancelled_count = bookings.filter(status="cancelled").count()
+
+       
+        page_obj = paginate_queryset(request, bookings, 10)
+
+   
+        if category:
+            services = CategoryService.objects.filter(category_id=category)
+        else:
+            services = CategoryService.objects.all()
+
+    
+        vendors = User.objects.filter(
+            role="vendor",
+            vendor_profile__isnull=False,
+        ).select_related("vendor_profile")
+
+        if city:
+            vendors = vendors.filter(vendor_profile__city=city)
+
+        if category:
+            vendors = vendors.filter(vendor_profile__category_id=category)
+
+        if service:
+            vendors = vendors.filter(vendor_profile__services__id=service)
+
+        vendors = vendors.distinct().order_by("first_name")
+
+     
+        context = {
+            "bookings":  page_obj,
+            "page_obj":  page_obj,
+
+      
+            "total_count":     total_count,
+            "pending_count":   pending_count,
+            "assigned_count":  assigned_count,
+            "completed_count": completed_count,
+            "cancelled_count": cancelled_count,
+
+     
+            "cities": VendorProfile.objects.exclude(
+                city__isnull=True
+            ).exclude(
+                city=""
+            ).values_list("city", flat=True).distinct(),
+
+            "categories": Category.objects.all(),
+            "services":   services,   
+            "vendors":    vendors,    
+
+        
+            "selected_status":   status   or "",
+            "selected_city":     city     or "",
+            "selected_category": category or "",
+            "selected_service":  service  or "",
+            "selected_search":   search   or "",
+        }
+
+        return render(request, "superadmin/assign_lead.html", context)
+
+    def post(self, request):
+        """Assign vendor via JSON POST."""
+
+        if request.user.role != "superadmin":
+            return JsonResponse({"success": False, "message": "Permission Denied"})
+
+        try:
+            data    = json.loads(request.body)
+            booking = get_object_or_404(Booking, id=data.get("booking_id"))
+            vendor  = get_object_or_404(User, id=data.get("vendor_id"), role="vendor")
+
+            booking.vendor = vendor
+            booking.status = "assigned"
+            booking.save()
+
+            BookingHistory.objects.create(
+                booking=booking,
+                status="Vendor Assigned",
+                updated_by=request.user,
+            )
+
+            return JsonResponse({"success": True, "message": "Vendor Assigned Successfully"})
+
+        except Exception as e:
+            return JsonResponse({"success": False, "message": str(e)})
+
+
+
+
+@method_decorator(never_cache, name="dispatch")
+class VendorFilterView(LoginRequiredMixin, View):
+
+    login_url = "/login/"
+
+    def get(self, request):
+
+        city     = request.GET.get("city")
+        category = request.GET.get("category")
+        service  = request.GET.get("service")
+
+        vendors = User.objects.filter(
+            role="vendor",
+            vendor_profile__isnull=False,  
+        ).select_related("vendor_profile")
+
+     
+        if city:
+            vendors = vendors.filter(vendor_profile__city=city)
+
+     
+        if category:
+            vendors = vendors.filter(vendor_profile__category_id=category)
+
+   
+        if service:
+            vendors = vendors.filter(vendor_profile__services__id=service)
+
+        vendors = vendors.distinct().order_by("first_name")
+
+        data = [
             {
-                'visitors': page_obj,
-                'page_obj': page_obj,
+                "id":    v.id,
+                "name":  v.first_name,
+            
+                "city":  v.vendor_profile.city if hasattr(v, "vendor_profile") else "",
+                "phone": v.phone or "",
             }
+            for v in vendors
+        ]
+
+        return JsonResponse(data, safe=False)
+
+
+
+
+@method_decorator(never_cache, name="dispatch")
+class ServiceFilterView(LoginRequiredMixin, View):
+
+
+    login_url = "/login/"
+
+    def get(self, request):
+
+        category = request.GET.get("category")
+
+        if category:
+            services = CategoryService.objects.filter(category_id=category)
+        else:
+            services = CategoryService.objects.all()
+
+        data = [
+            {"id": s.id, "name": s.s_title}
+            for s in services
+        ]
+
+        return JsonResponse(data, safe=False)
+
+
+# ─────────────────────────────────────────────────────────────────
+# ASSIGN VENDOR VIEW  (form POST — assign button in table)
+# ─────────────────────────────────────────────────────────────────
+
+class AssignVendorView(LoginRequiredMixin, View):
+
+    login_url = "/login/"
+
+    def post(self, request):
+
+        booking = get_object_or_404(
+            Booking,
+            id=request.POST.get("booking_id"),
         )
+
+        vendor = get_object_or_404(
+            User,
+            id=request.POST.get("vendor_id"),
+            role="vendor",
+        )
+
+        booking.vendor = vendor
+        booking.status = "assigned"
+        booking.save()
+
+        BookingHistory.objects.create(
+            booking=booking,
+            status="Vendor Assigned",
+            updated_by=request.user,
+        )
+
+        return redirect("assign_leads")
+
+
+# ─────────────────────────────────────────────────────────────────
+# DELETE LEAD VIEW  (AJAX POST)
+# ─────────────────────────────────────────────────────────────────
+
+@method_decorator(never_cache, name="dispatch")
+class DeleteLeadView(LoginRequiredMixin, View):
+
+    login_url = "/login/"
+
+    def post(self, request, booking_id):
+
+        if request.user.role != "superadmin":
+            return JsonResponse({
+                "success": False,
+                "message": "Permission Denied",
+            }, status=403)
+
+        try:
+            booking = get_object_or_404(Booking, id=booking_id)
+            booking.delete()
+
+            return JsonResponse({
+                "success": True,
+                "message": "Lead deleted successfully",
+            })
+
+        except Exception as e:
+            return JsonResponse({
+                "success": False,
+                "message": str(e),
+            }, status=500)
+
+
+# ─────────────────────────────────────────────────────────────────
+# EDIT LEAD VENDOR VIEW  (AJAX POST — change vendor)
+# ─────────────────────────────────────────────────────────────────
+
+@method_decorator(never_cache, name="dispatch")
+class EditLeadVendorView(LoginRequiredMixin, View):
+
+    login_url = "/login/"
+
+    def post(self, request):
+
+        if request.user.role != "superadmin":
+            return JsonResponse({
+                "success": False,
+                "message": "Permission Denied",
+            })
+
+        try:
+            data = json.loads(request.body)
+
+            booking = get_object_or_404(
+                Booking,
+                id=data.get("booking_id"),
+            )
+
+            vendor = get_object_or_404(
+                User,
+                id=data.get("vendor_id"),
+                role="vendor",
+            )
+
+            booking.vendor = vendor
+            booking.status = "assigned"
+            booking.save()
+
+            BookingHistory.objects.create(
+                booking=booking,
+                status="Vendor Reassigned",
+                updated_by=request.user,
+            )
+
+            return JsonResponse({
+                "success": True,
+                "message": "Vendor updated successfully",
+            })
+
+        except Exception as e:
+            return JsonResponse({
+                "success": False,
+                "message": str(e),
+            })

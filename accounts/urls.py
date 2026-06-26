@@ -91,8 +91,41 @@ urlpatterns = [
     
     path("admin-permissions/",AdminPermissionsView.as_view(),name="admin_permissions"),
     
-    path('visitors/',VisitorList.as_view(),name='visitors'),
+    path('visitors/',VisitorListView.as_view(),name='visitors'),
     
-    
+    # Main assign leads page (GET = list, POST = assign via JSON)
+    path(
+        "assign-leads/",
+        SuperAdminAssignLeadView.as_view(),
+        name="assign_leads",
+    ),
+
+    # AJAX: filter vendors by city / category / service
+    path(
+        "filter-vendors/",
+        VendorFilterView.as_view(),
+        name="filter_vendors",
+    ),
+
+    # Form POST: assign vendor button in table
+    path(
+        "assign-vendor/",
+        AssignVendorView.as_view(),
+        name="assign_vendor",
+    ),
+
+    # AJAX POST: delete a lead
+    path(
+        "delete-lead/<int:booking_id>/",
+        DeleteLeadView.as_view(),
+        name="delete_lead",
+    ),
+
+    # AJAX POST: change vendor on existing lead
+    path(
+        "edit-lead-vendor/",
+        EditLeadVendorView.as_view(),
+        name="edit_lead_vendor",
+    ),
 
 ]

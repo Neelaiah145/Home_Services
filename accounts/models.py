@@ -348,8 +348,6 @@ class TermsAcceptance(models.Model):
     
 
 
-
-
     class Meta:
         permissions = [
             ("manage_news",
@@ -388,7 +386,7 @@ class TermsAcceptance(models.Model):
 
 
 
-from django.db import models
+
 
 
 class Visitor(models.Model):
@@ -420,3 +418,4 @@ class OTP(models.Model):
 
     def __str__(self):
         return self.phone
+  

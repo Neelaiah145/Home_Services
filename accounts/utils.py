@@ -62,8 +62,8 @@ def send_otp(phone, purpose):
     )
 
     print("Generated OTP:", otp)
-    print("Status Code:", response.status_code)
-    print("Response:", response.text)
+    # print("Status Code:", response.status_code)
+    # print("Response:", response.text)
 
     return True
 

@@ -155,6 +155,12 @@ class="sidebar-logo">
             <span>All Leads</span>
           </a>
         </li>
+<li class="sidebar__item {% if request.resolver_match.url_name == 'assign_leads' %}active{% endif %}">
+    <a href="{% url 'assign_leads' %}">
+        <iconify-icon icon="mdi:account-switch" class="menu-icon"></iconify-icon>
+        <span>Assign Leads</span>
+    </a>
+</li>
 
         <li class="sidebar__item {% if request.resolver_match.url_name == 'admin_renewal_dashboard' %}active{% endif %}">
           <a href="{% url 'admin_renewal_dashboard' %}">

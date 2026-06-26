@@ -375,7 +375,7 @@ class FeedbackForm(LoginRequiredMixin,View):
 class ListFeedback(LoginRequiredMixin,View):
     def get(self, request):
         feedbacks = ServiceFeedback.objects.all().order_by('-feedback_created_at')
-        page_obj = paginator.get_page(page_number)
+        page_obj = paginate_queryset(request, feedbacks, 10)
         return render(request, 'pages/feedback/list.html', {
             'feedbacks': feedbacks,
             'page_obj':page_obj,
