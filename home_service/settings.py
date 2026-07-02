@@ -35,8 +35,8 @@ LOGIN_URL  = '/login/'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["sridixitha.com", "www.sridixitha.com"]
-
+# ALLOWED_HOSTS = ["sridixitha.com", "www.sridixitha.com"]
+ALLOWED_HOSTS = []
 USERNAME_FIELD = "email"
 # Application definition
 
@@ -50,8 +50,9 @@ INSTALLED_APPS = [
     'accounts',
     'core',
 ]
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_AGE = 1209600  # 14 days in seconds
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -80,6 +81,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.cart_count',
             ],
         },
     },

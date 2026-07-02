@@ -673,6 +673,11 @@ class="sidebar-logo">
         <div class="col-auto">
           <div class="d-flex flex-wrap align-items-center gap-3">
 
+            {% if request.user.role != 'customer' %}
+            <a href="{% url 'indexpage' %}" target="_blank" class="btn btn-outline-primary d-inline-flex align-items-center gap-2" style="margin-right: 15px; border-radius: 20px; padding: 5px 15px; white-space: nowrap;">
+              <iconify-icon icon="mdi:web" style="font-size: 1.2rem;"></iconify-icon> View Website
+            </a>
+            {% endif %}
 
             <div class="dropdown">
               <button

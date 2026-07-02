@@ -99,8 +99,106 @@ def generate_order_id():
 
 
 
+class Cart(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='cart')
+    session_key = models.CharField(max_length=255, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(user__isnull=False) | models.Q(session_key__isnull=False),
+                name='cart_user_or_session'
+            )
+        ]
+
+    def __str__(self):
+        return f"Cart - {self.user.email if self.user else self.session_key}"
+
+    @property
+    def total_items(self):
+        return self.items.count()
+
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
+    service = models.ForeignKey(CategoryService, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('cart', 'service')
+
+    def __str__(self):
+        return f"{self.service.s_title} in Cart {self.cart.id}"
+
+
 class Booking(models.Model):
     STATUS = (
+        ('pending', 'Pending'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bookings")
+    admin = models.ForeignKey(User,on_delete=models.SET_NULL,
+    null=True,blank=True,related_name="admin_bookings",limit_choices_to={"role": "admin"})
+    
+    order_id = models.CharField(max_length=20,unique=True,editable=False,default=generate_order_id)
+    name = models.CharField(max_length=100)
+    phone = models.CharField(max_length=15)
+    address = models.TextField()
+    problem = models.TextField(blank=True, null=True) # Optional now, since it might vary per service
+    status = models.CharField(max_length=20,choices=STATUS,default='pending')
+    city = models.CharField(max_length=100,blank=True,null=True)
+    estimated_amount = models.IntegerField(default=0)
+  
+    # -------------------------------------------------------------
+    # DEPRECATED FIELDS: Kept for backwards compatibility
+    # since old views still reference them directly on Booking.
+    # -------------------------------------------------------------
+    category = models.ForeignKey(Category,on_delete=models.SET_NULL, null=True, blank=True)
+    service = models.ForeignKey(CategoryService,on_delete=models.SET_NULL, null=True, blank=True)
+    vendor = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="deprecated_vendor_bookings")
+    scheduled_date = models.DateField(null=True,blank=True)
+    scheduled_time = models.CharField(max_length=50,null=True,blank=True)
+    start_date = models.DateField(null=True,blank=True)
+    end_date = models.DateField(null=True,blank=True)
+    renewal_requested = models.BooleanField(default=False)
+    is_renewed = models.BooleanField(default=False)
+    previous_total_days = models.IntegerField(null=True,blank=True)
+    renewal_count = models.IntegerField(default=0)
+    # -------------------------------------------------------------
+
+    booking_created_at = models.DateTimeField(auto_now_add=True)
+    booking_updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.order_id} - {self.name}"
+
+    # properties kept for legacy code compatibility during transition
+    @property
+    def total_days(self):
+        if self.start_date and self.end_date:
+            return (self.end_date - self.start_date).days + 1
+        return 0
+
+    @property
+    def show_renew_button(self):
+        if self.end_date:
+            from datetime import datetime
+            end_date = self.end_date
+            if isinstance(end_date, datetime):
+                end_date = end_date.date()
+            today = datetime.today().date()
+            remaining_days = (end_date - today).days
+            return 0 <= remaining_days <= 10
+        return False
+
+
+class BookingItem(models.Model):
+    ITEM_STATUS = (
         ('pending', 'Pending'),
         ('assigned', 'Assigned'),
         ('accepted', 'Accepted'),
@@ -108,20 +206,14 @@ class Booking(models.Model):
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     )
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    admin = models.ForeignKey(User,on_delete=models.SET_NULL,
-    null=True,blank=True,related_name="admin_bookings",limit_choices_to={"role": "admin"})
-    category = models.ForeignKey(Category,on_delete=models.CASCADE)
-    service = models.ForeignKey(CategoryService,on_delete=models.CASCADE)
-    order_id = models.CharField(max_length=20,unique=True,editable=False,default=generate_order_id)
-    vendor = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,blank=True,related_name="vendor_bookings")
-    name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=15)
-    address = models.TextField()
-    problem = models.TextField()
-    status = models.CharField(max_length=20,choices=STATUS,default='pending')
-    city = models.CharField(max_length=100,blank=True,null=True)
+    
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='items')
+    service = models.ForeignKey(CategoryService, on_delete=models.CASCADE, related_name='booking_items')
+    vendor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="assigned_booking_items")
+    
+    status = models.CharField(max_length=20, choices=ITEM_STATUS, default='pending')
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    
     # single day 
     scheduled_date = models.DateField(null=True,blank=True)
     scheduled_time = models.CharField(max_length=50,null=True,blank=True)
@@ -132,49 +224,28 @@ class Booking(models.Model):
     is_renewed = models.BooleanField(default=False)
     previous_total_days = models.IntegerField(null=True,blank=True)
     renewal_count = models.IntegerField(default=0)
-    estimated_amount = models.IntegerField(default=0)
-  
-    booking_created_at = models.DateTimeField(auto_now_add=True)
-    booking_updated_at = models.DateTimeField(auto_now=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
     def __str__(self):
-        return f"{self.order_id} - {self.service.s_title}"
-    # show the booking services in days wise if the multiple services booking
+        return f"{self.booking.order_id} - {self.service.s_title}"
+
     @property
     def total_days(self):
-
         if self.start_date and self.end_date:
-
-            return (
-                self.end_date - self.start_date
-            ).days + 1
-
+            return (self.end_date - self.start_date).days + 1
         return 0
 
-
-  
-    # SHOW RENEW NOTIFICATION BEFORE 10 DAYS
     @property
     def show_renew_button(self):
-
         if self.end_date:
-
             end_date = self.end_date
-
-            # HANDLE DATETIME FIELD
             if isinstance(end_date, datetime):
-
                 end_date = end_date.date()
-
             today = datetime.today().date()
-
-            remaining_days = (
-                end_date - today
-            ).days
-
-            print("Remaining Days :", remaining_days)
-
+            remaining_days = (end_date - today).days
             return 0 <= remaining_days <= 10
-
         return False
     
 # booking history(track the order)

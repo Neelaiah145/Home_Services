@@ -19,6 +19,8 @@ def generate_otp():
 def send_otp(phone, purpose):
 
     otp = generate_otp()
+    
+    print(f"\n[{purpose.upper()}] OTP for {phone}: {otp}\n")
 
     # Delete old OTPs
     OTP.objects.filter(phone=phone).delete()
@@ -29,38 +31,52 @@ def send_otp(phone, purpose):
         otp=otp
     )
 
-    templates = {
-        "login": {
-            "template_id": settings.SMS_LOGIN_TEMPLATE_ID,
-            "message": (
-                f"Dear User, your secure login OTP for Sridixitha Enterprises is { otp }. This code is required to complete your sign-in process. If you did not request this login, please ignore this message immediately."
-            )
-        },
-        "register": {
-            "template_id": settings.SMS_REGISTER_TEMPLATE_ID,
-            "message": (
-                f"Thank you for registering your account with Sridixitha Enterprises. Your verification code is { otp }. Please enter the OTP to complete your registration."
-            )
-        }
-    }
+    # templates = {
+    #     "login": {
+    #         "template_id": settings.SMS_LOGIN_TEMPLATE_ID,
+    #         "message": (
+    #             f"Dear User, your secure login OTP for Sridixitha Enterprises is { otp }. This code is required to complete your sign-in process. If you did not request this login, please ignore this message immediately."
+    #         )
+    #     },
+    #     "register": {
+    #         "template_id": settings.SMS_REGISTER_TEMPLATE_ID,
+    #         "message": (
+    #             f"Thank you for registering your account with Sridixitha Enterprises. Your verification code is { otp }. Please enter the OTP to complete your registration."
+    #         )
+    #     }
+    # }
 
-    config = templates[purpose]
+    # config = templates[purpose]
 
-    payload = {
-        "username": settings.SMS_USERNAME,
-        "apikey": settings.SMS_APIKEY,
-        "senderid": settings.SMS_SENDER_ID,
-        "mobile": phone,
-        "message": config["message"],
-        "templateid": config["template_id"],
-    }
+    # payload = {
+    #     "username": settings.SMS_USERNAME,
+    #     "apikey": settings.SMS_APIKEY,
+    #     "senderid": settings.SMS_SENDER_ID,
+    #     "mobile": phone,
+    #     "message": config["message"],
+    #     "templateid": config["template_id"],
+    # }
 
-    response = requests.get(
-        "https://smslogin.co/v3/api.php",
-        params=payload,
-        timeout=10
+    # response = requests.get(
+    #     "https://smslogin.co/v3/api.php",
+    #     params=payload,
+    #     timeout=10
+    # )
+    print("=== send_otp() started ===")
+
+    otp = generate_otp()
+    print("Generated OTP:", otp)
+
+    OTP.objects.filter(phone=phone).delete()
+    print("Old OTP deleted")
+
+    OTP.objects.create(
+        phone=phone,
+        otp=otp
     )
+    print("New OTP saved")
 
+    print("=== send_otp() finished ===")
     print("Generated OTP:", otp)
     # print("Status Code:", response.status_code)
     # print("Response:", response.text)

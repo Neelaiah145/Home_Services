@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import *
 from .exports import export_dashboard_excel
+from .cart_views import AddToCartView, RemoveFromCartView, ClearCartView, CartView, CheckoutView, BookingSuccessView
 
 
 urlpatterns = [
@@ -23,7 +24,13 @@ urlpatterns = [
     path('create_vendor/', CreateVendorView.as_view(), name='create_vendor'),
     path('service/<int:id>/', ServiceDetailView.as_view(), name='service_detail'),
     path('book_service/', BookServiceView.as_view(), name='book_service'),
-    # path('order_success/', BookingSuccessView.as_view(), name='order_success'),
+    # Cart and Checkout URLs
+    path('cart/add/', AddToCartView.as_view(), name='add_to_cart'),
+    path('cart/remove/', RemoveFromCartView.as_view(), name='remove_from_cart'),
+    path('cart/clear/', ClearCartView.as_view(), name='clear_cart'),
+    path('cart/', CartView.as_view(), name='cart_view'),
+    path('checkout/', CheckoutView.as_view(), name='checkout'),
+    path('booking-success/<int:booking_id>/', BookingSuccessView.as_view(), name='booking_success'),
 
     # path('superadmin/create-service/', CreateServiceView.as_view(), name='create_service'),
     # path('superadmin/update-service/<int:id>/', UpdateServiceView.as_view(), name='update_service'),
@@ -72,8 +79,8 @@ urlpatterns = [
     path('user-profile/<int:id>/', UserProfileView.as_view(), name='user_profile'),
     path('services_page/', ServicesListingView.as_view(), name='services_listing_page'),
     path("services_page/",ServicesListingView.as_view(),name="services_page"),
-    path("send-otp/",send_otp,name="send_otp"),
-    path("verify-otp/",verify_otp,name="verify_otp"),
+    path("send-otp/", send_otp_view, name="send_otp"),
+    path("verify-otp/", verify_otp_view, name="verify_otp"),
     path('vendor-help/',VendorHelpView.as_view(),name='vendor_help'),
     path("customer-sig/terms/",CustomerTermsView.as_view(),name="customer_terms"),
     path("terms/list/",TermsListView.as_view(),name="terms_list"),

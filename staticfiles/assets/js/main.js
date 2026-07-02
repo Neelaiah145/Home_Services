@@ -379,6 +379,8 @@ $(scrollToTopBtn).on("click", function (e) {
       variableWidth: d("variable-width") ? true : false,
       vertical: d("vertical") ? true : false,
       verticalSwiping: d("vertical") ? true : false,
+      swipeToSlide: true,
+      touchMove: true,
       prevArrow: d("prev-arrow") ?
         prevButton : '<button type="button" class="slick-prev"><i class="fa-solid fa-arrow-left"></i></button>',
       nextArrow: d("next-arrow") ?
@@ -451,13 +453,18 @@ $(scrollToTopBtn).on("click", function (e) {
             centerPadding: 0,
           },
         },
-        // You can unslick at a given breakpoint now by adding:
-        // settings: "unslick"
-        // instead of a settings object
       ],
     });
 
-
+    // Mouse wheel support for Slick
+    asSlide.on('wheel', (function(e) {
+      e.preventDefault();
+      if (e.originalEvent.deltaY < 0) {
+        $(this).slick('slickPrev');
+      } else {
+        $(this).slick('slickNext');
+      }
+    }));
   });
 
   /*----------- 08. Ajax Contact Form ----------*/

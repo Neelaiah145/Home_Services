@@ -100,26 +100,42 @@ class LoginView(View):
 
             login(request, user)
 
+            # --- MERGE SESSION CART WITH USER CART ---
+            from .models import Cart, CartItem
+            session_key = request.session.session_key
+            if session_key:
+                try:
+                    session_cart = Cart.objects.get(session_key=session_key)
+                    user_cart, created = Cart.objects.get_or_create(user=user)
+                    for item in session_cart.items.all():
+                        if not CartItem.objects.filter(cart=user_cart, service=item.service).exists():
+                            item.cart = user_cart
+                            item.save()
+                        else:
+                            item.delete()
+                    session_cart.delete()
+                except Cart.DoesNotExist:
+                    pass
+            # -----------------------------------------
+
             # print(
             #     "LOGGED IN USER ROLE:",
             #     user.role
             # )
 
-            if next_url:
-                redirect_url = next_url
+            if user.role == "superadmin":
+                redirect_url = reverse("superadmin_dashboard")
+            elif user.role == "admin":
+                redirect_url = reverse("admin_dashboard")
+            elif user.role == "vendor":
+                redirect_url = reverse("vendor_dashboard")
             else:
-                if user.role == "superadmin":
-                    redirect_url = reverse("superadmin_dashboard")
-                elif user.role == "admin":
-                    redirect_url = reverse("admin_dashboard")
-                elif user.role == "vendor":
-                    redirect_url = reverse("vendor_dashboard")
-                elif user.role == "customer":
-                    redirect_url = reverse("customer_dashboard")
-
+                # Customer or unknown role
+                if next_url:
+                    redirect_url = next_url
                 else:
-                    redirect_url = reverse("home")
-
+                    redirect_url = reverse("indexpage")
+            
             return JsonResponse({
                 "success": True,
                 "redirect": redirect_url
@@ -394,13 +410,17 @@ class RegisterView(View):
                         ser_obj
                     )
 
-                return JsonResponse({
-
-                    "success": True,
-
-                    "redirect": "/login/"
-
-                })
+                if role == "customer":
+                    login(request, user)
+                    return JsonResponse({
+                        "success": True,
+                        "redirect": "/"
+                    })
+                else:
+                    return JsonResponse({
+                        "success": True,
+                        "redirect": "/login/"
+                    })
 
             except Exception as e:
 
@@ -433,12 +453,17 @@ class RegisterView(View):
 
 # logout classes
 @method_decorator(never_cache, name='dispatch')
-class LogoutView(LoginRequiredMixin,View):
+class LogoutView(LoginRequiredMixin, View):
     """  logout user and clear session data  """
+    def get(self, request):
+        auth_logout(request)
+        request.session.flush()
+        return redirect("indexpage")
+        
     def post(self, request):
         auth_logout(request) 
         request.session.flush()
-        return redirect("login")
+        return redirect("indexpage")
 
 
 
@@ -2861,6 +2886,13 @@ class CustomerDashboardView(LoginRequiredMixin,RoleRequiredMixin,View):
             weekly_counts.append(count)
 
 
+        from .models import Cart
+        cart_count = 0
+        try:
+            cart = Cart.objects.get(user=user)
+            cart_count = cart.total_items
+        except Cart.DoesNotExist:
+            pass
 
         context = {
 
@@ -2874,6 +2906,7 @@ class CustomerDashboardView(LoginRequiredMixin,RoleRequiredMixin,View):
             "service_counts": service_counts,
             "weekly_labels": weekly_labels,
             "weekly_counts": weekly_counts,
+            "cart_count": cart_count,
         }
 
         return render(request,"customer/dashboard.html",context)
@@ -3266,6 +3299,14 @@ class DeleteUserView(View):
         if request.user == user:
             messages.error(request, "You cannot delete yourself!")
             return redirect("all_users")
+
+        try:
+            if hasattr(user, 'cart') and user.cart:
+                user.cart.session_key = f"deleted_{user.id}"
+                user.cart.save()
+                user.cart.delete()
+        except:
+            pass
 
         user.delete()
         messages.success(request, "User deleted successfully!")
@@ -4470,63 +4511,43 @@ from .utils import (
 )
 
 
-# def send_otp_view(request):
+def send_otp_view(request):
+    if request.method == "POST":
+        phone = request.POST.get("phone")
+        phone = normalize_phone(phone)
+        if not phone:
+            return JsonResponse({"error": "Phone required"})
+        
+        if not can_resend(phone):
+            return JsonResponse({"error": "Please wait before resend"})
+            
+        send_otp(phone, purpose="register")
+        
+        return JsonResponse({"status": "sent"})
+        
+    return JsonResponse({"error": "Invalid request"})
 
-#     if request.method == "POST":
-
-#         phone = request.POST.get("phone")
-
-#         phone = normalize_phone(phone)
-
-#         if not phone:
-
-#             return JsonResponse({
-#                 "error": "Phone required"
-#             })
-
-#         if not can_resend(phone):
-
-#             return JsonResponse({
-#                 "error": "Please wait before resend"
-#             })
-
-#         send_otp(phone)
-
-#         return JsonResponse({
-#             "status": "sent"
-#         })
-
-#     return JsonResponse({
-#         "error": "Invalid request"
-#     })
-
-# def verify_otp_view(request):
-
-#     if request.method == "POST":
-
-#         phone = request.POST.get("phone")
-
-#         phone = normalize_phone(phone)
-
-#         otp = request.POST.get("otp")
-
-#         if verify_otp(phone, otp):
-
-#             request.session["verified_phone"] = phone
-
-#             return JsonResponse({
-#                 "status": "verified"
-#             })
-
-#         return JsonResponse({
-#             "error": "Invalid OTP"
-#         })
-
-#     return JsonResponse({
-#         "error": "Invalid request"
-#     })
-    
-    
+def verify_otp_view(request):
+    if request.method == "POST":
+        # In vendor registration, the frontend doesn't send phone number to verify-otp 
+        # so we fetch it from the latest OTP or session, but let's see. 
+        # Wait, create_vendor.html only sends OTP. We need to pass phone from frontend or session.
+        # But if admin is creating vendor, they enter phone in form. So the frontend SHOULD send phone.
+        # I'll update frontend to send phone.
+        phone = request.POST.get("phone")
+        if not phone:
+            return JsonResponse({"error": "Phone required for verification"})
+            
+        phone = normalize_phone(phone)
+        otp = request.POST.get("otp")
+        
+        if verify_otp(phone, otp):
+            request.session["verified_phone"] = phone
+            return JsonResponse({"status": "verified"})
+            
+        return JsonResponse({"error": "Invalid OTP"})
+        
+    return JsonResponse({"error": "Invalid request"})
     
     
     

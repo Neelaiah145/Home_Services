@@ -24,36 +24,9 @@ from accounts.views import mainly_allowed_roles
 
 
 class CategoryServicesAPIView(View):
-
-    def get(self, request):
-        banners = HeroBanner.objects.all()
-        categories = Category.objects.all()
-        total_services = CategoryService.objects.all().order_by('servicename')
-     
-        category_id = request.GET.get('category')
-
-        cat_services = CategoryService.objects.none()
-     
-  
-        if category_id:
-
-            cat_services = CategoryService.objects.filter(
-                    category_id=category_id
-                ).order_by(
-                    's_title'
-                )
-
-        context = {
-            'banners': banners,
-            'categories': categories,
-            'cat_services': cat_services,
-            'total_services': total_services,
-           
-            
-           
-        }
-
-        return render(request,'index.html',context)
+    def get(self, request, category_id):
+        services = CategoryService.objects.filter(category_id=category_id, s_title__isnull=False).values('id', 's_title').order_by('s_title')
+        return JsonResponse({'services': list(services)})
 
 
 
@@ -67,6 +40,13 @@ class IndexView(View):
         jobs = Job.objects.all().order_by('title')
         feedbacks = ServiceFeedback.objects.all().order_by('-id')
         count_service = CategoryService.objects.count()
+        
+        q = request.GET.get('q', '').strip()
+        if q:
+            from django.db.models import Q
+            categories = categories.filter(Q(title__icontains=q) | Q(description__icontains=q))
+            services_cards = services_cards.filter(Q(servicename__icontains=q))
+
 
         category_id = request.GET.get('category')
         service_id = request.GET.get('cat_service')
@@ -87,6 +67,10 @@ class IndexView(View):
             cat_services = CategoryService.objects.filter(
                 category_id=category_id
             ).order_by('s_title')
+        elif q:
+            # If searching, let's also grab matching cat_services for the first matched category to display
+            if categories.exists():
+                cat_services = CategoryService.objects.filter(category=categories.first()).order_by('s_title')
         context={
             'selected_category': selected_category,
             'footer': footer,

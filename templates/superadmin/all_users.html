@@ -1100,19 +1100,11 @@ tbody tr:hover{
 
                                 {% if user.role != "superadmin" %}
 
-                                <form method="post"
-                                      action="{% url 'delete_user' user.id %}">
-
+                                <form method="post" action="{% url 'delete_user' user.id %}" class="delete-user-form">
                                     {% csrf_token %}
-
-                                    <button type="submit"
-                                            class="delete-btn"
-                                            onclick="return confirm('Delete this user?')">
-
+                                    <button type="button" class="delete-btn" onclick="confirmDelete(this, '{{ user.first_name|default:user.username }}')">
                                         Delete
-
                                     </button>
-
                                 </form>
 
                                 {% endif %}
@@ -1429,6 +1421,25 @@ function updateBehaviour(userId){
 
 }
 
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function confirmDelete(buttonElement, userName) {
+    Swal.fire({
+        title: 'Delete User?',
+        text: "Are you sure you want to delete '" + userName + "'? This action cannot be undone.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            buttonElement.closest('form').submit();
+        }
+    });
+}
 </script>
 
 {% endblock %}
