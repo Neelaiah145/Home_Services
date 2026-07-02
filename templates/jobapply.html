@@ -335,11 +335,7 @@
         <div class="form-panel">
             <h3 class="form-heading">Apply for: {{ job.title }}</h3>
 
-            {% if messages %}
-            {% for message in messages %}
-            <p class="notification-success">{{ message }}</p>
-            {% endfor %}
-            {% endif %}
+            
 
             <form method="post" enctype="multipart/form-data" class="submission-form">
                 {% csrf_token %}

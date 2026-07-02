@@ -993,6 +993,25 @@ class="sidebar-logo">
   </main>
   {% load static %}
 
+  {% if messages %}
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      {% for message in messages %}
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: "{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}",
+          title: "{{ message|escapejs }}",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        });
+      {% endfor %}
+    });
+  </script>
+  {% endif %}
+
   <!-- jQuery library js -->
   <script src="{% static 'assets/js/lib/jquery-3.7.1.min.js' %}"></script>
 

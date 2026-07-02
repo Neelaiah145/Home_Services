@@ -62,21 +62,7 @@ def send_otp(phone, purpose):
         params=payload,
         timeout=10
     )
-    print("=== send_otp() started ===")
 
-    otp = generate_otp()
-    print("Generated OTP:", otp)
-
-    OTP.objects.filter(phone=phone).delete()
-    print("Old OTP deleted")
-
-    OTP.objects.create(
-        phone=phone,
-        otp=otp
-    )
-    print("New OTP saved")
-
-    print("=== send_otp() finished ===")
     print("Generated OTP:", otp)
     # print("Status Code:", response.status_code)
     # print("Response:", response.text)

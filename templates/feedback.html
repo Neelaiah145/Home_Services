@@ -14,13 +14,7 @@
 {% endblock %}
 
 {% block content %}
-  {% if messages %}
-  {% for message in messages %}
-  <div class="alert alert-{{ message.tags }}">
-    {{ message }}
-  </div>
-  {% endfor %}
-  {% endif %}
+  
 {% if request.user.is_authenticated %}
   <div class="fb-wrapper">
     <div class="container">
