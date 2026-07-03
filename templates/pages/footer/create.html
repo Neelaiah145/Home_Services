@@ -102,6 +102,26 @@
 
                     </div>
 
+                    <!-- CART IMAGE -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+
+                            Cart Section Image
+
+                        </label>
+
+                        <div class="image-box">
+
+                            <img id="cart_preview" style="max-height: 100%; max-width: 100%;">
+
+                        </div>
+
+                        <input type="file" name="cart_image" class="file-input" onchange="previewCartImage(event)">
+
+                    </div>
+
                     <!-- DETAILS -->
 
                     <div class="col-md-8">
@@ -276,6 +296,24 @@
 
             document.getElementById(
                 'preview'
+            ).src = reader.result;
+
+        }
+
+        reader.readAsDataURL(
+            event.target.files[0]
+        );
+
+    }
+
+    function previewCartImage(event) {
+
+        const reader = new FileReader();
+
+        reader.onload = function () {
+
+            document.getElementById(
+                'cart_preview'
             ).src = reader.result;
 
         }

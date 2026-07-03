@@ -993,6 +993,7 @@ class CreateFooter(LoginRequiredMixin,View):
 
     def post(self, request):
         logo_image = request.FILES.get('logo_image')
+        cart_image = request.FILES.get('cart_image')
         footer_description = request.POST.get('footer_description')
         phone_num = request.POST.get('phone_num')
         whatsapp_num = request.POST.get('whatsapp_num')
@@ -1011,13 +1012,9 @@ class CreateFooter(LoginRequiredMixin,View):
 
         if not phone_num:
             errors.append("Phone number is required")
-        elif not phone_num.isdigit():
-            errors.append("Phone number must contain only digits")
 
         if not whatsapp_num:
             errors.append("WhatsApp number is required")
-        elif not whatsapp_num.isdigit():
-            errors.append("WhatsApp number must contain only digits")
 
         if not email:
             errors.append("Email is required")
@@ -1033,6 +1030,7 @@ class CreateFooter(LoginRequiredMixin,View):
 
         Footer.objects.create(
             logo_image=logo_image,
+            cart_image=cart_image,
             footer_description=footer_description,
             phone_num=phone_num,
             whatsapp_num=whatsapp_num,
@@ -1060,6 +1058,7 @@ class UpdateFooter(LoginRequiredMixin,View):
         footer = get_object_or_404(Footer, id=id)
 
         logo_image = request.FILES.get('logo_image')
+        cart_image = request.FILES.get('cart_image')
         footer_description = request.POST.get('footer_description')
         phone_num = request.POST.get('phone_num')
         whatsapp_num = request.POST.get('whatsapp_num')
@@ -1078,15 +1077,9 @@ class UpdateFooter(LoginRequiredMixin,View):
 
         if not phone_num:
             errors.append("Phone number is required")
-        elif not phone_num.isdigit():
-            errors.append("Phone number must contain only digits")
-        elif len(phone_num) < 10 or len(phone_num) > 15:
-            errors.append("Phone number must be 10–15 digits")
 
         if not whatsapp_num:
             errors.append("WhatsApp number is required")
-        elif not whatsapp_num.isdigit():
-            errors.append("WhatsApp number must contain only digits")
 
         if not email:
             errors.append("Email is required")
@@ -1113,6 +1106,8 @@ class UpdateFooter(LoginRequiredMixin,View):
 
         if logo_image:
             footer.logo_image = logo_image
+        if cart_image:
+            footer.cart_image = cart_image
 
         footer.save()
 

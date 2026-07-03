@@ -2,6 +2,25 @@
 
 {% block content %}
 
+<style>
+.logo-box {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+.logo-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+</style>
+
 
 <div class="footer-page">
 
@@ -74,6 +93,7 @@
 
                         <th>Sl.No</th>
                         <th>Logo</th>
+                        <th>Cart Image</th>
                         <th>Description</th>
                         <th>Phone</th>
                         <th>WhatsApp</th>
@@ -99,7 +119,7 @@
 
                             <div class="sl-no">
 
-                               {{ page_obj.start_index|add:forloop.counter0 }}
+                               {{ forloop.counter }}
 
                             </div>
 
@@ -114,6 +134,26 @@
                             <div class="logo-box">
 
                                 <img src="{{ footer.logo_image.url }}">
+
+                            </div>
+
+                            {% else %}
+
+                            -
+
+                            {% endif %}
+
+                        </td>
+
+                        <!-- CART IMAGE -->
+
+                        <td>
+
+                            {% if footer.cart_image %}
+
+                            <div class="logo-box">
+
+                                <img src="{{ footer.cart_image.url }}">
 
                             </div>
 

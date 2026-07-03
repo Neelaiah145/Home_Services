@@ -125,6 +125,48 @@
 
                     </div>
 
+                    <!-- CART IMAGE -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+
+                            Cart Section Image
+
+                        </label>
+
+                        <div class="image-box">
+
+                            {% if footer.cart_image %}
+
+                            <img id="cart_preview"
+
+                                 src="{{ footer.cart_image.url }}" style="max-height: 100%; max-width: 100%;">
+
+                            {% else %}
+
+                            <img id="cart_preview" style="max-height: 100%; max-width: 100%;">
+
+                            {% endif %}
+
+                        </div>
+
+                        <input type="file"
+
+                               name="cart_image"
+
+                               class="file-input"
+
+                               onchange="previewCartImage(event)">
+
+                        <small class="text-muted">
+
+                            Leave empty to keep old image
+
+                        </small>
+
+                    </div>
+
                     <!-- FIELDS -->
 
                     <div class="col-md-8">
@@ -323,6 +365,24 @@ function previewImage(event){
 
         document.getElementById(
             'preview'
+        ).src = reader.result;
+
+    }
+
+    reader.readAsDataURL(
+        event.target.files[0]
+    );
+
+}
+
+function previewCartImage(event){
+
+    const reader = new FileReader();
+
+    reader.onload = function(){
+
+        document.getElementById(
+            'cart_preview'
         ).src = reader.result;
 
     }

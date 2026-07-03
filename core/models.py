@@ -211,6 +211,7 @@ class ServiceFeedback(models.Model):
 class Footer(models.Model):
 
     logo_image = models.ImageField(upload_to='footer/logo/', blank=True, null=True)
+    cart_image = models.ImageField(upload_to='footer/cart/', blank=True, null=True)
 
     footer_description = models.TextField()
 
