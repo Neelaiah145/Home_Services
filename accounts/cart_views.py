@@ -129,43 +129,66 @@ class CheckoutView(LoginRequiredMixin, View):
             }
             return render(request, 'cart/checkout.html', context)
 
-        first_item = cart.items.first()
-        legacy_service = first_item.service if first_item else None
-        legacy_category = first_item.service.category if first_item and hasattr(first_item.service, 'category') else None
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
 
-        # Create Booking
-        booking = Booking.objects.create(
-            user=request.user,
-            name=name,
-            phone=phone,
-            city=city,
-            address=full_address,
-            problem=problem,
-            status='pending',
-            service=legacy_service,
-            category=legacy_category,
-            start_date=start_date if start_date else None,
-            end_date=end_date if end_date else start_date,
-            scheduled_date=start_date if start_date else None,
-            scheduled_time=scheduled_time if scheduled_time else None
-        )
+        # Find matched admin based on city
+        matched_admin = User.objects.filter(
+            role="admin",
+            city__iexact=city,
+            is_active=True
+        ).first()
 
-        # Move CartItems to BookingItems
+        created_bookings = []
         for item in cart.items.all():
+            service = item.service
+            category = service.category if hasattr(service, 'category') else None
+
+            # Find matching vendor if any
+            vendor = User.objects.filter(
+                role="vendor",
+                services=service
+            ).first()
+
+            # Create Booking
+            booking = Booking.objects.create(
+                user=request.user,
+                admin=matched_admin,
+                name=name,
+                phone=phone,
+                city=city,
+                address=full_address,
+                problem=problem,
+                status='pending',
+                service=service,
+                category=category,
+                vendor=vendor,
+                start_date=start_date if start_date else None,
+                end_date=end_date if end_date else start_date,
+                scheduled_date=start_date if start_date else None,
+                scheduled_time=scheduled_time if scheduled_time else None
+            )
+
+            # Move CartItem to BookingItem
             BookingItem.objects.create(
                 booking=booking,
-                service=item.service,
+                service=service,
+                vendor=vendor,
                 status='pending',
                 start_date=start_date if start_date else None,
                 end_date=end_date if end_date else start_date,
                 scheduled_date=start_date if start_date else None,
                 scheduled_time=scheduled_time if scheduled_time else None,
             )
+            created_bookings.append(booking)
 
         # Clear cart
         cart.items.all().delete()
 
-        return redirect('booking_success', booking_id=booking.id)
+        # Redirect to the first booking's success page or my_bookings if empty
+        if created_bookings:
+            return redirect('booking_success', booking_id=created_bookings[0].id)
+        return redirect('my_bookings')
 
 class BookingSuccessView(LoginRequiredMixin, View):
     def get(self, request, booking_id, *args, **kwargs):

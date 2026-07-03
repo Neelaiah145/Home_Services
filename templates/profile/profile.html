@@ -255,15 +255,12 @@ input[readonly]{
     <div class="card-body">
 
       <!-- MESSAGES -->
-
-      ">
-
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
             {{ message }}
-
           </div>
-
         {% endfor %}
-
       {% endif %}
 
       <!-- FORM -->
