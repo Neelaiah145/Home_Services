@@ -190,49 +190,4 @@
     </div>
   </div>
   <!-- listing Area End -->
-  <!--==============================
-	  Footer Area
-	============================== -->
-  <footer class="footer-layout1 bg-body z-index-common" data-bg-src="assets/img/bg/">
-    <!-- Cta Area -->
-
-    <!-- Cta Area End -->
-    <div class="footer-top">
-      <div class="container">
-        <div class="row g-5 justify-content-between">
-          <div class="col-md-6 col-lg-6 col-xl-auto">
-            <div class="newsletter-area">
-              <div class="footer-logo">
-                <a href="{% url 'indexpage' %}">
-                  <img
-                    src="{% if footer.logo_image  %} {{ footer.logo_image.url }} {% else %} {% static 'assets/img/new_image/sridixitha-logo.gif' %} {% endif %}"
-                    alt="Sridixitha" class="logo logo_news">
-                </a>
-              </div>
-              <p class="footer-text">{{ footer.footer_description }}</p>
-              <div class="footer-social-media">
-                {% if footer.whatsapp %}
-                <a href="{{ footer.whatsapp }}"><i class="fa-brands fa-whatsapp"></i></a>
-                {% else %}
-                <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
-                {% endif %}
-                {% if footer.facebook %}
-                <a href="{{ footer.facebook }}"><i class="fa-brands fa-facebook-f"></i></a>
-                {% else %}
-                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                {% endif %}
-                {% if footer.instagram %}
-                <a href="{{ footer.instagram }}"><i class="fa-brands fa-instagram"></i></a>
-                {% else %}
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                {% endif %}
-                {% if footer.twitter %}
-                <a href="{{ footer.twitter }}"><i class="fa-brands fa-x-twitter"></i></a>
-                {% else %}
-                <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
-                {% endif %}
-
-              </div>
-            </div>
-          </div>
 {% endblock %}

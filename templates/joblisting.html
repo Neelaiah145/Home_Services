@@ -74,7 +74,7 @@
     <div class="vs-menu-area text-center">
       <div class="mobile-logo">
         <a href="#"><img
-            src="{% if footer.logo_image %} {{ footer.logo_image.url }} {% else %} {% static 'assets/img/new_image/sridixitha-logo.gif' %} {% endif %}"
+            src="{% if footer.logo_image %} {{ footer.logo_image.url }} {% else %} {% static 'assets/images/logo/sridixitha_logo.gif' %} {% endif %}"
             alt="Sridixitha" class="logo logo_news"></a>
         <button class="vs-menu-toggle"><i class="fal fa-times"></i></button>
       </div>
@@ -117,7 +117,7 @@
       <div class="widget">
         <div class="vs-widget-about">
           <div class="mb-4">
-            <a href="#"><img src="{% static 'assets/images/new_image/sridixitha-logo.gif' %}" alt="logo"
+            <a href="#"><img src="{% static 'assets/images/logo/sridixitha_logo.gif' %}" alt="logo"
                 class="logo"></a>
           </div>
           <p class="sidemenu-text">
@@ -258,7 +258,7 @@
                     {% if footer.logo_image %}
                     <img src="{{ footer.logo_image.url }}" alt="Logo" class="logo logo_news">
                     {% else %}
-                    <span>No Image</span>
+                    <img src="{% static 'assets/images/logo/sridixitha_logo.gif' %}" alt="Logo" class="logo logo_news">
                     {% endif %}
 
                   </a>
@@ -436,7 +436,7 @@
                         <div class="newsletter-area">
                             <div class="footer-logo">
                                 <a href="{% url 'indexpage' %}">
-                                    <img src="{% if footer.logo_image  %} {{ footer.logo_image.url }} {% else %} {% static 'assets/img/new_image/sridixitha-logo.gif' %} {% endif %}"
+                                    <img src="{% if footer.logo_image  %} {{ footer.logo_image.url }} {% else %} {% static 'assets/images/logo/sridixitha_logo.gif' %} {% endif %}"
                                         alt="Sridixitha" class="logo logo_news">
                                 </a>
                             </div>

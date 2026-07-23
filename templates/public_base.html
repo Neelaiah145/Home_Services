@@ -133,12 +133,17 @@
 
     @media (max-width: 1199px) {
       .header-logo {
-        max-width: 40vw; /* Ensure logo scales down on small screens */
-        overflow: hidden;
+        max-width: 50vw; /* Ensure logo scales down on small screens */
+        display: block;
+      }
+      .header-logo a {
+        display: block;
       }
       .header-logo img {
-        max-width: 100%;
-        height: auto;
+        width: 100% !important;
+        max-width: 220px !important;
+        height: auto !important;
+        display: block;
       }
       .mobile-action-btn {
         padding: 6px 12px !important;
@@ -228,7 +233,7 @@
     <div class="vs-menu-area text-center">
       <div class="mobile-logo">
         <a href="#"><img
-            src="{% if footer.logo_image %} {{ footer.logo_image.url }} {% else %} {% static 'assets/img/new_image/sridixitha-logo.gif' %} {% endif %}"
+            src="{% if footer.logo_image %} {{ footer.logo_image.url }} {% else %} {% static 'assets/images/logo/sridixitha_logo.gif' %} {% endif %}"
             alt="Sridixitha" class="logo logo_news"></a>
         <button class="vs-menu-toggle"><i class="fal fa-times"></i></button>
       </div>
@@ -282,7 +287,7 @@
       <div class="widget">
         <div class="vs-widget-about">
           <div class="mb-4">
-            <a href="#"><img src="{% static 'assets/images/new_image/sridixitha-logo.gif' %}" alt="logo"
+            <a href="#"><img src="{% static 'assets/images/logo/sridixitha_logo.gif' %}" alt="logo"
                 class="logo"></a>
           </div>
           <p class="sidemenu-text">
@@ -423,7 +428,7 @@
                     {% if footer.logo_image %}
                     <img src="{{ footer.logo_image.url }}" alt="Logo" class="logo logo_news">
                     {% else %}
-                    <span>No Image</span>
+                    <img src="{% static 'assets/images/logo/sridixitha_logo.gif' %}" alt="Logo" class="logo logo_news">
                     {% endif %}
 
                   </a>
@@ -607,7 +612,7 @@
               <div class="footer-logo">
                 <a href="{% url 'indexpage' %}">
                   <img
-                    src="{% if footer.logo_image  %} {{ footer.logo_image.url }} {% else %} {% static 'assets/img/new_image/sridixitha-logo.gif' %} {% endif %}"
+                    src="{% if footer.logo_image  %} {{ footer.logo_image.url }} {% else %} {% static 'assets/images/logo/sridixitha_logo.gif' %} {% endif %}"
                     alt="Sridixitha" class="logo logo_news">
                 </a>
               </div>
