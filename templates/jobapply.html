@@ -179,12 +179,12 @@
 
                   <span class="contact-item">
                     <i class="fas fa-phone"></i>
-                    <a href="tel:+919876543210">+91 {{ footer.phone_num }}</a>
+                    <a href="tel:+91{{ footer.phone_num }}">+91 {{ footer.phone_num }}</a>
                   </span>
 
                   <span class="contact-item">
                     <i class="fab fa-whatsapp"></i>
-                    <a href="https://wa.me/919876543210" target="_blank">+91 {{ footer.whatsapp_num }}</a>
+                    <a href="https://wa.me/91{{ footer.whatsapp_num }}" target="_blank">+91 {{ footer.whatsapp_num }}</a>
                   </span>
 
                 </li>
@@ -422,7 +422,9 @@
                             <p class="footer-text">{{ footer.footer_description }}</p>
                             <div class="footer-social-media">
                                 {% if footer.whatsapp %}
-                                <a href="{{ footer.whatsapp }}"><i class="fa-brands fa-whatsapp"></i></a>
+                                <a href="{{ footer.whatsapp }}" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+                                {% elif footer.whatsapp_num %}
+                                <a href="https://wa.me/91{{ footer.whatsapp_num }}" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
                                 {% else %}
                                 <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
                                 {% endif %}
@@ -486,11 +488,11 @@
                                         alt="line footer"></span></h3>
                             <ul class="menu footer-menu">
 
-                                <li><a href="#"><i style="color: #ea6e12" class="fa-solid fa-phone"></i>+91 {{ footer.phone_num }}</a>
+                                <li><a href="tel:+91{{ footer.phone_num }}"><i style="color: #ea6e12" class="fa-solid fa-phone"></i>+91 {{ footer.phone_num }}</a>
                                 </li>
-                                <li><a href="#"><i style="color: #ea6e12" class="fa-brands fa-square-whatsapp"></i>+91 {{ footer.whatsapp_num }}</a>
+                                <li><a href="https://wa.me/91{{ footer.whatsapp_num }}" target="_blank"><i style="color: #ea6e12" class="fa-brands fa-square-whatsapp"></i>+91 {{ footer.whatsapp_num }}</a>
                                 </li>
-                                <li><a href="#"><i style="color: #ea6e12" class="fa-solid fa-envelope"></i>{{ footer.email }}</a>
+                                <li><a href="mailto:{{ footer.email }}" style="text-transform: lowercase !important;"><i style="color: #ea6e12" class="fa-solid fa-envelope"></i>{{ footer.email|lower }}</a>
                                 </li>
                                 <li><a href="#"><i style="color: #ea6e12" class="fa-solid fa-location-dot"></i>{{ footer.address }}</a>
                                 </li>

@@ -804,7 +804,7 @@ class AllUsersView(LoginRequiredMixin,View):
             )
 
         users = users.order_by("-id")
-        locations = (
+        raw_locations = (
 
             users
 
@@ -819,6 +819,14 @@ class AllUsersView(LoginRequiredMixin,View):
             .distinct()
 
         )
+        seen_cities = set()
+        locations = []
+        for loc in raw_locations:
+            cleaned_loc = loc.strip().title()
+            if cleaned_loc and cleaned_loc not in seen_cities:
+                seen_cities.add(cleaned_loc)
+                locations.append(cleaned_loc)
+        locations.sort()
         page_obj = paginate_queryset(request,users,10)
 
         if current_user.role == "superadmin":
