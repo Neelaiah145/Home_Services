@@ -92,7 +92,7 @@
 
                             <div class="sl-no">
 
-                                {{ forloop.counter }}
+                                {{ page_obj.start_index|add:forloop.counter0 }}
 
                             </div>
 
@@ -178,11 +178,19 @@
 
                             </span>
 
-                            {% elif contact.status == 'in_progress' %}
+                            {% elif contact.status == 'in_progress' or contact.status == 'progress' %}
 
                             <span class="status-badge progress">
 
                                 In Progress
+
+                            </span>
+
+                            {% elif contact.status == 'completed' %}
+
+                            <span class="status-badge completed">
+
+                                Completed
 
                             </span>
 
@@ -191,6 +199,14 @@
                             <span class="status-badge closed">
 
                                 Closed
+
+                            </span>
+
+                            {% else %}
+
+                            <span class="status-badge pending">
+
+                                {{ contact.get_status_display|default:contact.status|title }}
 
                             </span>
 
@@ -204,7 +220,7 @@
 
                             <div class="date-text">
 
-                                {{ contact.created_at|date:"d M Y" }}
+                                {{ contact.contact_created_at|date:"d M Y" }}
 
                             </div>
 
@@ -257,7 +273,7 @@
 
         <!-- PAGINATION -->
 
-        {% if page_obj %}
+        {% if page_obj.has_other_pages %}
 
         <div class="tbl-footer">
 
@@ -273,21 +289,27 @@
 
                 {% endif %}
 
-                <span class="pg-btn active">
+                {% for num in page_obj.paginator.page_range %}
 
-                    {{ page_obj.number }}
+                    {% if page_obj.number == num %}
 
-                </span>
+                    <span class="pg-btn active">
 
-                {% if page_obj.has_next %}
+                        {{ num }}
 
-                <a class="pg-btn" href="?page={{ page_obj.next_page_number }}">
+                    </span>
 
-                    {{ page_obj.next_page_number }}
+                    {% else %}
 
-                </a>
+                    <a class="pg-btn" href="?page={{ num }}">
 
-                {% endif %}
+                        {{ num }}
+
+                    </a>
+
+                    {% endif %}
+
+                {% endfor %}
 
                 {% if page_obj.has_next %}
 

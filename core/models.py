@@ -13,6 +13,10 @@ class News(models.Model):
     news_created_at = models.DateTimeField(auto_now_add=True)
     news_updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def created_at(self):
+        return self.news_created_at
+
     def __str__(self):
         return self.content if self.content else "News"
 
@@ -23,6 +27,10 @@ class HeroBanner(models.Model):
     image = models.ImageField(upload_to='hero/')
     herosection_created_at = models.DateTimeField(auto_now_add=True)
     herosection_updated_at = models.DateField(auto_now=True)
+
+    @property
+    def created_at(self):
+        return self.herosection_created_at
 
     def __str__(self):
         return self.heading
@@ -50,6 +58,10 @@ class Category(models.Model):
 
     category_created_at = models.DateTimeField(auto_now_add=True)
     category_updated_at = models.DateTimeField(auto_now=True)   
+
+    @property
+    def created_at(self):
+        return self.category_created_at
 
     def get_tags_list(self):
         return [tag.strip() for tag in self.tags.split(',') if tag.strip()]
@@ -88,6 +100,10 @@ class CategoryService(models.Model):
     categoryservice_created_at = models.DateTimeField(auto_now_add=True)
     Categoryservice_updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def created_at(self):
+        return self.categoryservice_created_at
+
     def __str__(self):
         return self.s_title
 
@@ -101,6 +117,10 @@ class ServicesCards(models.Model):
     
     servicecard_created_at = models.DateTimeField(auto_now_add=True)
     servicecard_updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def created_at(self):
+        return self.servicecard_created_at
 
     def __str__(self):
         return self.title
@@ -139,6 +159,10 @@ class Job(models.Model):
     job_created_at = models.DateTimeField(auto_now_add=True)
     job_updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def created_at(self):
+        return self.job_created_at
+
     def __str__(self):
         return self.title
 
@@ -159,6 +183,10 @@ class JobApplication(models.Model):
 
     jobapplication_created_at = models.DateTimeField(auto_now_add=True)
     jobapplication_updated_at = models.DateField(auto_now=True)
+
+    @property
+    def created_at(self):
+        return self.jobapplication_created_at
 
     def __str__(self):
         return f"{self.name} - {self.job.title}"
@@ -203,6 +231,10 @@ class ServiceFeedback(models.Model):
     feedback_created_at = models.DateTimeField(auto_now_add=True)
     feedback_updated_at = models.DateField(auto_now = True)
 
+    @property
+    def created_at(self):
+        return self.feedback_created_at
+
     def __str__(self):
         return f"{self.customer_name} - {self.service_name}"
 
@@ -230,6 +262,10 @@ class Footer(models.Model):
     footer_created_at = models.DateTimeField(auto_now_add=True)
     footer_updated_at = models.DateTimeField(auto_now=True)
 
+    @property
+    def created_at(self):
+        return self.footer_created_at
+
     def __str__(self):
         return f"Footer - {self.phone_num}"
     
@@ -241,6 +277,7 @@ class Contact(models.Model):
         ('pending', 'Pending'),
         ('contacted', 'Contacted'),
         ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
         ('closed', 'Closed'),
     ]
 
@@ -258,6 +295,10 @@ class Contact(models.Model):
 
     contact_created_at = models.DateTimeField(auto_now_add=True)
     contact_updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def created_at(self):
+        return self.contact_created_at
 
     def __str__(self):
         return self.name

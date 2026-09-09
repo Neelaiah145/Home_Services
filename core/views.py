@@ -255,9 +255,11 @@ class ContactForm(View):
 class ContactListView(LoginRequiredMixin,View):
     def get(self, request):
         contacts = Contact.objects.all().order_by('-contact_created_at')
+        page_obj = paginate_queryset(request, contacts, 10)
 
         return render(request, 'pages/contact/list.html', {
-            'contacts': contacts
+            'contacts': page_obj,
+            'page_obj': page_obj
         })
 
 @method_decorator(permission_required('core.change_contact'),name='dispatch')
@@ -361,8 +363,8 @@ class ListFeedback(LoginRequiredMixin,View):
         feedbacks = ServiceFeedback.objects.all().order_by('-feedback_created_at')
         page_obj = paginate_queryset(request, feedbacks, 10)
         return render(request, 'pages/feedback/list.html', {
-            'feedbacks': feedbacks,
-            'page_obj':page_obj,
+            'feedbacks': page_obj,
+            'page_obj': page_obj,
             
         })
 
@@ -708,7 +710,7 @@ class DeleteCategoryService(LoginRequiredMixin,View):
 @method_decorator(never_cache, name='dispatch')
 class ListServices(LoginRequiredMixin,View):
     def get(self, request):
-        services = ServicesCards.objects.all()
+        services = ServicesCards.objects.all().order_by('-id')
         page_obj = paginate_queryset(request,services,10)
         return render(request, 'pages/services/list.html', {'services': page_obj,'page_obj': page_obj,})
 
@@ -981,7 +983,11 @@ class AdminJobApplicationsView(LoginRequiredMixin, View):
 class ListFooter(LoginRequiredMixin,View):
     def get(self, request):
         footers = Footer.objects.all().order_by('-id')
-        return render(request, 'pages/footer/list.html', {'footers': footers})
+        page_obj = paginate_queryset(request, footers, 10)
+        return render(request, 'pages/footer/list.html', {
+            'footers': page_obj,
+            'page_obj': page_obj
+        })
 
 
 @method_decorator(permission_required('core.add_footer'),name='dispatch')

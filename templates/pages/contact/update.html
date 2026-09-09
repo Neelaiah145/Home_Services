@@ -191,6 +191,13 @@
 
                         </option>
 
+                        <option value="completed"
+                            {% if contact.status == 'completed' %}selected{% endif %}>
+
+                            Completed
+
+                        </option>
+
                         <option value="closed"
                             {% if contact.status == 'closed' %}selected{% endif %}>
 

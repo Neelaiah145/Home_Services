@@ -5050,12 +5050,14 @@ body{
     color:#1d4ed8;
 }
 
-.progress{
+.progress,
+.in_progress{
     background:#cffafe;
     color:#0891b2;
 }
 
-.closed{
+.closed,
+.completed{
     background:#dcfce7;
     color:#15803d;
 }
