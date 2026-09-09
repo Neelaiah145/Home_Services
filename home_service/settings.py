@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from pathlib import Path
+from decouple import config
+
+
+
+
 ROOT_URLCONF = 'home_service.urls'
 AUTH_USER_MODEL = 'accounts.User'
 
@@ -35,9 +40,9 @@ LOGIN_URL  = '/login/'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# ALLOWED_HOSTS = ["sridixitha.com", "www.sridixitha.com"]
+ALLOWED_HOSTS = ["sridixitha.com", "www.sridixitha.com"]
 
-ALLOWED_HOSTS = []
+
 
 USERNAME_FIELD = "email"
 # Application definition
@@ -167,7 +172,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.sridixitha.com",
 ]
 
-from decouple import config
+
 
 SMS_USERNAME = config("SMS_USERNAME")
 SMS_APIKEY = config("SMS_APIKEY")
