@@ -29,6 +29,6 @@ jobs:
 
             python manage.py collectstatic --noinput
 
-            systemctl restart sridixitha
-
-            systemctl status sridixitha --no-page
+            sudo systemctl restart sridixitha.service
+          
+            sudo systemctl status sridixitha.service --no-pager
